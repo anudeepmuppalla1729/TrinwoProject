@@ -1,0 +1,531 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+    
+}
+
+/* Navbar container */
+.navbar {
+    background: white;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Left section */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 45px;
+    width: 400px;
+    margin-left: 70px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.ask-btn {
+    background: #c92ae0;
+    border: 2px solid #a522b7;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Search box */
+.search-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #eee;
+    border-radius: 10px;
+    padding: 0.2rem 0.5rem;
+    max-width: 500px;
+}
+.search-box input {
+    border: none;
+    background: transparent;
+    flex: 1;
+    padding: 0.2rem;
+    font-size: 0.9rem;
+    outline: none;
+}
+.search-box i {
+    color: #777;
+    cursor: pointer;
+}
+
+/* Right links & icons */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    margin-left: 30px;
+    margin-right: 70px;
+    font-weight: bolder;
+    font-size: larger;
+}
+.nav-links a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    font-weight: none;
+}
+.nav-links i {
+    font-size: larger;
+    cursor: pointer;
+}
+
+/* Home page layout container */
+.home_container {
+    margin: 0;
+    padding-right: 100px;
+   overflow-y: auto; 
+}
+
+/* Sidebar fixed on the left */
+.dashboard_items {
+    position: fixed;
+    left: 100px;
+    top: 50px; /* below navbar */
+    width: 230px;
+    height: calc(100vh - 70px);
+    margin-top: 10px; /* full height minus navbar */
+    background: rgb(236, 234, 234);
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-y: auto ;   /* scroll only sidebar if overflow */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid #ddd;
+    z-index: 90;
+    border-radius: 10px;
+}
+.dashboard_items .menu {
+    display: flex;
+    flex-direction: column;
+    margin-top: 80px;
+}
+.dashboard_items .menu a {
+    padding: 0.4rem;
+    margin-bottom: 0.5rem;
+    background: #c92ae0;
+    border: 2px solid #c92ae0;
+    border-radius: 6px;
+    text-decoration: none;
+    color: rgb(247, 245, 245);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.3s;
+}
+.dashboard_items .menu a:hover {
+    background: #de9ce8;
+    color: rgb(10,10,10);
+}
+.dashboard_items .settings-logout {
+    margin-bottom: 50px;
+}
+.settings-logout a {
+    padding: 0.4rem;
+    margin-bottom: 0.5rem;
+    background: rgb(236, 234, 234);
+    margin-left: 50px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: larger;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.3s;
+}
+
+
+/* Sidebar corner images */
+.sidebar-corner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    opacity: 1;
+}
+.sidebar-top-left {
+    top: 0;
+    left: 0;
+    background-image: url('../assets/top_left.png'); /* change path as needed */
+}
+.sidebar-top-right {
+    top: 0;
+    right: 0;
+    background-image: url('../assets/top_upscaled.png'); /* change path as needed */
+}
+.sidebar-bottom-left {
+    bottom: 0;
+    left: 0;
+    background-image: url('../assets/bottom_left.png'); /* change path as needed */
+}
+.sidebar-bottom-right {
+    bottom: 0;
+    right: 0;
+    background-image: url('../assets/bottom_upscaled.png'); /* change path as needed */
+}
+
+
+
+
+/* Main content area */
+.home_content {
+    margin-left: 390px;    /* leave space for the fixed sidebar */
+    padding: 1rem;
+    background: white;
+    height: calc(100vh - 60px); /* fill viewport minus navbar (adjust if needed) */
+    overflow-y: auto;      /* scroll main content if long */
+    overflow-x: hidden;    /* hide horizontal scrollbar */
+    box-sizing: border-box;
+    
+    scroll-behavior: smooth;
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+.home_content::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* Question Input Box */
+.question-box {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    position: relative;
+}
+
+/* Input + user icon row */
+.question-input {
+    width: calc(100% - 40px); /* leave space for icon */
+    padding: 0.6rem 2.5rem 0.6rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background: white;
+}
+.user-icon {
+    position: absolute;
+    top: 1.2rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: #555;
+}
+
+/* Action Buttons Row */
+.question-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.question-actions button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.privacy-select {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background:  #c92ae0;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.image-btn, .privacy-btn {
+    background:  #c92ae0;
+    color: white;
+}
+.post-btn {
+    background: #c92ae0;
+    color: white;
+    margin-left: auto;
+}
+.post-btn:hover {
+    background: #a522b7;
+}
+
+
+/* Modal backdrop */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+/* Modal box */
+.modal-box {
+  background: #e0e0e0;
+  border: 2px solid #444;
+  padding: 1rem;
+  width: 600px;
+ 
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 170px;
+}
+.close-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+.modal-options {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.privacy-select {
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  border: none;
+  background: #c92ae0;
+  color: rgb(251, 248, 248);
+  font-weight: bold;
+}
+.question-textarea {
+  width: 96%;
+  min-height: 120px;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+  font-size:larger;
+  font-family: none;
+}
+.image-upload-icon {
+  position: absolute;
+  bottom: 210px;
+  
+  right: 30px;
+  cursor: pointer;
+  color: #333;
+  font-size: 1.2rem;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.cancel-btn,
+.post-btn {
+  padding: 0.4rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.cancel-btn {
+  background: #ccc;
+}
+.post-btn {
+  background: #c92ae0;
+  color: rgb(246, 245, 245);
+}
+
+
+
+
+.posts-container {
+  margin-top: 1rem;
+}
+.post {
+  background: rgb(235, 233, 233);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+  position: relative;
+}
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.post-header .profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size:medium;
+}
+.profile i{
+    font-size: larger;
+}
+.post-header .options {
+  position: relative;
+  cursor: pointer;
+ 
+}.options-menu {
+  position: absolute;
+  right: 0;
+  top: 1.3rem;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  display: none;
+  z-index: 10;
+  /* Make text larger */
+  font-size: 1rem;       /* Increase overall font size inside the menu */
+}
+
+.options-menu.active {
+  display: block;
+   background-color: #c92ae0;
+}
+
+.options-menu div {
+  padding: 0.3rem 0.8rem;
+  width:100px;
+  cursor: pointer;
+  font-size: 1rem; 
+  background-color: #c92ae0;   
+  color:white;   /* Make each menu option a bit larger */
+}
+
+.options-menu div:hover {
+  background: #de9ce8;
+  border-radius: 10px;
+}
+.options-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-width: 160px;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.options-menu hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 0;
+}
+
+/* Buttons inside the menu */
+.options-menu button {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #fcf8f8;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Hover effect */
+.options-menu button:hover {
+  background: #f7f7f7;
+  color: #050505;
+}
+
+/* Optional: Rounded corners on first/last */
+.options-menu button:first-of-type {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.options-menu button:last-of-type {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+
+
+.close-post {
+  cursor: pointer;
+  color: black;
+  margin-left: 0.5rem;
+  font-size: 28px;       /* Increased size of the close icon */
+}
+
+.post h2 {
+  margin: 0.5rem 0;
+}
+.post p {
+  margin: 0.2rem 0;
+}
+
+
+.post-actions {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #ccc;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  
+}
+
+.post-actions button {
+  background: #c92ae0;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+  color:white;
+}
+
+
+.post-actions button:hover {
+  background: #c92ae0;
+}
+
+#close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
