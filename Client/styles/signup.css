@@ -45,7 +45,7 @@ body {
   border-bottom-right-radius: 20px;
   overflow: hidden;
   /* Add two background images in the top-right and bottom-right corners */
-  background-image: url('../assets/top_upscaled.png'), url('../assets/bottom_upscaled.png');
+  background-image: url('../assets/top-right.png'), url('../assets/bottom-right.png');
   background-position: top right, bottom right;
   background-repeat: no-repeat, no-repeat;
   background-size: 120px 120px, 120px 120px;
