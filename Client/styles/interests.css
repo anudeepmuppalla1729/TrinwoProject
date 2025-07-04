@@ -31,29 +31,37 @@ html, body {
 .top-left {
     top: 0;
     left: 0;
-    background-image: url('../assets/left.png');
+    background-image: url('../assets/top-left.png');
+    height: 50px;
+    width: 50px;
 }
 
 .top-right {
     top: 0;
     right: 0;
-    background-image: url('../assets/top_upscaled.png');
+    background-image: url('../assets/top-right.png');
+    height: 50px;
+    width: 50px;
 }
 
 .bottom-left {
     bottom: 0;
     left: 0;
+    height: 50px;
+    width: 50px;
     background-image: url('../assets/bottom_left.png');
 }
 
 .bottom-right {
     bottom: 0;
     right: 0;
-    background-image: url('../assets/bottom_upscaled.png');
+    height: 50px;
+    width: 50px;
+    background-image: url('../assets/bottom-right.png');
 }
 
 .container {
-    background: #fff;
+    background: rgba(0,0,0,0.03);
     padding: 1rem;
     border: 2px solid #ccc;
     border-radius: 8px;
@@ -160,4 +168,8 @@ button {
 
 button:hover {
     background: #a522b7;
+}
+
+.continue-btn{
+    margin-right: 50px;
 }
