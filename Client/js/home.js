@@ -247,3 +247,24 @@ newsFeedButton.addEventListener('click', function(e) {
   e.preventDefault();
   renderPosts();
 });
+
+// Sidebar hamburger menu toggle for mobile
+// Ensure this runs after DOM is loaded
+window.addEventListener('DOMContentLoaded', function() {
+  const hamburger = document.getElementById('hamburgerBtn');
+  if (hamburger) {
+    hamburger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.body.classList.toggle('sidebar-open');
+    });
+    // Optional: close sidebar when clicking outside
+    document.addEventListener('click', function(e) {
+      if (document.body.classList.contains('sidebar-open')) {
+        const sidebar = document.querySelector('.dashboard_items');
+        if (sidebar && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+          document.body.classList.remove('sidebar-open');
+        }
+      }
+    });
+  }
+});
