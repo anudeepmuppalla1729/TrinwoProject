@@ -81,19 +81,17 @@ body {
   pointer-events: none;
 }
 .icon-divider {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    transform: translateY(-50%);
-    height: 60%;
-    width: 1px;
-    background-color: #ccc;
-    
-  }
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  height: 60%;
+  width: 1px;
+  background-color: #ccc;
+}
   
-
 .form-label{
-    font-weight:bold ;
+  font-weight:bold;
 }
 .form-input {
   width: 100%;
@@ -118,6 +116,10 @@ body {
   align-items: center;
   margin:10px;
   gap: 0.5rem;
+}
+
+.ms-auto {
+  margin-left: auto;
 }
   
 .btn-signup {
@@ -155,7 +157,6 @@ body {
   background-color: #f9f9f9;
   font-weight: 500;
   display: flex;
-  
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
@@ -175,4 +176,3 @@ body {
 .form-link:hover {
   text-decoration: underline;
 }
-  
