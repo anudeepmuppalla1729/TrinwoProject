@@ -47,6 +47,7 @@
             <div class="sidebar-corner sidebar-bottom-right"></div>
 
             <nav class="menu">
+                <a href="user_profile.html"><i class="bi bi-person-circle"></i>My Profile</a>
                 <a href="#"><i class="bi bi-newspaper"></i> News Feed</a>
                 <a href="#" class="sidebar-ask-btn"><i class="bi bi-question-circle"></i> Ask Question</a>
 
@@ -132,8 +133,31 @@
 
     </div>
 
-
+    <div class="question-list">
+      <div class="question-card" data-id="1" data-title="What is JavaScript?" data-body="JavaScript is a scripting language used to create dynamic content on websites.">
+        <h3>What is JavaScript?</h3>
+        <p>Click to see details and answers</p>
+      </div>
+    
+      <div class="question-card" data-id="2" data-title="What is CSS?" data-body="CSS is used to style HTML elements on a webpage.">
+        <h3>What is CSS?</h3>
+        <p>Click to see details and answers</p>
+      </div>
+    </div>
+    
 
 <script src="./js/home.js"></script>
+<script>
+// Attach click event to user profile links/icons
+document.querySelectorAll('.user-profile-link').forEach(el => {
+  el.addEventListener('click', function(e) {
+    e.stopPropagation(); // Prevent triggering post click
+    const name = this.getAttribute('data-name');
+    const location = this.getAttribute('data-location');
+    localStorage.setItem('selectedUser', JSON.stringify({ name, location }));
+    window.location.href = 'user_profile.html';
+  });
+});
+</script>
 </body>
 </html>
