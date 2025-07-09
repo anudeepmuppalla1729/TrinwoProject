@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('user_id');
             $table->string('email', 100)->unique();
             $table->string('password');
-            $table->string('name', 100);
+            $table->string('name');
             $table->text('profile_pic')->nullable();
             $table->string('phone', 15)->nullable();
             $table->integer('age')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('studying_in', 150)->nullable();
             $table->string('expert_in', 150)->nullable();
             $table->text('interests')->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

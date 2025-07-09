@@ -5,6 +5,6 @@
     <title>Home Page</title>
 </head>
 <body>
-    <h1>Welcome to Trinwo Diaries!</h1>
+    <h1>Hi , {{ $data }} ! Welcome to Trinwo Diaries!</h1>
 </body>
 </html>

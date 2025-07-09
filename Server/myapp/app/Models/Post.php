@@ -8,6 +8,10 @@ class Post extends Model
 {
     protected $primaryKey = 'post_id';
 
+    protected $fillable = [
+        'user_id', 'heading', 'details', 'visibility', 'upvotes', 'downvotes'
+    ];
+
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -16,20 +20,7 @@ class Post extends Model
         return $this->hasMany(PostImage::class, 'post_id');
     }
 
-    public function answers() {
-        return $this->hasMany(Answer::class, 'question_id');
-    }
-
-    public function votes() {
-        return $this->hasMany(PostVote::class, 'post_id');
-    }
-
-    public function bookmarks() {
-        return $this->hasMany(Bookmark::class, 'post_id');
-    }
-
     public function tags() {
         return $this->belongsToMany(Tag::class, 'post_tags', 'post_id', 'tag_id');
     }
 }
-

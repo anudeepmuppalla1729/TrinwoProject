@@ -9,14 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('post_images', function (Blueprint $table) {
             $table->id('image_id');
-            $table->unsignedBigInteger('post_id')->nullable();
-            $table->text('image_url')->nullable();
-            $table->foreign('post_id')->references('post_id')->on('posts')->onDelete('cascade');
-        });
+            $table->foreignId('post_id')->constrained('posts', 'post_id')->onDelete('cascade');
+            $table->text('image_url');
+            $table->timestamps();
+        });        
     }
 
     /**

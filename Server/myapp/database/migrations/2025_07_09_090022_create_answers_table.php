@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id('answer_id');
-            $table->unsignedBigInteger('question_id');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('question_id')->constrained('questions', 'question_id')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users', 'user_id');
             $table->text('content');
-            $table->timestamp('created_at')->useCurrent();
-    
-            $table->foreign('question_id')->references('post_id')->on('posts')->onDelete('cascade');
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-        });
+            $table->integer('upvotes')->default(0);
+            $table->integer('downvotes')->default(0);
+            $table->timestamps();
+        });        
     }
 
     /**

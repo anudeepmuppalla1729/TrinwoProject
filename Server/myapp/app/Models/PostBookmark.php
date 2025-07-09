@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PostVote extends Model
+class PostBookmark extends Model
 {
-    protected $primaryKey = 'vote_id';
+    protected $primaryKey = 'bookmark_id';
+
+    protected $fillable = ['user_id', 'post_id'];
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');

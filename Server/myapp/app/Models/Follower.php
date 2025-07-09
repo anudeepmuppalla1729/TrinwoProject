@@ -8,12 +8,14 @@ class Follower extends Model
 {
     protected $primaryKey = 'follower_id';
 
+    protected $fillable = ['user_id', 'follower_user_id'];
+
     public function user() {
-        return $this->belongsTo(User::class, 'user_id'); // the one being followed
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function follower() {
-        return $this->belongsTo(User::class, 'follower_user_id'); // the one following
+        return $this->belongsTo(User::class, 'follower_user_id');
     }
 }
 

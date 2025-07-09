@@ -9,19 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id('post_id');
-            $table->unsignedBigInteger('user_id');
-            $table->enum('type', ['question', 'post']);
-            $table->string('heading')->nullable();
-            $table->text('details')->nullable();
+            $table->foreignId('user_id')->constrained('users', 'user_id');
+            $table->string('heading');
+            $table->text('details');
             $table->enum('visibility', ['public', 'private'])->default('public');
-            $table->timestamp('created_at')->useCurrent();
-
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-        });
+            $table->integer('upvotes')->default(0);
+            $table->integer('downvotes')->default(0);
+            $table->timestamps();
+        });        
     }
 
     /**

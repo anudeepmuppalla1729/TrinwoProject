@@ -8,16 +8,15 @@ class Answer extends Model
 {
     protected $primaryKey = 'answer_id';
 
+    protected $fillable = [
+        'question_id', 'user_id', 'content', 'upvotes', 'downvotes'
+    ];
+
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function post() {
-        return $this->belongsTo(Post::class, 'question_id');
-    }
-
-    public function votes() {
-        return $this->hasMany(AnswerVote::class, 'answer_id');
+    public function question() {
+        return $this->belongsTo(Question::class, 'question_id');
     }
 }
-

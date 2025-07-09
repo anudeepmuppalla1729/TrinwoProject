@@ -2,20 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class PostTag extends Model
+class PostTag extends Pivot
 {
-    public $incrementing = false;
-    protected $primaryKey = null;
-    public $timestamps = false;
+    protected $table = 'post_tags';
 
-    public function post() {
-        return $this->belongsTo(Post::class, 'post_id');
-    }
-
-    public function tag() {
-        return $this->belongsTo(Tag::class, 'tag_id');
-    }
+    protected $fillable = ['post_id', 'tag_id'];
 }
-
