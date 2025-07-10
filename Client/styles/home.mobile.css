@@ -1,1 +1,207 @@
- 
+@media (max-width: 600px) {
+  /* Hamburger menu button */
+  .hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #222;
+    z-index: 1201;
+  }
+  .ask-btn { display: none; }
+
+  /* Navbar adjustments */
+  .navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 4px;
+    gap: 15px;
+    min-height: 20px;
+    margin-left: 0;
+  }
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+  }
+  .nav-left { gap: 2px; margin-left: 0; font-size: 1rem; }
+  .search-box {
+    max-width: 200px;
+    min-width: 140px;
+    flex: 0 1 200px;
+    font-size: 1.05rem;
+  }
+  .search-box input {
+    font-size: 1.1rem;
+    width: 140px;
+    min-width: 0;
+    padding: 0.2rem 0.4rem;
+  }
+
+  /* Sidebar as drawer with corner backgrounds */
+  .dashboard_items {
+    position: fixed;
+    left: 0;
+    top: 56px;
+    width: 80vw;
+    max-width: 320px;
+    height: calc(100vh - 56px);
+    background: #eceaea;
+    z-index: 1200;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    box-shadow: 2px 0 12px rgba(0,0,0,0.18);
+    border-radius: 0 12px 12px 0;
+    padding: 1.2rem 0.7rem;
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+  .dashboard_items::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 38px;
+    height: 38px;
+    background: url('../assets/bottom_left.png') no-repeat left bottom/contain;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .dashboard_items::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 50px;
+    height: 50px;
+    background: url('../assets/bottom-right.png') no-repeat right bottom/contain;
+    z-index: 1;
+    pointer-events: none;
+  }
+  body.sidebar-open .dashboard_items {
+    transform: translateX(0);
+  }
+  body.sidebar-open::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 1199;
+  }
+  .dashboard_items .menu {
+    margin-top: 20px;
+    gap: 0.7rem;
+  }
+  .dashboard_items .menu a,
+  .settings-logout a {
+    padding: 0.7rem 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .dashboard_items .menu a i { font-size: 1rem; }
+  .settings-logout { padding-top: 0.5rem; margin-bottom: 0.5rem; }
+  .sidebar-corner { width: 32px; height: 32px; opacity: 0.7; }
+
+  /* Main layout stacks vertically */
+  .home_container { padding: 0; margin: 0; display: block; }
+  .home_content { margin-left: 0; padding: 0.5rem 0.2rem; height: auto; min-height: 100vh; box-sizing: border-box; }
+
+  /* Question box: input and icon in a row, actions below */
+  .question-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    padding: 0.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    background: #f5f5f5;
+    position: relative;
+  }
+  .question-input {
+    flex: 1 1 auto;
+    font-size: 1rem;
+    padding: 0.7rem 0.7rem 0.7rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: white;
+    margin-right: 0.3rem;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+  .user-icon {
+    position: static;
+    font-size: 1.5rem;
+    color: #555;
+    margin-right: 0;
+    margin-left: 0.2rem;
+    margin-bottom: 0;
+  }
+  .question-actions {
+    order: 2;
+    width: 100%;
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.7rem;
+    justify-content: flex-start;
+  }
+  .image-btn, .privacy-select {
+    flex: 1 1 0;
+    max-width: 45%;
+    min-width: 0;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 8px;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  /* Posts */
+  .posts-container {
+    margin: 12px 8px 12px 8px;
+  }
+  .post { padding: 0.7rem; border-radius: 12px; margin-bottom: 1.2rem; font-size: 1rem; }
+  .post-header { flex-direction: row; gap: 0.5rem; }
+  .profile i { font-size: 1.2rem; }
+  .close-post { font-size: 1.3rem; }
+  .post-actions { gap: 0.3rem; font-size: 0.95rem; }
+  .post-actions button { font-size: 0.95rem; padding: 0.4rem 0.7rem; border-radius: 8px; margin: 0; box-sizing: border-box; }
+
+  /* Modal box (if used on mobile) */
+  .modal-box {
+    width: 90vw;
+    max-width: 350px;
+    min-width: unset;
+    padding: 0.5rem;
+    font-size: 0.98rem;
+    box-sizing: border-box;
+  }
+  .modal-title {
+    margin-left: 0;
+    font-size: 1.05rem;
+  }
+  .image-upload-icon {
+    right: 8px;
+    bottom: 80px;
+    font-size: 1rem;
+  }
+
+  /* Mobile/PC contact toggles */
+  .mobile-contact { display: inline-flex !important; align-items: center; }
+  .pc-contact { display: none !important; }
+  .nav-links i, .mobile-contact i { font-size: 1.1rem; }
+  .nav-links .fa-bell, .nav-links .fa-regular.fa-bell { display: none !important; }
+} 

@@ -4,6 +4,12 @@ body {
     background: white;
     
 }
+.hamburger
+{
+  display: none;
+}
+
+
 
 /* Navbar container */
 .navbar {
@@ -528,4 +534,8 @@ body {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.mobile-contact {
+  display: none;
 }

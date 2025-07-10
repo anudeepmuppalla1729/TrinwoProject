@@ -9,8 +9,12 @@
     <!-- Font Awesome for additional icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <!-- Main CSS -->
+    <link rel="stylesheet" href="./styles/user_profile.css" />
     <link rel="stylesheet" href="./styles/home.css" />
     <link rel="stylesheet" href="./styles/home.mobile.css" />
+  
+      
+
     
     
 </head>
@@ -51,6 +55,7 @@
             <div class="sidebar-corner sidebar-bottom-right"></div>
 
             <nav class="menu">
+                <a href="user_profile.html"><i class="bi bi-person-circle"></i>My Profile</a>
                 <a href="#"><i class="bi bi-newspaper"></i> News Feed</a>
                 <a href="#" class="sidebar-ask-btn"><i class="bi bi-question-circle"></i> Ask Question</a>
 
@@ -68,63 +73,38 @@
 
         <!-- Main Content as a div -->
        <div class="home_content">
+        <!-- User Profile Section -->
+<!-- Stylish Profile Banner -->
 
-            <!-- Question Input Box -->
-    <div class="question-box">
-        <input 
-            type="text" 
-            class="question-input" 
-            placeholder="Type Your Question or Insight here" />
-        <i class="bi bi-person-circle user-icon"></i>
-        <div class="question-actions">
-            <button class="image-btn">
-              <i class="fa-solid fa-image"></i> Add Image
-            </button>
-          <select class="privacy-select">
-             <option value="public">Public</option>
-             <option value="private">Private</option>
-         </select>
-              <button class="post-btn">Post</button>
-         </div>
+<div class="profile-banner">
+    <div class="profile-left">
+      <div class="profile-icon">
+        <i class="bi bi-person-fill"></i>
+      </div>
+      <div class="profile-details">
+        <p>Hello,</p>
+        <h2>TRINWO SOLUTIONS</h2>
+        <span>0 Followers &nbsp;&nbsp; 3 Following</span>
+      </div>
     </div>
-                              <!-- Modal structure -->
-<div id="askModal" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="modal-title">Ask Question</span>
-      <button class="close-btn">&times;</button>
-       <i class="fa-solid fa-image image-upload-icon"></i>
-    </div>
-    <hr />
-
-    <!-- Privacy and icon -->
-    <div class="modal-options">
-      <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
-      <select class="privacy-select">
-        <option>Public</option>
-        <option>Private</option>
-      </select>
-    </div>
-
-    <!-- Question area -->
-    <textarea class="question-textarea" placeholder="Type your question and insight here..."></textarea>
-   
-
-    <!-- Buttons -->
-    <div class="modal-actions">
-      <button class="cancel-btn">Cancel</button>
-      <button class="post-btn">Post</button>
+    <div class="profile-right">
+      <p class><i class="bi bi-calendar-event"></i> <strong class="h">Joined on June 9, 2025</strong></p>
+      <p><i class="bi bi-geo-alt-fill"></i> Vizag, India</p>
+      <p><i class="bi bi-link-45deg"></i> www.trinwosolutions</p>
     </div>
   </div>
-</div>
+  
+  
+   
+  
+    
+  </div>
+  
+  
+  
 
-    <!-- Rest of your home_content below -->
-
-    <!-- Rest of your home_content below -->
-        <div class="posts-container" id="postsContainer">
-                   <!-- Posts will be rendered here by JavaScript -->
-        </div>
-
+      
+ 
 
 
            </div>
@@ -132,7 +112,7 @@
 
     </div>
 
-
+    
 
 <script src="./js/home.js"></script>
 </body>
