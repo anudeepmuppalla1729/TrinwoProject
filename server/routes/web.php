@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\AnswerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,9 +20,31 @@ Route::get('/interests', function () {
     return view('pages.interests');
 })->name('interests');
 
-Route::get('/question', function () {
-    return view('pages.question');
-})->name('question');
+Route::get('/questions', [QuestionController::class, 'index'])->name('questions');
+Route::get('/question/{id?}', [QuestionController::class, 'show'])->name('question');
+
+// Question routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/questions', [QuestionController::class, 'store'])->name('questions.store');
+    Route::get('/questions/create', [QuestionController::class, 'create'])->name('questions.create');
+    Route::get('/questions/{id}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
+    Route::put('/questions/{id}', [QuestionController::class, 'update'])->name('questions.update');
+    Route::delete('/questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+    Route::post('/questions/{id}/upvote', [QuestionController::class, 'upvote'])->name('questions.upvote');
+    Route::post('/questions/{id}/downvote', [QuestionController::class, 'downvote'])->name('questions.downvote');
+    Route::post('/questions/{id}/bookmark', [QuestionController::class, 'bookmark'])->name('questions.bookmark');
+    Route::post('/questions/{id}/share', [QuestionController::class, 'share'])->name('questions.share');
+    
+    // Answer routes
+    Route::post('/questions/{questionId}/answers', [AnswerController::class, 'store'])->name('answers.store');
+    Route::put('/answers/{id}', [AnswerController::class, 'update'])->name('answers.update');
+    Route::delete('/answers/{id}', [AnswerController::class, 'destroy'])->name('answers.destroy');
+    Route::post('/answers/{id}/upvote', [AnswerController::class, 'upvote'])->name('answers.upvote');
+    Route::post('/answers/{id}/downvote', [AnswerController::class, 'downvote'])->name('answers.downvote');
+    Route::post('/answers/{id}/accept', [AnswerController::class, 'accept'])->name('answers.accept');
+    Route::post('/answers/{id}/comment', [AnswerController::class, 'comment'])->name('answers.comment');
+    Route::post('/answers/{id}/share', [AnswerController::class, 'share'])->name('answers.share');
+});
 
 Route::get('/user-profile', function () {
     return view('pages.user_profile');

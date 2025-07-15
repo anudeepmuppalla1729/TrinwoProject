@@ -199,75 +199,9 @@ function closeAllMenus() {
     .forEach((menu) => menu.classList.remove('active'));
 }
 
-const answerQuestionButton = document.querySelector('.dashboard_items .menu a:nth-child(3)'); // 3rd link is Answer Question
-
-function renderAnswerQuestionsView() {
-  const homeContent = document.querySelector('.home_content');
-  homeContent.innerHTML = `
-    <div class="answer-header" style="display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-size:1.5rem;font-weight:bold;">Answer</span>
-      <span class="close-answer-view" style="font-size:2rem;cursor:pointer;">&times;</span>
-    </div>
-    <hr />
-    <span style="background:#c92ae0;color:white;padding:0.3rem 1rem;border-radius:8px;font-weight:bold;font-size:1.1rem;">Questions</span>
-    <div class="questions-list" style="margin-top:1rem;">
-      ${posts.map((post, idx) => `
-        <div class="question-card" style="background:#fff;border:1px solid #ccc;border-radius:10px;padding:1rem;margin-bottom:1rem;position:relative;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:1.1rem;font-weight:bold;">${post.title}</span>
-            <span style="display:flex;align-items:center;gap:0.7rem;">
-              <span class="question-options" style="font-size:1.5rem;cursor:pointer;">&#8942;
-                <div class="options-menu">
-                  <button >Answer</button<hr>
-                  <button>Pass</button><hr>
-                  <button>Bookmark</button>
-                </div>
-              </span>
-              <span class="close-question" data-index="${idx}" style="font-size:1.5rem;cursor:pointer;">&times;</span>
-            </span>
-          </div>
-          <div style="margin-top:0.5rem;">
-            <button style="background:#c92ae0;color:white;border:none;border-radius:6px;padding:0.3rem 1rem;margin-right:0.5rem;">Answer 12</button>
-            <button style="background:#c92ae0;color:white;border:none;border-radius:6px;padding:0.3rem 1rem;margin-right:0.5rem;">Pass</button>
-            <button style="background:#c92ae0;color:white;border:none;border-radius:6px;padding:0.3rem 1rem;">Bookmark</button>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-
-  // Attach close event for the view (top right cross)
-  const closeAnswerViewBtn = homeContent.querySelector('.close-answer-view');
-  if (closeAnswerViewBtn) {
-    closeAnswerViewBtn.addEventListener('click', function() {
-      renderPosts();
-    });
-  }
-
-  // Attach close event for each question
-  homeContent.querySelectorAll('.close-question').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const idx = btn.getAttribute('data-index');
-      posts.splice(idx, 1);
-      renderAnswerQuestionsView();
-    });
-  });
-
-  // Attach options menu events
-  homeContent.querySelectorAll('.question-options').forEach(opt => {
-    opt.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeAllMenus();
-      opt.querySelector('.options-menu').classList.toggle('active');
-    });
-  });
-  document.addEventListener('click', closeAllMenus);
-}
-
-answerQuestionButton.addEventListener('click', function(e) {
-  e.preventDefault();
-  renderAnswerQuestionsView();
-});
+// Remove the custom event handler for the Answer Question link in the sidebar
+// This allows the default behavior of the link to work properly, redirecting to the questions page
+// The link in sidebar.blade.php already has the correct route: {{ route('questions') }}
 
 
 // Client/js/home.js
