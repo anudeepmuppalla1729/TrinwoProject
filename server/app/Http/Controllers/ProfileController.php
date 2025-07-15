@@ -57,4 +57,60 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Show the user dashboard.
+     */
+    public function dashboard()
+    {
+        return view('pages.profile.dashboard');
+    }
+
+    /**
+     * Show the user's answers.
+     */
+    public function answers()
+    {
+        return view('pages.profile.answers');
+    }
+
+    /**
+     * Show the user's questions.
+     */
+    public function questions()
+    {
+        return view('pages.profile.questions');
+    }
+
+    /**
+     * Show the user's posts.
+     */
+    public function posts()
+    {
+        return view('pages.profile.posts');
+    }
+
+    /**
+     * Show the user's followers.
+     */
+    public function followers()
+    {
+        return view('pages.profile.followers');
+    }
+
+    /**
+     * Show the user's following.
+     */
+    public function following()
+    {
+        return view('pages.profile.following');
+    }
+
+    /**
+     * Show the user's bookmarks.
+     */
+    public function bookmarks()
+    {
+        return view('pages.profile.bookmarks');
+    }
 }

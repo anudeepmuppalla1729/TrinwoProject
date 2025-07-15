@@ -14,6 +14,6 @@
     <div class="nav-links">
         <a href="#" class="contact"><i class="fa-regular fa-address-book"></i></a>
         <a href="#"><i class="fa-regular fa-bell"></i></a>
-        <a href="#"><i class="bi bi-person-circle"></i></a>
+        <a href="/profile/dashboard"><i class="bi bi-person-circle"></i></a>
     </div>
 </nav> 
