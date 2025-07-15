@@ -15,6 +15,15 @@
         <div class="signup-right">
             <div class="signup-form-wrapper">
                 <h3 class="signup-header">Login to Your Account</h3>
+                @if ($errors->any())
+                    <div class="alert alert-danger" style="color: red; margin-bottom: 1rem;">
+                        <ul style="margin: 0; padding-left: 1.2em;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form class="signup-form" method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="form-group">

@@ -4,8 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('pages.home');
-})->name('home');
+    return view('pages.login');
+})->name('login');
 
 Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
@@ -31,11 +31,18 @@ Route::get('/user-information', function () {
 })->name('user_information');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return view('pages.dashboard');
+})->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user-information', [\App\Http\Controllers\UserOnboardingController::class, 'showUserInfoForm'])->name('user.information');
+    Route::post('/user-information', [\App\Http\Controllers\UserOnboardingController::class, 'submitUserInfo']);
+    Route::get('/user-interests', [\App\Http\Controllers\UserOnboardingController::class, 'showInterestsForm'])->name('user.interests');
+    Route::post('/user-interests', [\App\Http\Controllers\UserOnboardingController::class, 'submitInterests']);
 });

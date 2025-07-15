@@ -22,78 +22,76 @@
     <div class="signup-right">
       <div class="signup-form-wrapper">
         <h3 class="signup-header">Create your Account</h3>
-        <form class="signup-form">
-          
-          <!-- Name -->
-          <div class="form-group">
-            <label class="form-label">Name</label>
-            <div class="input-icon-group">
-              <i class="bi bi-person-circle"></i>
-   
-              <input type="text" class="form-input" placeholder="Enter Your Name" />
+        @if ($errors->any())
+            <div class="alert alert-danger" style="color: red; margin-bottom: 1rem;">
+                <ul style="margin: 0; padding-left: 1.2em;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-            <div class="error-message"></div>
-          </div>
-
-          <!-- Email -->
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <div class="input-icon-group">
-              <i class="bi bi-envelope"></i>
-   
-              <input type="email" class="form-input" placeholder="Enter Your Email" />
+        @endif
+        <form class="signup-form" method="POST" action="{{ route('register') }}">
+            @csrf
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <div class="input-icon-group">
+                    <i class="bi bi-person-circle"></i>
+                    <input type="text" name="name" class="form-input" placeholder="Enter Your Name" required />
+                </div>
+                <div class="error-message"></div>
             </div>
-            <div class="error-message"></div>
-          </div>
-
-          <!-- Password -->
-          <div class="form-group">
-            <label class="form-label">Password</label>
-            <div class="input-icon-group">
-              <i class="bi bi-lock-fill"></i>
-
-              <input type="password" class="form-input" placeholder="Create password" />
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <div class="input-icon-group">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email" name="email" class="form-input" placeholder="Enter Your Email" required />
+                </div>
+                <div class="error-message"></div>
             </div>
-            <div class="error-message"></div>
-            
-          </div>
-
-          <!-- Checkbox -->
-          <div class="form-group form-checkbox">
-            <input class="form-check-input" type="checkbox" id="terms" />
-            <span class="icon-divider"></span>
-            <label class="form-check-label" for="terms">I agree to all terms &amp; Conditions (optional)</label>
-          </div>
-
-          <!-- Sign Up Button -->
-          <div class="form-group">
-            <button class="btn-signup" type="submit">Sign up</button>
-          </div>
-
-          <!-- OR Divider -->
-          <p class="form-divider">or continue with</p>
-
-          <!-- Social Buttons -->
-          <div class="social-buttons">
-            <button type="button" class="btn-social">
-              <i class="bi bi-google"></i> Google
-            </button>
-            <button type="button" class="btn-social">
-              <i class="bi bi-facebook"></i> Facebook
-            </button>
-          </div>
-
-          <!-- Footer -->
-          <p class="form-footer">
-            Already have an account?
-            <a href="login.html" class="form-link">Sign in</a>
-          </p>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <div class="input-icon-group">
+                    <i class="bi bi-lock-fill"></i>
+                    <input type="password" name="password" class="form-input" placeholder="Create password" required />
+                </div>
+                <div class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <div class="input-icon-group">
+                    <i class="bi bi-lock-fill"></i>
+                    <input type="password" name="password_confirmation" class="form-input" placeholder="Confirm password" required />
+                </div>
+                <div class="error-message"></div>
+            </div>
+            <div class="form-group form-checkbox">
+                <input class="form-check-input" type="checkbox" id="terms" name="terms" />
+                <span class="icon-divider"></span>
+                <label class="form-check-label" for="terms">I agree to all terms &amp; Conditions (optional)</label>
+            </div>
+            <div class="form-group">
+                <button class="btn-signup" type="submit">Sign up</button>
+            </div>
+            <p class="form-divider">or continue with</p>
+            <div class="social-buttons">
+                <button type="button" class="btn-social">
+                    <i class="bi bi-google"></i> Google
+                </button>
+                <button type="button" class="btn-social">
+                    <i class="bi bi-facebook"></i> Facebook
+                </button>
+            </div>
+            <p class="form-footer">
+                Already have an account?
+                <a href="{{ route('login') }}" class="form-link">Sign in</a>
+            </p>
         </form>
       </div>
     </div>
   </div>
 
   <!-- JS -->
-  <script src="js/signup.js"></script>
+  <!-- <script src="js/signup.js"></script> -->
 </body>
 </html>

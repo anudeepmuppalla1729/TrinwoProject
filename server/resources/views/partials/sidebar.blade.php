@@ -13,6 +13,9 @@
     </nav>
     <div class="settings-logout">
         <a href="#"><i class="bi bi-gear"></i> Settings</a>
-        <a href="#"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
     </div>
 </div> 
