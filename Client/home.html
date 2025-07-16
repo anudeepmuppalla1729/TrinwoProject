@@ -10,6 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <!-- Main CSS -->
     <link rel="stylesheet" href="./styles/home.css" />
+    <link rel="stylesheet" href="./styles/home.mobile.css" />
     
     
 </head>
@@ -17,6 +18,9 @@
 
     <!-- Top Navigation -->
     <nav class="navbar">
+        <button class="hamburger" id="hamburgerBtn">
+          <i class="bi bi-list"></i>
+        </button>
         <div class="nav-left">
             <span class="logo">TRINWOPJ</span>
             <i class="bi bi-house-fill"></i>
@@ -29,7 +33,7 @@
         </div>
 
         <div class="nav-links">
-            <a href="#">Contact Us</a>
+            <a href="#" class="contact"><i class="fa-regular fa-address-book"></i></a>
             <a href="#"><i class="fa-regular fa-bell"></i></a>
             <a href="#"><i class="bi bi-person-circle"></i></a>
         </div>
@@ -71,21 +75,17 @@
             type="text" 
             class="question-input" 
             placeholder="Type Your Question or Insight here" />
-
         <i class="bi bi-person-circle user-icon"></i>
-
         <div class="question-actions">
             <button class="image-btn">
               <i class="fa-solid fa-image"></i> Add Image
             </button>
-          <!-- native select dropdown -->
-         <select class="privacy-select">
+          <select class="privacy-select">
              <option value="public">Public</option>
              <option value="private">Private</option>
          </select>
               <button class="post-btn">Post</button>
          </div>
-
     </div>
                               <!-- Modal structure -->
 <div id="askModal" class="modal-overlay">

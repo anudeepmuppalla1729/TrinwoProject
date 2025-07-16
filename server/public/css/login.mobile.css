@@ -1,0 +1,150 @@
+@media (max-width: 650px) {
+  body {
+    background: #f5f5fa;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .signup-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100vw;
+    background: none;
+    padding: 20px 15px; /* Added padding to container */
+    box-sizing: border-box; /* Ensure padding is included in width */
+  }
+
+  .signup-left {
+    display: none !important;
+  }
+
+  .signup-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    background-image: none;
+    padding: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .signup-form-wrapper {
+    background: rgba(0,0,0,0.03);
+    border-radius: 20px;
+    padding: 25px 20px; /* Reduced vertical padding */
+    width: 100%; /* Full width of parent */
+    max-width: 100%; /* Remove fixed max-width */
+    box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+    box-sizing: border-box; /* Include padding in width */
+    background-image: url('../assets/top-left.png'), 
+                     url('../assets/top-right.png'),
+                     url('../assets/bottom_left.png'), 
+                     url('../assets/bottom-right.png');
+    background-position: top left, top right, bottom left, bottom right;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-size: 40px 40px; /* Reduced corner image size */
+  }
+
+  .signup-header {
+    font-size: 1.5rem; /* Slightly larger for mobile */
+    margin-bottom: 1.5rem;
+    text-align: center; /* Center align heading */
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  .form-label {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  .input-icon-group {
+    position: relative;
+    width: 100%;
+  }
+
+  .input-icon-group i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 12px;
+    font-size: 1rem;
+    color: #777;
+  }
+
+  .form-input {
+    font-size: 0.95rem;
+    padding: 0.8rem 0.8rem 0.8rem 2.8rem; /* Adjusted left padding */
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+  }
+
+  .form-checkbox {
+    display: flex;
+    align-items: center;
+    margin: 1.2rem 0;
+    flex-wrap: wrap; /* Allow wrapping */
+  }
+
+  .form-check-input {
+    margin-right: 8px;
+  }
+
+  .form-check-label {
+    font-size: 0.9rem;
+    margin-right: auto; /* Push forgot password to right */
+  }
+
+  .form-link {
+    font-size: 0.9rem;
+    white-space: nowrap; /* Prevent text breaking */
+  }
+
+  .btn-signup {
+    font-size: 1.05rem;
+    border-radius: 10px;
+    padding: 0.85rem;
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  .form-divider {
+    text-align: center;
+    width: 100%;
+    margin: 1.2rem 0;
+    font-size: 0.95rem;
+  }
+
+  .social-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .btn-social {
+    flex: 1; /* Equal width buttons */
+    font-size: 0.9rem;
+    border-radius: 8px;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .form-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+  }
+}

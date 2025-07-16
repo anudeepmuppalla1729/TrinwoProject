@@ -1,3 +1,31 @@
+// Hamburger menu for mobile sidebar (shared for home and user_profile)
+document.addEventListener('DOMContentLoaded', function() {
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const dashboardItems = document.querySelector('.dashboard_items');
+  console.log('DOMContentLoaded: hamburgerBtn', hamburgerBtn, 'dashboardItems', dashboardItems);
+
+  if (hamburgerBtn && dashboardItems) {
+    hamburgerBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.body.classList.toggle('sidebar-open');
+      console.log('Hamburger clicked, sidebar toggled');
+    });
+
+    // Close sidebar when clicking outside (on overlay)
+    document.addEventListener('click', function(e) {
+      if (
+        document.body.classList.contains('sidebar-open') &&
+        !dashboardItems.contains(e.target) &&
+        e.target !== hamburgerBtn &&
+        !hamburgerBtn.contains(e.target)
+      ) {
+        document.body.classList.remove('sidebar-open');
+        console.log('Sidebar closed by outside click');
+      }
+    });
+  }
+});
+
 // Modal handling
 const askButton = document.querySelector('.ask-btn'); // top navbar ask button
 const sidebarAskButton = document.querySelector('.sidebar-ask-btn'); // sidebar ask button
@@ -171,79 +199,58 @@ function closeAllMenus() {
     .forEach((menu) => menu.classList.remove('active'));
 }
 
-const answerQuestionButton = document.querySelector('.dashboard_items .menu a:nth-child(3)'); // 3rd link is Answer Question
+// Remove the custom event handler for the Answer Question link in the sidebar
+// This allows the default behavior of the link to work properly, redirecting to the questions page
+// The link in sidebar.blade.php already has the correct route: {{ route('questions') }}
 
-function renderAnswerQuestionsView() {
-  const homeContent = document.querySelector('.home_content');
-  homeContent.innerHTML = `
-    <div class="answer-header" style="display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-size:1.5rem;font-weight:bold;">Answer</span>
-      <span class="close-answer-view" style="font-size:2rem;cursor:pointer;">&times;</span>
-    </div>
-    <hr />
-    <span style="background:#c92ae0;color:white;padding:0.3rem 1rem;border-radius:8px;font-weight:bold;font-size:1.1rem;">Questions</span>
-    <div class="questions-list" style="margin-top:1rem;">
-      ${posts.map((post, idx) => `
-        <div class="question-card" style="background:#fff;border:1px solid #ccc;border-radius:10px;padding:1rem;margin-bottom:1rem;position:relative;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:1.1rem;font-weight:bold;">${post.title}</span>
-            <span style="display:flex;align-items:center;gap:0.7rem;">
-              <span class="question-options" style="font-size:1.5rem;cursor:pointer;">&#8942;
-                <div class="options-menu">
-                  <div>Answer</div><hr>
-                  <div>Pass</div><hr>
-                  <div>Bookmark</div>
-                </div>
-              </span>
-              <span class="close-question" data-index="${idx}" style="font-size:1.5rem;cursor:pointer;">&times;</span>
-            </span>
-          </div>
-          <div style="margin-top:0.5rem;">
-            <button style="background:#c92ae0;color:white;border:none;border-radius:6px;padding:0.3rem 1rem;margin-right:0.5rem;">Answer 12</button>
-            <button style="background:#c92ae0;color:white;border:none;border-radius:6px;padding:0.3rem 1rem;margin-right:0.5rem;">Pass</button>
-            <button style="background:#c92ae0;color:white;border:none;border-radius:6px;padding:0.3rem 1rem;">Bookmark</button>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
 
-  // Attach close event for the view (top right cross)
-  const closeAnswerViewBtn = homeContent.querySelector('.close-answer-view');
-  if (closeAnswerViewBtn) {
-    closeAnswerViewBtn.addEventListener('click', function() {
-      renderPosts();
-    });
-  }
+// Client/js/home.js
+document.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('.question-card');
 
-  // Attach close event for each question
-  homeContent.querySelectorAll('.close-question').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const idx = btn.getAttribute('data-index');
-      posts.splice(idx, 1);
-      renderAnswerQuestionsView();
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const questionData = {
+        id: card.dataset.id,
+        title: card.dataset.title,
+        body: card.dataset.body
+      };
+
+      // Save question to localStorage
+      localStorage.setItem('selectedQuestion', JSON.stringify(questionData));
+
+      // Go to question details page
+      window.location.href = 'question.html';
     });
   });
-
-  // Attach options menu events
-  homeContent.querySelectorAll('.question-options').forEach(opt => {
-    opt.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeAllMenus();
-      opt.querySelector('.options-menu').classList.toggle('active');
-    });
-  });
-  document.addEventListener('click', closeAllMenus);
-}
-
-answerQuestionButton.addEventListener('click', function(e) {
-  e.preventDefault();
-  renderAnswerQuestionsView();
 });
+
 
 const newsFeedButton = document.querySelector('.dashboard_items .menu a'); // First <a> in .menu is News Feed
 
 newsFeedButton.addEventListener('click', function(e) {
   e.preventDefault();
   renderPosts();
+});
+
+// Handle click on hardcoded question cards (bottom of home.html)
+document.querySelectorAll('.question-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const id = card.getAttribute('data-id');
+    const title = card.getAttribute('data-title');
+    const body = card.getAttribute('data-body');
+    const question = { id, title, body };
+    localStorage.setItem('selectedQuestion', JSON.stringify(question));
+    window.location.href = 'question.html';
+  });
+});
+
+document.getElementById('qas-answer').addEventListener('click', () => {
+  document.getElementById('answer-input').focus();
+});
+document.getElementById('qas-pass').addEventListener('click', () => {
+  alert('You chose to pass on this question.');
+});
+document.getElementById('qas-bookmark').addEventListener('click', () => {
+  alert('Question bookmarked! (Feature coming soon)');
 });

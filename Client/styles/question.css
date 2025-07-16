@@ -1,0 +1,190 @@
+/* styles/question.css */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f7f7f7;
+}
+
+.question-page {
+  max-width: 800px;
+  margin: auto;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.question-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.question-nav button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.question-heading {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: rgb(237, 233, 233);
+  border-radius: 8px;
+}
+
+h4 {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.answers-scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.answer-item {
+  background: #fff;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+.answer-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.answer-actions button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.answer-actions .views {
+  margin-left: auto;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.answer-form {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+#answer-input {
+  width: 95%;
+  height: 50px;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  margin-bottom: 0.5rem;
+}
+
+#answer-form button {
+  padding: 0.6rem 1.2rem;
+  background-color: #a522b7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+/* Answer Card Styling */
+.answer-card {
+  background-color:  rgb(237, 233, 233);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: 0.2s ease;
+}
+
+.answer-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.answer-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin: 0 0 1rem;
+}
+
+.answer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.answer-actions .btn {
+  background-color: #c014c0;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.answer-actions .btn:hover {
+  background-color: #a012a2;
+}
+
+.answer-actions .seen {
+  font-weight: bold;
+  color: #fbf7f7;
+  background-color: #c014c0;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+.answers-scroll {
+  max-height: 300px;
+  overflow-y: scroll; /* always show scrollbar */
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fafafa;
+  margin-bottom: 1rem;
+}
+
+/* Optional: Custom scrollbar styling for Chrome & Edge */
+.answers-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.answers-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.answers-scroll::-webkit-scrollbar-thumb {
+  background-color: #ebe6eb;
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;
+}
