@@ -64,6 +64,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth'])->prefix('profile')->name('profile.')->group(function () {
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
+    Route::get('/answers', [ProfileController::class, 'answers'])->name('answers');
+    Route::get('/questions', [ProfileController::class, 'questions'])->name('questions');
+    Route::get('/posts', [ProfileController::class, 'posts'])->name('posts');
+    Route::get('/followers', [ProfileController::class, 'followers'])->name('followers');
+    Route::get('/following', [ProfileController::class, 'following'])->name('following');
+    Route::get('/bookmarks', [ProfileController::class, 'bookmarks'])->name('bookmarks');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/user-information', [\App\Http\Controllers\UserOnboardingController::class, 'showUserInfoForm'])->name('user.information');
     Route::post('/user-information', [\App\Http\Controllers\UserOnboardingController::class, 'submitUserInfo']);
