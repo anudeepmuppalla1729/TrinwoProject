@@ -223,7 +223,7 @@ body {
 
 /* Main content area */
 .home_content {
-  margin-left: 390px;
+  margin-left: 340px;
   /* leave space for the fixed sidebar */
   padding: 1rem;
   background: white;
@@ -233,7 +233,6 @@ body {
   /* scroll main content if long */
   overflow-x: hidden;
   /* hide horizontal scrollbar */
-  box-sizing: border-box;
 
   scroll-behavior: smooth;
   /* Hide scrollbar for Chrome, Safari and Opera */

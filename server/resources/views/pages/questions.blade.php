@@ -4,8 +4,8 @@
 @push('styles')
 <style>
     .questions-container {
-        max-width: 800px;
-        margin: 20px auto;
+        width: 100%;
+
         padding: 20px;
         font-family: 'Segoe UI', sans-serif;
         background: white;
@@ -83,7 +83,7 @@
     
     .question-meta span:first-child {
         font-weight: 500;
-        color: #555;
+
     }
     
     .question-excerpt {
@@ -97,7 +97,6 @@
         display: flex;
         flex-wrap: wrap;
         gap: 15px;
-        color: #666;
         font-size: 14px;
         background-color: #f9f9f9;
         padding: 12px 15px;

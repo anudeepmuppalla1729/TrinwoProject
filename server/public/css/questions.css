@@ -3,6 +3,7 @@
 .questions-list {
   margin-top: 20px;
   margin-bottom: 20px;
+  width: 300px;
 }
 
 .question-item {
