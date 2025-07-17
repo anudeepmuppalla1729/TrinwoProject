@@ -111,6 +111,17 @@ class ProfileController extends Controller
      */
     public function bookmarks()
     {
-        return view('pages.profile.bookmarks');
+        $userId = Auth::id();
+        
+        // Get user's bookmarked posts
+        $bookmarkedPosts = \App\Models\Post::whereHas('bookmarks', function($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->with(['user', 'images', 'comments'])
+          ->orderBy('created_at', 'desc')
+          ->get();
+        
+        return view('pages.profile.bookmarks', [
+            'bookmarkedPosts' => $bookmarkedPosts
+        ]);
     }
 }
