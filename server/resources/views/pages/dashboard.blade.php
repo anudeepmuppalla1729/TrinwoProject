@@ -3,7 +3,7 @@
 @section('content')
 <div class="home_content">
     <div class="question-box">
-        <input type="text" class="insight-btn question-input" placeholder="Type Your Question or Insight here" />
+        <input type="text" class="insight-btn question-input" placeholder="Type Your Question or Insight here" readonly/>
         <i class="bi bi-person-circle user-icon"></i>
 
     </div>
