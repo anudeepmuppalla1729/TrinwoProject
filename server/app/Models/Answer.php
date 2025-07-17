@@ -19,4 +19,9 @@ class Answer extends Model
     public function question() {
         return $this->belongsTo(Question::class, 'question_id');
     }
+
+    public function isAccepted()
+    {
+        return $this->question && $this->question->accepted_answer_id === $this->answer_id;
+    }
 }

@@ -1,15 +1,27 @@
 <div class="sidebar">
     <div class="profile-header">
-        <div class="profile-pic"></div>
-        <h2 class="profile-name">Alex Morgan</h2>
-        <p class="profile-title">Senior Developer & Tech Enthusiast</p>
+        <div class="profile-pic profile-picture" @if(!Auth::user()->profile_pic) data-initials="{{ strtoupper(collect(explode(' ', Auth::user()->name))->map(fn($w)=>$w[0])->join('')) }}" @endif>
+            @if(Auth::user()->profile_pic)
+                <img src="{{ Storage::url(Auth::user()->profile_pic) }}" alt="Profile Picture" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+            @endif
+        </div>
+        <h2 class="profile-name">{{ Auth::user()->name }}</h2>
+        <p class="profile-title">
+            @if(Auth::user()->bio)
+                {{ Auth::user()->bio }}
+            @elseif(Auth::user()->expert_in || Auth::user()->studying_in)
+                {{ Auth::user()->studying_in }}{{ Auth::user()->studying_in && Auth::user()->expert_in ? ' - ' : '' }}{{ Auth::user()->expert_in }}
+            @else
+                Member
+            @endif
+        </p>
         <div class="stats">
             <div class="stat-item">
-                <span class="sidebar-stat-value">1.2K</span>
+                <span class="sidebar-stat-value">{{ Auth::user()->followers()->count() }}</span>
                 <span class="sidebar-stat-label">Followers</span>
             </div>
             <div class="stat-item">
-                <span class="sidebar-stat-value">850</span>
+                <span class="sidebar-stat-value">{{ Auth::user()->following()->count() }}</span>
                 <span class="sidebar-stat-label">Following</span>
             </div>
         </div>

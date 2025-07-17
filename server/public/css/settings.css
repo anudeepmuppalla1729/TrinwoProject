@@ -272,22 +272,31 @@ input:focus, select:focus, textarea:focus {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+    background: #c92ae0;
     position: relative;
     margin-right: 25px;
-    border: 3px solid var(--white);
+    border: 3px solid #fff;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
-
 .profile-picture::after {
-    content: "AM";
+    content: attr(data-initials);
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: bold;
-    color: var(--white);
+    color: #fff;
+    letter-spacing: 1px;
+    display: none;
+    pointer-events: none;
+}
+.profile-picture:not(:has(img))::after {
+    display: block;
 }
 
 .upload-btn {

@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Here you would typically send the data to the server
                 // For now, we'll just show an alert with the collected data
-                alert(`Question submitted!\nQuestion: ${question}\nDescription: ${description}\nPrivacy: ${privacy}`);
+                // alert(`Question submitted!\nQuestion: ${question}\nDescription: ${description}\nPrivacy: ${privacy}`);
                 
                 // Clear the form and close the modal
                 questionTextarea.value = '';

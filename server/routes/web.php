@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('password.update');
 });
 
 Route::middleware(['auth'])->prefix('profile')->name('profile.')->group(function () {
@@ -98,6 +99,7 @@ Route::middleware(['auth'])->prefix('profile')->name('profile.')->group(function
     Route::get('/following', [ProfileController::class, 'following'])->name('following');
     Route::get('/bookmarks', [ProfileController::class, 'bookmarks'])->name('bookmarks');
     Route::get('/settings', [ProfileController::class, 'settings'])->name('settings');
+    Route::post('/settings', [ProfileController::class, 'updateSettings'])->name('settings.update');
 });
 
 Route::middleware(['auth'])->group(function () {

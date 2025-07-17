@@ -802,3 +802,40 @@ body {
 .mobile-contact {
   display: none;
 }
+
+/* Flash message styles */
+.custom-flash-message {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    padding: 1em 1.5em;
+    margin: 1.5em auto 1em auto;
+    border-radius: 8px;
+    font-size: 1.08em;
+    font-weight: 500;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    max-width: 600px;
+    animation: fadeInFlash 0.7s;
+}
+
+.alert-success {
+    background: linear-gradient(90deg, #e6f9f0 0%, #d1f2e7 100%);
+    color: #1a7f5a;
+    border: 1px solid #b2e5d0;
+}
+
+.alert-danger {
+    background: linear-gradient(90deg, #ffeaea 0%, #ffd6d6 100%);
+    color: #c0392b;
+    border: 1px solid #ffb3b3;
+}
+
+.custom-flash-message i {
+    font-size: 1.3em;
+    margin-right: 0.5em;
+}
+
+@keyframes fadeInFlash {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

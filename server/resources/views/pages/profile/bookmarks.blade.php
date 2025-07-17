@@ -8,8 +8,7 @@
 
 @section('main_content')
 <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">Your Bookmarks</h2>
-
-@if($bookmarkedPosts->isEmpty())
+@if($bookmarkedPosts->isEmpty() && $bookmarkedQuestions->isEmpty())
     <div class="content-card">
         <div class="card-header">
             <h3 class="card-title">No bookmarks yet</h3>
@@ -58,6 +57,38 @@
                     <button class="action-btn comment-count-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
                         <i class="bi bi-chat-dots" style="font-size: 1.2rem; margin-right: 5px;"></i>
                         <span>{{ $post->comments->count() }}</span>
+                    </button>
+                    <button class="action-btn bookmark-btn active" style="display: flex; align-items: center; background: none; border: none; color: #a522b7; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                        <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>
+                    </button>
+                </div>
+            </div>
+        @endforeach
+        @foreach($bookmarkedQuestions as $question)
+            <div class="post" data-id="question-{{ $question->question_id }}">
+                <div class="post-header">
+                    <div class="profile">
+                        <i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>
+                        <div>
+                            <strong>{{ $question->user->name }}</strong><br>
+                            <small style="font-size: 1rem;">{{ $question->user->studying_in ?? 'Member' }} - {{ $question->user->expert_in ?? 'Member' }}</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <h2>{{ $question->title }}</h2>
+                <p>{{ $question->description }}</p>
+                <div class="post-meta">
+                    <small>Asked on {{ $question->created_at->format('M d, Y') }}</small>
+                </div>
+                <div class="post-actions" style="display: flex; justify-content: space-between; padding: 10px 0;">
+                    <a href="{{ route('question', $question->question_id) }}" class="action-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                        <i class="bi bi-eye" style="font-size: 1.2rem; margin-right: 5px;"></i>
+                        <span>View Question</span>
+                    </a>
+                    <button class="action-btn comment-count-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                        <i class="bi bi-chat-dots" style="font-size: 1.2rem; margin-right: 5px;"></i>
+                        <span>{{ $question->answers->count() }}</span>
                     </button>
                     <button class="action-btn bookmark-btn active" style="display: flex; align-items: center; background: none; border: none; color: #a522b7; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
                         <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>

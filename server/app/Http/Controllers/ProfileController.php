@@ -63,7 +63,32 @@ class ProfileController extends Controller
      */
     public function dashboard()
     {
-        return view('pages.profile.dashboard');
+        $user = Auth::user();
+        $questionsCount = $user->questions()->count();
+        $answersCount = $user->answers()->count();
+        $postsCount = $user->posts()->count();
+        $totalUpvotes = $user->answers()->sum('upvotes') + $user->posts()->sum('upvotes');
+
+        // Recent activity: last 3 questions, answers, and posts
+        $recentQuestions = $user->questions()->latest()->take(1)->get();
+        $recentAnswers = $user->answers()->latest()->take(1)->get();
+        $recentPosts = $user->posts()->latest()->take(1)->get();
+
+        // Merge and sort by created_at descending
+        $recentActivity = collect([])
+            ->merge($recentQuestions)
+            ->merge($recentAnswers)
+            ->merge($recentPosts)
+            ->sortByDesc('created_at')
+            ->take(3);
+
+        return view('pages.profile.dashboard', [
+            'questionsCount' => $questionsCount,
+            'answersCount' => $answersCount,
+            'postsCount' => $postsCount,
+            'totalUpvotes' => $totalUpvotes,
+            'recentActivity' => $recentActivity,
+        ]);
     }
 
     /**
@@ -71,7 +96,11 @@ class ProfileController extends Controller
      */
     public function answers()
     {
-        return view('pages.profile.answers');
+        $user = Auth::user();
+        $answers = $user->answers()->with('question')->latest()->get();
+        return view('pages.profile.answers', [
+            'answers' => $answers
+        ]);
     }
 
     /**
@@ -79,7 +108,11 @@ class ProfileController extends Controller
      */
     public function questions()
     {
-        return view('pages.profile.questions');
+        $user = Auth::user();
+        $questions = $user->questions()->with('answers')->latest()->get();
+        return view('pages.profile.questions', [
+            'questions' => $questions
+        ]);
     }
 
     /**
@@ -87,7 +120,11 @@ class ProfileController extends Controller
      */
     public function posts()
     {
-        return view('pages.profile.posts');
+        $user = Auth::user();
+        $posts = $user->posts()->with('comments')->latest()->get();
+        return view('pages.profile.posts', [
+            'posts' => $posts
+        ]);
     }
 
     /**
@@ -95,7 +132,11 @@ class ProfileController extends Controller
      */
     public function followers()
     {
-        return view('pages.profile.followers');
+        $user = Auth::user();
+        $followers = $user->followers()->with('follower')->get();
+        return view('pages.profile.followers', [
+            'followers' => $followers
+        ]);
     }
 
     /**
@@ -103,7 +144,11 @@ class ProfileController extends Controller
      */
     public function following()
     {
-        return view('pages.profile.following');
+        $user = Auth::user();
+        $following = $user->following()->with('user')->get();
+        return view('pages.profile.following', [
+            'following' => $following
+        ]);
     }
 
     /**
@@ -112,16 +157,21 @@ class ProfileController extends Controller
     public function bookmarks()
     {
         $userId = Auth::id();
-        
         // Get user's bookmarked posts
         $bookmarkedPosts = \App\Models\Post::whereHas('bookmarks', function($query) use ($userId) {
             $query->where('user_id', $userId);
         })->with(['user', 'images', 'comments'])
           ->orderBy('created_at', 'desc')
           ->get();
-        
+        // Get user's bookmarked questions
+        $bookmarkedQuestions = \App\Models\Question::whereHas('bookmarks', function($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->with(['user', 'answers'])
+          ->orderBy('created_at', 'desc')
+          ->get();
         return view('pages.profile.bookmarks', [
-            'bookmarkedPosts' => $bookmarkedPosts
+            'bookmarkedPosts' => $bookmarkedPosts,
+            'bookmarkedQuestions' => $bookmarkedQuestions
         ]);
     }
 
@@ -130,6 +180,53 @@ class ProfileController extends Controller
      */
     public function settings()
     {
-        return view('pages.profile.settings');
+        $user = Auth::user();
+        return view('pages.profile.settings', compact('user'));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $user = Auth::user();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:100',
+            'phone' => 'nullable|string|max:15',
+            'age' => 'nullable|integer|min:1|max:120',
+            'gender' => 'nullable|in:Male,Female,Other',
+            'studying_in' => 'nullable|string|max:150',
+            'expert_in' => 'nullable|string|max:150',
+            'interests' => 'nullable|string',
+            'bio' => 'nullable|string',
+            'profile_pic' => 'nullable|image|max:2048',
+        ]);
+        if ($request->hasFile('profile_pic')) {
+            $path = $request->file('profile_pic')->store('profile_pics', 'public');
+            $validated['profile_pic'] = $path;
+        }
+        // Only update interests if present in the request
+        if (!$request->has('interests')) {
+            unset($validated['interests']);
+        }
+        try {
+            $user->update($validated);
+            return redirect()->back()->with('success', 'Profile updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while updating your profile.');
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required'],
+            'password' => ['required', 'min:8', 'confirmed'],
+        ]);
+        $user = Auth::user();
+        if (!\Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->with('error', 'Current password is incorrect.');
+        }
+        $user->password = bcrypt($request->password);
+        $user->save();
+        return redirect()->back()->with('success', 'Password updated successfully!');
     }
 }
