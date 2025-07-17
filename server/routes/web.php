@@ -72,6 +72,7 @@ Route::middleware(['auth'])->prefix('profile')->name('profile.')->group(function
     Route::get('/followers', [ProfileController::class, 'followers'])->name('followers');
     Route::get('/following', [ProfileController::class, 'following'])->name('following');
     Route::get('/bookmarks', [ProfileController::class, 'bookmarks'])->name('bookmarks');
+    Route::get('/settings', [ProfileController::class, 'settings'])->name('settings');
 });
 
 Route::middleware(['auth'])->group(function () {

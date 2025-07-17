@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'User Profile - Q&A Forum')</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/profile_sidebar.css') }}">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> -->
+    <script src="https://kit.fontawesome.com/447522222b.js" crossorigin="anonymous"></script>
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('css/profile_sidebar.css') }}">
 </head>
 <body>
     @include('partials.profile_sidebar')
@@ -16,7 +17,7 @@
     @stack('scripts')
     <footer>
         @stack('footer-scripts')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script> -->
         <script>
        
             const menuToggle = document.querySelector('.menu-toggle');

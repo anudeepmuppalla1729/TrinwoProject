@@ -43,6 +43,10 @@
             <i class="fas fa-bookmark"></i>
             <span>Bookmarks</span>
         </a>
+        <a href="{{ route('profile.settings') }}" class="nav-item @if(Route::is('profile.settings')) active @endif">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
     </div>
     <!-- <div class="nav-links">
             <div class="nav-item active" data-page="dashboard">

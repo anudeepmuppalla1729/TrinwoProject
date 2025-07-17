@@ -113,4 +113,12 @@ class ProfileController extends Controller
     {
         return view('pages.profile.bookmarks');
     }
+
+    /**
+     * Show the user's settings page.
+     */
+    public function settings()
+    {
+        return view('pages.profile.settings');
+    }
 }
