@@ -9,7 +9,7 @@ class Question extends Model
     protected $primaryKey = 'question_id';
 
     protected $fillable = [
-        'user_id', 'title', 'description', 'visibility', 'is_closed', 'upvotes', 'downvotes'
+        'user_id', 'title', 'description', 'visibility', 'is_closed'
     ];
 
     public function user() {

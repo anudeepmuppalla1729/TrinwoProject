@@ -81,9 +81,31 @@
         border-bottom: 1px dashed #eee;
     }
     
-    .question-meta span:first-child {
-        font-weight: 500;
-
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #c92ae0;
+    }
+    
+    .user-avatar i {
+        font-size: 18px;
+        color: #c92ae0;
+    }
+    
+    .user-name {
+        font-weight: 600;
+        color: #333;
     }
     
     .question-excerpt {
@@ -326,71 +348,7 @@
             </div>
         </div>
         
-        @php
-        // Dummy questions data
-        $questions = [
-            [
-                'id' => 1,
-                'title' => 'How does artificial intelligence impact job markets?',
-                'excerpt' => 'I am curious about the long-term effects of AI on employment across different sectors. Which industries are most vulnerable to automation?',
-                'user' => 'TechEnthusiast',
-                'created_at' => '2 days ago',
-                'views' => 120,
-                'answers' => 5,
-                'upvotes' => 15,
-                'downvotes' => 2,
-                'tags' => ['artificial-intelligence', 'jobs', 'automation']
-            ],
-            [
-                'id' => 2,
-                'title' => 'What are the best practices for sustainable agriculture?',
-                'excerpt' => 'Looking for modern techniques that balance productivity with environmental conservation in farming.',
-                'user' => 'EcoFarmer',
-                'created_at' => '1 week ago',
-                'views' => 85,
-                'answers' => 3,
-                'upvotes' => 10,
-                'downvotes' => 0,
-                'tags' => ['agriculture', 'sustainability', 'farming']
-            ],
-            [
-                'id' => 3,
-                'title' => 'How will Blockchain Technology impact the future of industries?',
-                'excerpt' => 'Blockchain technology is more than just the foundation of cryptocurrencies. It represents a decentralized, tamper-proof digital ledger capable of transforming how industries operate.',
-                'user' => 'InnovTech',
-                'created_at' => '3 days ago',
-                'views' => 210,
-                'answers' => 8,
-                'upvotes' => 25,
-                'downvotes' => 3,
-                'tags' => ['blockchain', 'finance', 'technology']
-            ],
-            [
-                'id' => 4,
-                'title' => 'What are effective strategies for mental health management?',
-                'excerpt' => 'Seeking evidence-based approaches for maintaining good mental health in high-stress environments.',
-                'user' => 'WellnessAdvocate',
-                'created_at' => '5 days ago',
-                'views' => 175,
-                'answers' => 12,
-                'upvotes' => 32,
-                'downvotes' => 1,
-                'tags' => ['mental-health', 'wellness', 'stress-management']
-            ],
-            [
-                'id' => 5,
-                'title' => 'How can renewable energy be integrated into existing power grids?',
-                'excerpt' => 'What are the technical and policy challenges of incorporating solar and wind energy into traditional electricity distribution systems?',
-                'user' => 'GreenEngineer',
-                'created_at' => '1 day ago',
-                'views' => 65,
-                'answers' => 2,
-                'upvotes' => 8,
-                'downvotes' => 0,
-                'tags' => ['renewable-energy', 'power-grid', 'sustainability']
-            ]
-        ];
-        @endphp
+        {{-- Questions data is now passed from the controller --}}
         
         <div class="questions-list">
             @foreach($questions as $question)
@@ -399,7 +357,12 @@
                     <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
                 </h2>
                 <div class="question-meta">
-                    <span>Asked by {{ $question['user'] }}</span>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <span class="user-name">{{ $question['user'] }}</span>
+                    </div>
                     <span>{{ $question['created_at'] }}</span>
                 </div>
                 <div class="question-excerpt">{{ $question['excerpt'] }}</div>
@@ -410,33 +373,18 @@
                 </div>
                 <div class="question-stats">
                     <div class="stat">
-                        <i class="bi bi-eye"></i>
-                        <span>{{ $question['views'] }} views</span>
-                    </div>
-                    <div class="stat">
                         <i class="bi bi-chat-left-text"></i>
                         <span>{{ $question['answers'] }} answers</span>
                     </div>
                     <div class="stat">
-                        <i class="bi bi-arrow-up"></i>
+                        <i class="bi bi-hand-thumbs-up"></i>
                         <span>{{ $question['upvotes'] }} upvotes</span>
-                    </div>
-                    <div class="stat">
-                        <i class="bi bi-arrow-down"></i>
-                        <span>{{ $question['downvotes'] }} downvotes</span>
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
-        
-        <div class="pagination">
-            <button class="page-btn disabled">Previous</button>
-            <button class="page-btn">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn">Next</button>
-        </div>
+
     </div>
 </div>
 @endsection

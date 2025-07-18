@@ -5,22 +5,40 @@
             <button class="close-btn">&times;</button>
         </div>
         <hr />
-        <div class="modal-options">
-            <div class="user-info">
-                <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
-                <span class="username">Username</span>
+        <form id="askQuestionForm" method="POST" action="{{ route('questions.store') }}">
+            @csrf
+            <div class="modal-options">
+                <div class="user-info">
+                    <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
+                    <span class="username">{{ Auth::user() ? Auth::user()->name : 'Username' }}</span>
+                </div>
+                <select class="privacy-select" name="privacy">
+                    <option>Public</option>
+                    <option>Private</option>
+                </select>
             </div>
-            <select class="privacy-select">
-                <option>Public</option>
-                <option>Private</option>
-            </select>
-        </div>
-        <textarea class="question-textarea" placeholder="Type your question here..."></textarea>
-        <textarea class="question-description" placeholder="Add a description for your question..."></textarea>
-        <div class="modal-actions">
-            <button class="cancel-btn">Cancel</button>
-            <button class="ask-btn">Ask</button>
-        </div>
+            <textarea class="question-textarea" name="title" placeholder="Type your question here..."></textarea>
+            @error('title')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+            <textarea class="question-description" name="description" placeholder="Add a description for your question..."></textarea>
+            @error('description')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+            <div class="tags-input-container">
+                <input type="text" class="tags-input" placeholder="Add tags (e.g., technology, education)" />
+                <input type="hidden" name="tags" id="tags-hidden" />
+                <div class="tags-suggestions" style="display: none;"></div>
+                <div class="selected-tags"></div>
+            </div>
+            @error('tags')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn">Cancel</button>
+                <button type="button" class="ask-btn">Ask</button>
+            </div>
+        </form>
     </div>
 </div>
 
