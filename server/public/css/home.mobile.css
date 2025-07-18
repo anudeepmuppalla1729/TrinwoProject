@@ -198,10 +198,47 @@
     bottom: 80px;
     font-size: 1rem;
   }
+  
+  /* Tags input mobile styles */
+  .tags-input-container {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .tags-input {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+  
+  .tags-suggestions {
+    max-height: 120px;
+  }
+  
+  .tags-suggestions div {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .selected-tags {
+    gap: 6px;
+    margin-top: 8px;
+  }
+  
+  .selected-tags .tag {
+    padding: 3px 6px;
+    font-size: 0.85rem;
+  }
+  
+  .error-message {
+    font-size: 11px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding: 4px;
+  }
 
   /* Mobile/PC contact toggles */
   .mobile-contact { display: inline-flex !important; align-items: center; }
   .pc-contact { display: none !important; }
   .nav-links i, .mobile-contact i { font-size: 1.1rem; }
   .nav-links .fa-bell, .nav-links .fa-regular.fa-bell { display: none !important; }
-} 
+}

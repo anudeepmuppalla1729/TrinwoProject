@@ -58,26 +58,200 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.target === askModal) closeAskModal();
         });
         
+        // Tags functionality for Ask Question modal
+        const tagsInput = askModal.querySelector('.tags-input');
+        const tagsSuggestions = askModal.querySelector('.tags-suggestions');
+        const selectedTags = askModal.querySelector('.selected-tags');
+        let tags = [];
+        
+        // Common tags suggestions
+        const commonTags = [
+            'technology', 'education', 'science', 'health', 'business', 
+            'art', 'history', 'sports', 'food', 'travel', 'music', 'movies',
+            'programming', 'design', 'finance', 'politics', 'environment'
+        ];
+        
+        // Function to render selected tags
+        const renderTags = () => {
+            selectedTags.innerHTML = '';
+            tags.forEach(tag => {
+                const tagElement = document.createElement('div');
+                tagElement.classList.add('tag');
+                tagElement.innerHTML = `
+                    ${tag}
+                    <span class="remove-tag">×</span>
+                `;
+                
+                // Add event listener to remove tag
+                tagElement.querySelector('.remove-tag').addEventListener('click', () => {
+                    tags = tags.filter(t => t !== tag);
+                    renderTags();
+                });
+                
+                selectedTags.appendChild(tagElement);
+            });
+        };
+        
+        // Show suggestions when input is focused
+        if (tagsInput) {
+            tagsInput.addEventListener('click', () => {
+                // Filter suggestions based on input
+                const inputValue = tagsInput.value.toLowerCase();
+                const filteredTags = commonTags.filter(tag => 
+                    tag.toLowerCase().includes(inputValue) && !tags.includes(tag)
+                );
+                
+                // Render suggestions
+                if (filteredTags.length > 0) {
+                    tagsSuggestions.innerHTML = '';
+                    filteredTags.forEach(tag => {
+                        const suggestion = document.createElement('div');
+                        suggestion.textContent = tag;
+                        suggestion.addEventListener('click', () => {
+                            if (!tags.includes(tag)) {
+                                tags.push(tag);
+                                renderTags();
+                                tagsInput.value = '';
+                                tagsSuggestions.style.display = 'none';
+                            }
+                        });
+                        tagsSuggestions.appendChild(suggestion);
+                    });
+                    tagsSuggestions.style.display = 'block';
+                } else {
+                    tagsSuggestions.style.display = 'none';
+                }
+            });
+            
+            // Update suggestions as user types
+            tagsInput.addEventListener('input', () => {
+                const inputValue = tagsInput.value.toLowerCase();
+                const filteredTags = commonTags.filter(tag => 
+                    tag.toLowerCase().includes(inputValue) && !tags.includes(tag)
+                );
+                
+                if (filteredTags.length > 0 && inputValue.length > 0) {
+                    tagsSuggestions.innerHTML = '';
+                    filteredTags.forEach(tag => {
+                        const suggestion = document.createElement('div');
+                        suggestion.textContent = tag;
+                        suggestion.addEventListener('click', () => {
+                            if (!tags.includes(tag)) {
+                                tags.push(tag);
+                                renderTags();
+                                tagsInput.value = '';
+                                tagsSuggestions.style.display = 'none';
+                            }
+                        });
+                        tagsSuggestions.appendChild(suggestion);
+                    });
+                    tagsSuggestions.style.display = 'block';
+                } else {
+                    tagsSuggestions.style.display = 'none';
+                }
+            });
+            
+            // Add tag when Enter is pressed
+            tagsInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const inputValue = tagsInput.value.trim();
+                    if (inputValue && !tags.includes(inputValue)) {
+                        tags.push(inputValue);
+                        renderTags();
+                        tagsInput.value = '';
+                        tagsSuggestions.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!tagsInput.contains(e.target) && !tagsSuggestions.contains(e.target)) {
+                    tagsSuggestions.style.display = 'none';
+                }
+            });
+        }
+        
         // Handle form submission
         if (postButton) {
             postButton.addEventListener('click', function() {
                 const question = questionTextarea.value.trim();
                 const description = questionDescription.value.trim();
                 const privacy = privacySelect.value;
+                const tagsHiddenField = document.getElementById('tags-hidden');
                 
                 if (question === '') {
                     alert('Please enter your question');
                     return;
                 }
                 
-                // Here you would typically send the data to the server
-                // For now, we'll just show an alert with the collected data
-                // alert(`Question submitted!\nQuestion: ${question}\nDescription: ${description}\nPrivacy: ${privacy}`);
+                // Update hidden tags field with current tags
+                tagsHiddenField.value = tags.join(',');
                 
-                // Clear the form and close the modal
-                questionTextarea.value = '';
-                questionDescription.value = '';
-                closeAskModal();
+                // Show loading indicator
+                postButton.textContent = 'Posting...';
+                postButton.disabled = true;
+                
+                // Get the form
+                const form = document.getElementById('askQuestionForm');
+                
+                // Create form data from the form
+                const formData = new FormData(form);
+                
+                // Clear any existing error messages
+                document.querySelectorAll('.error-message').forEach(el => el.remove());
+                
+                // Send data to server using fetch API
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        alert('Question posted successfully!');
+                        
+                        // Clear the form and close the modal
+                        questionTextarea.value = '';
+                        questionDescription.value = '';
+                        tags = [];
+                        renderTags();
+                        closeAskModal();
+                    } else {
+                        // Handle validation errors
+                        if (data.errors) {
+                            // Display validation errors
+                            Object.keys(data.errors).forEach(field => {
+                                const message = data.errors[field][0];
+                                const input = form.querySelector(`[name="${field}"]`);
+                                if (input) {
+                                    const errorDiv = document.createElement('div');
+                                    errorDiv.className = 'error-message';
+                                    errorDiv.textContent = message;
+                                    input.parentNode.insertBefore(errorDiv, input.nextSibling);
+                                }
+                            });
+                        } else {
+                            // Show general error message
+                            alert('Error posting question: ' + (data.message || 'Unknown error'));
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error posting question:', error);
+                    alert('Error posting question. Please try again.');
+                })
+                .finally(() => {
+                    // Reset button state
+                    postButton.textContent = 'Ask';
+                    postButton.disabled = false;
+                });
             });
         }
     }

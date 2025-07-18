@@ -23,8 +23,16 @@ class AnswerController extends Controller
             'content' => 'required|string',
         ]);
 
-        // In a real application, you would store the answer in the database
-        // For now, we'll redirect to the question page
+        // Check if the question exists
+        $question = Question::findOrFail($questionId);
+        
+        // Create the answer
+        $answer = new Answer();
+        $answer->question_id = $questionId;
+        $answer->user_id = Auth::id();
+        $answer->content = $request->content;
+        $answer->save();
+        
         return redirect()->route('question', ['id' => $questionId])->with('success', 'Answer posted successfully!');
     }
 
@@ -68,8 +76,36 @@ class AnswerController extends Controller
      */
     public function upvote($id)
     {
-        // In a real application, you would upvote the answer in the database
-        // For now, we'll redirect to the question page
+        $answer = Answer::findOrFail($id);
+        $userId = Auth::id();
+        
+        if (!$userId) {
+            return redirect()->back()->with('error', 'You must be logged in to vote!');
+        }
+        
+        // Check if user has already voted on this answer
+        $existingVote = $answer->getUserVote($userId);
+        
+        if ($existingVote) {
+            // If user already upvoted, remove the vote (toggle off)
+            if ($existingVote->vote_type === 'upvote') {
+                $existingVote->delete();
+                
+                return redirect()->back()->with('success', 'Upvote removed!');
+            }
+            
+            // If user previously downvoted, change to upvote
+            $existingVote->update(['vote_type' => 'upvote']);
+            
+            return redirect()->back()->with('success', 'Changed from downvote to upvote!');
+        }
+        
+        // Create new upvote
+        $answer->votes()->create([
+            'user_id' => $userId,
+            'vote_type' => 'upvote'
+        ]);
+        
         return redirect()->back()->with('success', 'Answer upvoted!');
     }
 
@@ -81,8 +117,36 @@ class AnswerController extends Controller
      */
     public function downvote($id)
     {
-        // In a real application, you would downvote the answer in the database
-        // For now, we'll redirect to the question page
+        $answer = Answer::findOrFail($id);
+        $userId = Auth::id();
+        
+        if (!$userId) {
+            return redirect()->back()->with('error', 'You must be logged in to vote!');
+        }
+        
+        // Check if user has already voted on this answer
+        $existingVote = $answer->getUserVote($userId);
+        
+        if ($existingVote) {
+            // If user already downvoted, remove the vote (toggle off)
+            if ($existingVote->vote_type === 'downvote') {
+                $existingVote->delete();
+                
+                return redirect()->back()->with('success', 'Downvote removed!');
+            }
+            
+            // If user previously upvoted, change to downvote
+            $existingVote->update(['vote_type' => 'downvote']);
+            
+            return redirect()->back()->with('success', 'Changed from upvote to downvote!');
+        }
+        
+        // Create new downvote
+        $answer->votes()->create([
+            'user_id' => $userId,
+            'vote_type' => 'downvote'
+        ]);
+        
         return redirect()->back()->with('success', 'Answer downvoted!');
     }
 

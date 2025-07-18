@@ -108,11 +108,27 @@ class ProfileController extends Controller
      */
     public function questions()
     {
-        $user = Auth::user();
-        $questions = $user->questions()->with('answers')->latest()->get();
-        return view('pages.profile.questions', [
-            'questions' => $questions
-        ]);
+        $userId = Auth::id();
+        
+        // Get user's questions
+        $questions = \App\Models\Question::where('user_id', $userId)
+            ->with(['answers', 'tags'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($question) {
+                return [
+                    'id' => $question->question_id,
+                    'title' => $question->title,
+                    'description' => $question->description,
+                    'created_at' => $question->created_at->format('M d, Y'),
+                    'answers' => $question->answers->count(),
+                    'upvotes' => $question->upvotes ?? 0,
+                    'downvotes' => $question->downvotes ?? 0,
+                    'tags' => $question->tags->pluck('name')->toArray()
+                ];
+            });
+        
+        return view('pages.profile.questions', compact('questions'));
     }
 
     /**

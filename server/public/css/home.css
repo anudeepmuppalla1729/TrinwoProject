@@ -496,6 +496,89 @@ body {
   box-shadow: 0 0 0 2px rgba(201, 42, 224, 0.1);
 }
 
+.tags-input-container {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.tags-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+.tags-input:focus {
+  outline: none;
+  border-color: #c92ae0;
+  box-shadow: 0 0 0 2px rgba(201, 42, 224, 0.1);
+}
+
+.tags-suggestions {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tags-suggestions div {
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: background 1s;
+}
+
+.tags-suggestions div:hover {
+  background: #f0f0f0;
+  color: #c92ae0;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.selected-tags .tag {
+  background-color: #e1ecf4;
+  color: #39739d;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.selected-tags .tag .remove-tag {
+  cursor: pointer;
+  font-weight: bold;
+  color: #39739d;
+}
+
+.selected-tags .tag .remove-tag:hover {
+  color: #c92ae0;
+}
+
+.error-message {
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding: 5px;
+  background-color: rgba(229, 57, 53, 0.1);
+  border-radius: 4px;
+}
+
 .insight-heading {
   width: 100%;
   height: 50px;
