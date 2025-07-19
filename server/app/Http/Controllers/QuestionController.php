@@ -30,6 +30,7 @@ class QuestionController extends Controller
                     'title' => $question->title,
                     'excerpt' => substr($question->description, 0, 200) . (strlen($question->description) > 200 ? '...' : ''),
                     'user' => $question->user->name,
+                    'user_id' => $question->user->user_id,
                     'created_at' => $question->created_at->diffForHumans(),
                     'answers' => $question->answers->count(),
                     'upvotes' => 0, // Questions don't have upvotes in this system
@@ -154,6 +155,7 @@ class QuestionController extends Controller
             'title' => $questionModel->title,
             'description' => $questionModel->description,
             'user' => $questionModel->user->name,
+            'user_id' => $questionModel->user->user_id,
             'user_location' => $questionModel->user->studying_in ?? 'Unknown Location',
             'created_at' => $questionModel->created_at->diffForHumans(),
             'upvotes' => 0, // Questions don't have upvotes in this system
@@ -167,6 +169,7 @@ class QuestionController extends Controller
                 'id' => $answer->answer_id,
                 'content' => $answer->content,
                 'user' => $answer->user->name,
+                'user_id' => $answer->user->user_id,
                 'created_at' => $answer->created_at->diffForHumans(),
                 'upvotes' => $answer->getUpvotesCount(),
                 'downvotes' => $answer->getDownvotesCount(),

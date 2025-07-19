@@ -87,6 +87,20 @@ Route::get('/dashboard', function () {
     return view('pages.dashboard');
 })->name('dashboard');
 
+// User profile viewing routes
+Route::get('/user/{userId}', [ProfileController::class, 'viewProfile'])->name('user.profile');
+Route::get('/user/{userId}/posts', [ProfileController::class, 'viewUserPosts'])->name('user.posts');
+Route::get('/user/{userId}/questions', [ProfileController::class, 'viewUserQuestions'])->name('user.questions');
+Route::get('/user/{userId}/answers', [ProfileController::class, 'viewUserAnswers'])->name('user.answers');
+
+// User follow/unfollow routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/user/{userId}/follow', [ProfileController::class, 'followUser'])->name('user.follow');
+    Route::post('/user/{userId}/unfollow', [ProfileController::class, 'unfollowUser'])->name('user.unfollow');
+    Route::get('/user/{userId}/follow-status', [ProfileController::class, 'getFollowStatus'])->name('user.follow-status');
+    Route::post('/profile/followers/{followerId}/remove', [ProfileController::class, 'removeFollower'])->name('follower.remove');
+});
+
 // API route for dashboard posts (accessible without authentication)
 Route::get('/api/dashboard/posts', [PostController::class, 'getDashboardPosts'])->name('api.dashboard.posts');
 

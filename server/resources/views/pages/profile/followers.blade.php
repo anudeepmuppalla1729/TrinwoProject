@@ -23,6 +23,7 @@
                         <div class="user-stat-label">Followers</div>
                     </div>
                 </div>
+                <button class="remove-follower-btn" data-follower-id="{{ $follower->follower_id }}" data-user-id="{{ $follower->follower_user_id }}" style="margin-top: 10px; background-color: #a522b7; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">Remove</button>
             </div>
         </div>
     @empty
@@ -34,4 +35,4 @@
         </div>
     @endforelse
 </div>
-@endsection 
+@endsection

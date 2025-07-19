@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Models\AnswerVote;
+use App\Models\PostVote;
+use App\Models\Follower;
 
 class ProfileController extends Controller
 {
@@ -254,5 +258,216 @@ class ProfileController extends Controller
         $user->password = bcrypt($request->password);
         $user->save();
         return redirect()->back()->with('success', 'Password updated successfully!');
+    }
+    
+    /**
+     * View another user's profile
+     */
+    public function viewProfile($userId)
+    {
+        // Find the user by ID
+        $user = User::findOrFail($userId);
+        
+        // Get user's stats
+        $questionsCount = $user->questions()->count();
+        $answersCount = $user->answers()->count();
+        $postsCount = $user->posts()->count();
+        
+        // Calculate total upvotes from answer_votes and post_votes tables
+        $answerUpvotes = AnswerVote::whereHas('answer', function($query) use ($user) {
+            $query->where('user_id', $user->user_id);
+        })->where('vote_type', 'upvote')->count();
+        
+        $postUpvotes = PostVote::whereHas('post', function($query) use ($user) {
+            $query->where('user_id', $user->user_id);
+        })->where('vote_type', 'upvote')->count();
+        
+        $totalUpvotes = $answerUpvotes + $postUpvotes;
+
+        // Recent activity: last 3 questions, answers, and posts
+        $recentQuestions = $user->questions()->latest()->take(1)->get();
+        $recentAnswers = $user->answers()->latest()->take(1)->get();
+        $recentPosts = $user->posts()->where('visibility', 'public')->latest()->take(1)->get();
+
+        // Merge and sort by created_at descending
+        $recentActivity = collect([])
+            ->merge($recentQuestions)
+            ->merge($recentAnswers)
+            ->merge($recentPosts)
+            ->sortByDesc('created_at')
+            ->take(3);
+
+        return view('pages.profile.view', [
+            'profileUser' => $user,
+            'questionsCount' => $questionsCount,
+            'answersCount' => $answersCount,
+            'postsCount' => $postsCount,
+            'totalUpvotes' => $totalUpvotes,
+            'recentActivity' => $recentActivity,
+        ]);
+    }
+    
+    /**
+     * View another user's posts
+     */
+    public function viewUserPosts($userId)
+    {
+        $user = User::findOrFail($userId);
+        $posts = $user->posts()->where('visibility', 'public')->with('comments')->latest()->get();
+        
+        return view('pages.profile.view_posts', [
+            'profileUser' => $user,
+            'posts' => $posts
+        ]);
+    }
+    
+    /**
+     * View another user's questions
+     */
+    public function viewUserQuestions($userId)
+    {
+        $user = User::findOrFail($userId);
+        
+        // Get user's questions
+        $questions = $user->questions()
+            ->with(['answers', 'tags'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($question) {
+                return [
+                    'id' => $question->question_id,
+                    'title' => $question->title,
+                    'description' => $question->description,
+                    'created_at' => $question->created_at->format('M d, Y'),
+                    'answers' => $question->answers->count(),
+                    'upvotes' => 0,
+                    'downvotes' => 0,
+                    'tags' => $question->tags->pluck('name')->toArray()
+                ];
+            });
+        
+        return view('pages.profile.view_questions', [
+            'profileUser' => $user,
+            'questions' => $questions
+        ]);
+    }
+    
+    /**
+     * View another user's answers
+     */
+    public function viewUserAnswers($userId)
+    {
+        $user = User::findOrFail($userId);
+        $answers = $user->answers()->with('question')->latest()->get();
+        
+        return view('pages.profile.view_answers', [
+            'profileUser' => $user,
+            'answers' => $answers
+        ]);
+    }
+    
+    /**
+     * Follow a user
+     */
+    public function followUser($userId)
+    {
+        $userToFollow = User::findOrFail($userId);
+        $currentUser = Auth::user();
+        
+        // Check if already following
+        if ($currentUser->following()->where('follower_user_id', $userId)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are already following this user'
+            ]);
+        }
+        
+        // Create follow relationship
+        $currentUser->following()->create([
+            'user_id' => $userId,
+            'follower_user_id' => $currentUser->user_id
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'You are now following ' . $userToFollow->name
+        ]);
+    }
+    
+    /**
+     * Unfollow a user
+     */
+    public function unfollowUser($userId)
+    {
+        $userToUnfollow = User::findOrFail($userId);
+        $currentUser = Auth::user();
+        
+        // Check if following
+        $follow = $currentUser->following()->where('user_id', $userId)->first();
+        
+        if (!$follow) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not following this user'
+            ]);
+        }
+        
+        // Delete follow relationship
+        $follow->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'You have unfollowed ' . $userToUnfollow->name
+        ]);
+    }
+    
+    /**
+     * Get follow status
+     */
+    public function getFollowStatus($userId)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'following' => false
+            ]);
+        }
+        
+        $currentUser = Auth::user();
+        $following = $currentUser->following()->where('user_id', $userId)->exists();
+        
+        return response()->json([
+            'following' => $following
+        ]);
+    }
+    
+    /**
+     * Remove a follower
+     */
+    public function removeFollower($followerId)
+    {
+        $currentUser = Auth::user();
+        
+        // Find the follower relationship
+        $follower = Follower::where('follower_id', $followerId)
+            ->where('user_id', $currentUser->user_id)
+            ->first();
+        
+        if (!$follower) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Follower not found'
+            ]);
+        }
+        
+        // Get follower name before deleting
+        $followerName = $follower->follower->name ?? 'User';
+        
+        // Delete the follower relationship
+        $follower->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => $followerName . ' has been removed from your followers'
+        ]);
     }
 }

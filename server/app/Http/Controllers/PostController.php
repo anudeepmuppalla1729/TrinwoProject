@@ -226,8 +226,16 @@ class PostController extends Controller
                     $userBookmark = $post->getUserBookmark($userId) ? true : false;
                 }
                 
+                // Check if the current user is following the post author
+                $isFollowing = false;
+                if ($userId && $post->user->user_id !== $userId) {
+                    $currentUser = Auth::user();
+                    $isFollowing = $currentUser->following()->where('user_id', $post->user->user_id)->exists();
+                }
+                
                 return [
                     'id' => $post->post_id,
+                    'user_id' => $post->user->user_id,
                     'profileName' => $post->user->name,
                     'studyingIn' => $post->user->studying_in ?? 'Member',
                     'expertIn' => $post->user->expert_in ?? 'Member',
@@ -249,7 +257,8 @@ class PostController extends Controller
                     'commentCount' => $post->comments->count(),
                     'userVote' => $userVote, // Add user's vote status
                     'isBookmarked' => $userBookmark, // Add user's bookmark status
-                    'user_bookmark' => $userBookmark ? true : null // For compatibility with frontend code
+                    'user_bookmark' => $userBookmark ? true : null, // For compatibility with frontend code
+                    'isFollowing' => $isFollowing // Add whether the current user is following the post author
                 ];
             });
 

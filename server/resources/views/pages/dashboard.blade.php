@@ -46,6 +46,7 @@
 <script src="{{ asset('js/home.js') }}"></script>
 <script>
     window.isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+    window.currentUserId = {{ Auth::check() ? Auth::id() : 'null' }};
 </script>
 @endpush
 @endsection

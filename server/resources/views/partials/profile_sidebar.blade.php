@@ -27,6 +27,10 @@
         </div>
     </div>
     <div class="nav-links">
+        <a href="{{ route('dashboard') }}" class="nav-item main-feed">
+            <i class="fas fa-home"></i>
+            <span>Main Feed</span>
+        </a>
         <a href="{{ route('profile.dashboard') }}" class="nav-item @if(Route::is('profile.dashboard')) active @endif">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
