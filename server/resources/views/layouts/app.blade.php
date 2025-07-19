@@ -17,16 +17,7 @@
     @include('partials.sidebar')
     @include('partials.modals')
     <div class="container">
-        @if (session('success'))
-            <div class="alert alert-success custom-flash-message">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger custom-flash-message">
-                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            </div>
-        @endif
+
         <!-- <main class="main-content"> -->
             @yield('content')
         <!-- </main> -->

@@ -8,8 +8,10 @@ use App\Models\Tag;
 use App\Models\QuestionTag;
 use App\Models\QuestionBookmark;
 use App\Models\User;
+use App\Models\QuestionReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class QuestionController extends Controller
 {
@@ -20,11 +22,22 @@ class QuestionController extends Controller
      */
     public function index()
     {
+        // Get the current user ID if authenticated
+        $userId = Auth::id();
+        
         // Fetch questions from the database
         $questions = Question::with(['user', 'tags'])
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function($question) {
+            ->map(function($question) use ($userId) {
+                // Check if the question is bookmarked by the current user
+                $isBookmarked = false;
+                if ($userId) {
+                    $isBookmarked = QuestionBookmark::where('user_id', $userId)
+                        ->where('question_id', $question->question_id)
+                        ->exists();
+                }
+                
                 return [
                     'id' => $question->question_id,
                     'title' => $question->title,
@@ -35,7 +48,8 @@ class QuestionController extends Controller
                     'answers' => $question->answers->count(),
                     'upvotes' => 0, // Questions don't have upvotes in this system
                     'downvotes' => 0, // Questions don't have downvotes in this system
-                    'tags' => $question->tags->pluck('name')->toArray()
+                    'tags' => $question->tags->pluck('name')->toArray(),
+                    'is_bookmarked' => $isBookmarked
                 ];
             });
             
@@ -149,6 +163,14 @@ class QuestionController extends Controller
         $questionModel = Question::with(['user', 'tags', 'answers.user'])
             ->findOrFail($id);
             
+        // Check if the question is bookmarked by the current user
+        $isBookmarked = false;
+        if (Auth::check()) {
+            $isBookmarked = QuestionBookmark::where('user_id', Auth::id())
+                ->where('question_id', $id)
+                ->exists();
+        }
+            
         // Format the question data
         $question = [
             'id' => $questionModel->question_id,
@@ -160,7 +182,8 @@ class QuestionController extends Controller
             'created_at' => $questionModel->created_at->diffForHumans(),
             'upvotes' => 0, // Questions don't have upvotes in this system
             'downvotes' => 0, // Questions don't have downvotes in this system
-            'tags' => $questionModel->tags->pluck('name')->toArray()
+            'tags' => $questionModel->tags->pluck('name')->toArray(),
+            'is_bookmarked' => $isBookmarked
         ];
         
         // Format the answers data
@@ -297,9 +320,52 @@ class QuestionController extends Controller
      */
     public function bookmark($id)
     {
-        // In a real application, you would bookmark the question in the database
-        // For now, we'll redirect to the question page
-        return redirect()->route('question', ['id' => $id])->with('success', 'Question bookmarked!');
+        try {
+            $userId = Auth::id();
+            $questionId = $id;
+            
+            // Check if the question exists
+            $question = Question::findOrFail($questionId);
+            
+            // Check if the question is already bookmarked by the user
+            $bookmark = QuestionBookmark::where('user_id', $userId)
+                ->where('question_id', $questionId)
+                ->first();
+                
+            if ($bookmark) {
+                // If already bookmarked, remove the bookmark
+                $bookmark->delete();
+                $message = 'Bookmark removed!';
+                $isBookmarked = false;
+            } else {
+                // If not bookmarked, add a bookmark
+                QuestionBookmark::create([
+                    'user_id' => $userId,
+                    'question_id' => $questionId
+                ]);
+                $message = 'Question bookmarked!';
+                $isBookmarked = true;
+            }
+            
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'isBookmarked' => $isBookmarked
+                ]);
+            }
+            
+            return redirect()->back()->with('success', $message);
+        } catch (\Exception $e) {
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -536,7 +536,30 @@ function attachPostEvents() {
         .then(data => {
           if (data.success) {
             reportModal.style.display = 'none';
-            alert('Report submitted successfully!');
+            
+            // Create and show success notification
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success';
+            alertDiv.textContent = 'Report submitted successfully!';
+            alertDiv.style.padding = '10px 15px';
+            alertDiv.style.marginBottom = '15px';
+            alertDiv.style.borderRadius = '5px';
+            alertDiv.style.backgroundColor = '#d4edda';
+            alertDiv.style.color = '#155724';
+            alertDiv.style.border = '1px solid #c3e6cb';
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.left = '50%';
+            alertDiv.style.transform = 'translateX(-50%)';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            
+            document.body.appendChild(alertDiv);
+            
+            // Remove alert after 2 seconds
+            setTimeout(() => {
+              alertDiv.remove();
+            }, 2000);
           } else {
             reportError.textContent = data.message || 'Failed to submit report.';
             reportError.style.display = 'block';

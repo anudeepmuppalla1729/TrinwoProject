@@ -1,4 +1,4 @@
- @extends('layouts.profile')
+@extends('layouts.profile')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/user_profile_posts.css') }}">
 @endpush
@@ -18,31 +18,20 @@
         <button class="filter-btn">Tutorials</button>
     </div>
 </div>
-<!-- Posts Statistics -->
-<div class="posts-stats">
-    <div class="stat-card">
-        <div class="stat-value">42</div>
-        <div class="stat-label">Total Posts</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">24.8K</div>
-        <div class="stat-label">Total Views</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">1.4K</div>
-        <div class="stat-label">Total Comments</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">3.7K</div>
-        <div class="stat-label">Total Shares</div>
-    </div>
-</div>
+
 <!-- Posts Grid -->
 <div class="posts-grid">
     @forelse($posts as $post)
         <div class="post-card">
             <div class="post-header">
-                {{-- You can add post image and category here if available --}}
+                @if($post->images && $post->images->count() > 0)
+                    <img src="{{ asset('storage/' . $post->images->first()->image_url) }}" alt="{{ $post->heading }}" class="post-image">
+                    <div class="post-category">{{ ucfirst($post->category ?? 'General') }}</div>
+                @else
+                    <div class="post-header-placeholder">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                @endif
             </div>
             <div class="post-body">
                 <div class="post-meta">
@@ -60,12 +49,13 @@
                     </div>
                 </div>
                 <div class="post-actions">
-                    <button class="action-btn">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <form method="POST" action="{{ route('posts.destroy', $post->post_id) }}" class="delete-post-form" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="action-btn delete-btn" title="Delete post">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
                     @auth
                     <span class="options" style="position:relative;">
                         <i class="bi bi-three-dots-vertical" style="font-size:1.2rem; cursor:pointer;"></i>
@@ -83,7 +73,7 @@
             </div>
             @if($post->comments->count())
                 <div class="post-comments">
-                    <strong>Comments:</strong>
+                    <strong><i class="far fa-comments"></i> Comments ({{ $post->comments->count() }}):</strong>
                     <ul>
                         @foreach($post->comments as $comment)
                             <li>{{ $comment->comment_text }} <small>— {{ $comment->user->name ?? 'Unknown' }}</small></li>
@@ -134,6 +124,7 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Report modal functionality
         let reportModal = document.getElementById('reportModal');
         let reportForm = document.getElementById('reportForm');
         let reportIdInput = document.getElementById('reportIdInput');
@@ -141,6 +132,38 @@
         let detailsInput = document.getElementById('detailsInput');
         let reportError = document.getElementById('reportError');
         let currentAction = '';
+        
+        // Options menu toggle
+        document.querySelectorAll('.bi-three-dots-vertical').forEach(dots => {
+            dots.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const optionsMenu = this.nextElementSibling;
+                // Close all other open menus first
+                document.querySelectorAll('.options-menu').forEach(menu => {
+                    if (menu !== optionsMenu) {
+                        menu.style.display = 'none';
+                    }
+                });
+                // Toggle this menu
+                optionsMenu.style.display = optionsMenu.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+        
+        // Close options menu when clicking outside
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.options-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        });
+        
+        // Prevent menu from closing when clicking inside it
+        document.querySelectorAll('.options-menu').forEach(menu => {
+            menu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+        
+        // Report button functionality
         document.querySelectorAll('.report-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -155,9 +178,13 @@
                 reportModal.style.display = 'flex';
             });
         });
+        
+        // Close modal button
         document.querySelector('.close-modal').addEventListener('click', function() {
             reportModal.style.display = 'none';
         });
+        
+        // Report form validation
         reportForm.addEventListener('submit', function(e) {
             if(!reasonSelect.value) {
                 e.preventDefault();
@@ -166,11 +193,27 @@
                 return false;
             }
         });
+        
         // Close modal on outside click
         reportModal.addEventListener('click', function(e) {
             if(e.target === reportModal) reportModal.style.display = 'none';
         });
+        
+        // Copy link functionality
+        document.querySelectorAll('.options-menu button').forEach(button => {
+            if (button.textContent.trim() === 'Copy Link') {
+                button.addEventListener('click', function() {
+                    const postId = this.closest('.options').querySelector('.remove-bookmark').getAttribute('data-post-id');
+                    const url = `${window.location.origin}/posts/${postId}`;
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert('Link copied to clipboard!');
+                    }).catch(err => {
+                        console.error('Could not copy text: ', err);
+                    });
+                });
+            }
+        });
     });
 </script>
 @endpush
-@endsection 
+@endsection

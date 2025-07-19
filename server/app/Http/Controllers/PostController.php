@@ -151,7 +151,7 @@ class PostController extends Controller
         
         $post->delete();
         
-        return redirect()->route('posts.index')
+        return redirect()->route('profile.posts')
             ->with('success', 'Post deleted successfully!');
     }
     

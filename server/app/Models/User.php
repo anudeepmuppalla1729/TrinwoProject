@@ -116,5 +116,13 @@ class User extends Authenticatable
     {
         return $this->status === 'inactive';
     }
+    
+    /**
+     * Get the questions bookmarked by the user
+     */
+    public function bookmarkedQuestions()
+    {
+        return $this->belongsToMany(Question::class, 'question_bookmarks', 'user_id', 'question_id');
+    }
 
 }

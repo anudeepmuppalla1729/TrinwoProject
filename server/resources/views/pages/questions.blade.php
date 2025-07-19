@@ -5,11 +5,10 @@
 <style>
     .questions-container {
         width: 100%;
-
         padding: 20px;
         font-family: 'Segoe UI', sans-serif;
-        background: white;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        background: #fff;
+
         border-radius: 12px;
     }
     
@@ -23,13 +22,12 @@
     }
     
     .question-card {
-        background-color: #fff;
+        background-color: rgb(236, 234, 234);
         border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        padding: 25px;
-        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 20px;
         transition: all 0.3s ease;
-        border-left: 5px solid #c92ae0;
         position: relative;
         overflow: hidden;
     }
@@ -52,12 +50,13 @@
     }
     
     .question-title {
-        font-size: 20px;
-        font-weight: bold;
+        font-size: 18px;
+        font-weight: 600;
         color: #333;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         position: relative;
         z-index: 1;
+        line-height: 1.3;
     }
     
     .question-title a {
@@ -74,28 +73,28 @@
     .question-meta {
         display: flex;
         justify-content: space-between;
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px dashed #eee;
+        color: #777;
+        font-size: 13px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid black;
     }
     
     .user-info {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
     
     .user-avatar {
-        width: 35px;
-        height: 35px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         background-color: #f0f0f0;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid #c92ae0;
+        border: 1px solid #eaeaea;
     }
     
     .user-avatar i {
@@ -110,20 +109,19 @@
     
     .question-excerpt {
         color: #444;
-        line-height: 1.7;
-        margin-bottom: 18px;
-        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        font-size: 14px;
     }
     
     .question-stats {
         display: flex;
         flex-wrap: wrap;
-        gap: 15px;
-        font-size: 14px;
-        background-color: #f9f9f9;
-        padding: 12px 15px;
-        border-radius: 8px;
-        margin-top: 15px;
+        gap: 12px;
+        font-size: 13px;
+        padding: 10px 0;
+        margin-top: 10px;
+        border-top: 1px solid black;
     }
     
     .stat {
@@ -134,30 +132,29 @@
     }
     
     .stat:hover {
-        transform: translateY(-2px);
+
         color: #c92ae0;
     }
     
     .stat i {
         font-size: 16px;
-        color: #c92ae0;
     }
     
     .question-tags {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        margin-top: 15px;
+        margin-top: 12px;
+        margin-bottom: 10px;
     }
     
     .tag {
-        background-color: #e1ecf4;
-        color: #39739d;
-        padding: 6px 10px;
-        border-radius: 20px;
-        font-size: 12px;
+        background-color: #f0f0f0;
+        color: #555;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
         transition: all 0.2s ease;
-        border: 1px solid transparent;
     }
     
     .tag:hover {
@@ -246,6 +243,40 @@
     .search-box i {
         color: #c92ae0;
         font-size: 16px;
+    }
+    
+    .question-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid black;
+    }
+    
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: none;
+        border: none;
+        color: #555;
+        cursor: pointer;
+        font-size: 13px;
+        padding: 5px 8px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+    
+    .action-btn:hover {
+        color: #c92ae0;
+    }
+    
+    .bookmark-btn.bookmarked {
+        color: #c92ae0;
+    }
+    
+    .bookmark-btn.bookmarked i {
+        color: #c92ae0;
     }
     
     .filter-options select {
@@ -353,12 +384,9 @@
         <div class="questions-list">
             @foreach($questions as $question)
             <div class="question-card">
-                <h2 class="question-title">
-                    <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
-                </h2>
                 <div class="question-meta">
                     <div class="user-info">
-                        <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
+                        <a href="{{ route('user.profile', parameters: $question['user_id']) }}" style="text-decoration: none;">
                             <div class="user-avatar">
                                 <i class="bi bi-person-fill"></i>
                             </div>
@@ -369,32 +397,41 @@
                     </div>
                     <span>{{ $question['created_at'] }}</span>
                 </div>
+                <h2 class="question-title">
+                    <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
+                </h2>
                 <div class="question-excerpt">{{ $question['excerpt'] }}</div>
                 <div class="question-tags">
                     @foreach($question['tags'] as $tag)
                     <span class="tag">{{ $tag }}</span>
                     @endforeach
                 </div>
-                <div class="question-stats">
-                    <div class="stat">
+
+                <div class="question-actions">
+                    @auth
+                    <form method="POST" action="{{ route('questions.bookmark', ['id' => $question['id']]) }}" class="d-inline bookmark-form">
+                        @csrf
+                        <button type="submit" class="action-btn bookmark-btn {{ $question['is_bookmarked'] ? 'bookmarked' : '' }}">
+                            <i class="bi {{ $question['is_bookmarked'] ? 'bi-bookmark-fill' : 'bi-bookmark' }}"></i>
+                            <span>{{ $question['is_bookmarked'] ? 'Bookmarked' : 'Bookmark' }}</span>
+                            
+                        </button>
+                    </form>
+                    @endauth
+                    <div class="stat" >
                         <i class="bi bi-chat-left-text"></i>
                         <span>{{ $question['answers'] }} answers</span>
-                    </div>
-                    <div class="stat">
-                        <i class="bi bi-hand-thumbs-up"></i>
-                        <span>{{ $question['upvotes'] }} upvotes</span>
-                    </div>
-                </div>
-                @auth
-                <div style="margin-top:10px;">
+                            </div>
+                    @auth
                     <form method="POST" action="{{ route('questions.report', ['id' => $question['id']]) }}" class="d-inline report-form">
                         @csrf
                         <button type="button" class="action-btn report-btn" data-type="question" data-id="{{ $question['id'] }}">
                             <i class="fas fa-flag"></i> Report
                         </button>
                     </form>
+                    @endauth
                 </div>
-                @endauth
+                
             </div>
             @endforeach
         </div>
@@ -444,6 +481,68 @@
                 if (!this.classList.contains('disabled')) {
                     alert('Pagination feature coming soon!');
                 }
+            });
+        });
+
+        // Bookmark functionality with AJAX
+        const bookmarkForms = document.querySelectorAll('.bookmark-form');
+        bookmarkForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const url = this.getAttribute('action');
+                const button = this.querySelector('.bookmark-btn');
+                const icon = button.querySelector('i');
+                const text = button.querySelector('span');
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button appearance
+                        if (data.isBookmarked) {
+                            button.classList.add('bookmarked');
+                            icon.classList.remove('bi-bookmark');
+                            icon.classList.add('bi-bookmark-fill');
+                            text.textContent = 'Bookmarked';
+                        } else {
+                            button.classList.remove('bookmarked');
+                            icon.classList.remove('bi-bookmark-fill');
+                            icon.classList.add('bi-bookmark');
+                            text.textContent = 'Bookmark';
+                        }
+                        
+                        // Show success message
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-success';
+                        alertDiv.textContent = data.message;
+                        alertDiv.style.padding = '10px 15px';
+                        alertDiv.style.marginBottom = '15px';
+                        alertDiv.style.borderRadius = '5px';
+                        alertDiv.style.backgroundColor = '#d4edda';
+                        alertDiv.style.color = '#155724';
+                        alertDiv.style.border = '1px solid #c3e6cb';
+                        
+                        const container = document.querySelector('.questions-container');
+                        container.insertBefore(alertDiv, container.firstChild);
+                        
+                        // Remove alert after 3 seconds
+                        setTimeout(() => {
+                            alertDiv.remove();
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             });
         });
 
