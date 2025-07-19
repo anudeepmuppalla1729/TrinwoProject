@@ -4,12 +4,35 @@
 @push('styles')
 <style>
     .question-detail-container {
-        max-width: 800px;
-        margin: 20px auto;
+        width: 915px;
+        margin: 5px auto;
         padding: 20px;
         font-family: 'Segoe UI', sans-serif;
         background: white;
+        border-radius: 15px;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .d-inline {
+        display: inline;
+    }
+    
+    .alert {
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
     }
     
     .question-header {
@@ -29,6 +52,43 @@
         color: #666;
         font-size: 14px;
         margin-bottom: 15px;
+    }
+    
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #c92ae0;
+    }
+    
+    .user-avatar i {
+        font-size: 20px;
+        color: #c92ae0;
+    }
+    
+    .user-details {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .user-name {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .user-location {
+        font-size: 12px;
+        color: #666;
     }
     
     .question-content {
@@ -152,6 +212,33 @@
         margin-bottom: 10px;
     }
     
+    .answer-user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .answer-user-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #2ecc71;
+    }
+    
+    .answer-user-avatar i {
+        font-size: 18px;
+        color: #2ecc71;
+    }
+    
+    .answer-user-name {
+        font-weight: 600;
+        color: #333;
+    }
+    
     .answer-actions {
         display: flex;
         gap: 15px;
@@ -210,61 +297,36 @@
 @section('content')
 <div class="home_content">
 <div class="question-detail-container">
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+    
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
+    
     <a href="{{ route('questions') }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back to Questions
     </a>
     
-    @php
-    // Dummy question data
-    $question = [
-        'id' => 3,
-        'title' => 'How will Blockchain Technology impact the future of industries?',
-        'description' => 'Blockchain technology is more than just the foundation of cryptocurrencies. It represents a decentralized, tamper-proof digital ledger capable of transforming how industries operate. From financial institutions to healthcare providers and supply chains, the impact of blockchain is expected to be revolutionary.',
-        'user' => 'InnovTech',
-        'user_location' => 'Bengaluru, Karnataka',
-        'created_at' => '3 days ago',
-        'views' => 210,
-        'upvotes' => 25,
-        'downvotes' => 3,
-        'tags' => ['blockchain', 'finance', 'technology']
-    ];
-    
-    // Dummy answers
-    $answers = [
-        [
-            'id' => 1,
-            'content' => 'Blockchain helps remove intermediaries, reduce fraud, and secure transactions using its decentralized ledger system. It\'s transforming supply chains, finance, and even voting systems.',
-            'user' => 'TechExpert',
-            'created_at' => '2 days ago',
-            'upvotes' => 12,
-            'downvotes' => 1,
-            'is_accepted' => false
-        ],
-        [
-            'id' => 2,
-            'content' => 'Blockchain will fundamentally change how data and transactions are verified, secured, and shared across industries. Its decentralized and transparent nature eliminates the need for middlemen, reduces fraud, and enables real-time traceability. In the future, companies will use blockchain to improve security, streamline processes, and enhance trust between parties — unlocking new efficiencies and creating entirely new business models.',
-            'user' => 'BlockchainDev',
-            'created_at' => '1 day ago',
-            'upvotes' => 18,
-            'downvotes' => 0,
-            'is_accepted' => true
-        ],
-        [
-            'id' => 3,
-            'content' => 'While blockchain has potential, we should be cautious about overhyping it. Many industries are still figuring out practical applications, and challenges like scalability and energy consumption remain. It\'s promising but not a silver bullet for every problem.',
-            'user' => 'RealisticAnalyst',
-            'created_at' => '12 hours ago',
-            'upvotes' => 5,
-            'downvotes' => 2,
-            'is_accepted' => false
-        ]
-    ];
-    @endphp
+    {{-- Question and answers data is now passed from the controller --}}
     
     <div class="question-header">
         <h1 class="question-title">{{ $question['title'] }}</h1>
         <div class="question-meta">
-            <span>Asked by {{ $question['user'] }} from {{ $question['user_location'] }}</span>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">{{ $question['user'] }}</span>
+                    <span class="user-location">{{ $question['user_location'] }}</span>
+                </div>
+            </div>
             <span>{{ $question['created_at'] }}</span>
         </div>
     </div>
@@ -277,14 +339,6 @@
             @endforeach
         </div>
         <div class="question-actions">
-            <button class="action-btn upvote-btn">
-                <i class="bi bi-arrow-up"></i>
-                <span>{{ $question['upvotes'] }}</span>
-            </button>
-            <button class="action-btn downvote-btn">
-                <i class="bi bi-arrow-down"></i>
-                <span>{{ $question['downvotes'] }}</span>
-            </button>
             <button class="action-btn bookmark-btn">
                 <i class="bi bi-bookmark"></i>
                 <span>Bookmark</span>
@@ -294,8 +348,12 @@
                 <span>Share</span>
             </button>
             <div class="stat">
-                <i class="bi bi-eye"></i>
-                <span>{{ $question['views'] }} views</span>
+                <i class="bi bi-hand-thumbs-up"></i>
+                <span>{{ $question['upvotes'] }} upvotes</span>
+            </div>
+            <div class="stat">
+                <i class="bi bi-hand-thumbs-down"></i>
+                <span>{{ $question['downvotes'] }} downvotes</span>
             </div>
         </div>
     </div>
@@ -319,19 +377,30 @@
             </div>
             @endif
             <div class="answer-meta">
-                <span>Answered by {{ $answer['user'] }}</span>
+                <div class="answer-user-info">
+                    <div class="answer-user-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <span class="answer-user-name">{{ $answer['user'] }}</span>
+                </div>
                 <span>{{ $answer['created_at'] }}</span>
             </div>
             <div class="answer-content">{{ $answer['content'] }}</div>
             <div class="answer-actions">
-                <button class="action-btn upvote-btn">
-                    <i class="bi bi-arrow-up"></i>
-                    <span>{{ $answer['upvotes'] }}</span>
-                </button>
-                <button class="action-btn downvote-btn">
-                    <i class="bi bi-arrow-down"></i>
-                    <span>{{ $answer['downvotes'] }}</span>
-                </button>
+                <form action="{{ route('answers.upvote', $answer['id']) }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="action-btn upvote-btn">
+                        <i class="bi bi-arrow-up"></i>
+                        <span>{{ $answer['upvotes'] }}</span>
+                    </button>
+                </form>
+                <form action="{{ route('answers.downvote', $answer['id']) }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="action-btn downvote-btn">
+                        <i class="bi bi-arrow-down"></i>
+                        <span>{{ $answer['downvotes'] }}</span>
+                    </button>
+                </form>
                 <button class="action-btn comment-btn">
                     <i class="bi bi-chat"></i>
                     <span>Comment</span>

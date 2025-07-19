@@ -120,10 +120,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     return dateA > dateB ? -1 : 1;
                 } 
                 else if (sortValue === 'popular') {
-                    // Sort by upvotes
-                    const upvotesA = parseInt(a.querySelector('.stat:nth-child(3) span').textContent);
-                    const upvotesB = parseInt(b.querySelector('.stat:nth-child(3) span').textContent);
-                    return upvotesB - upvotesA;
+                    // Sort by views instead of upvotes
+                    const viewsA = parseInt(a.querySelector('.stat:nth-child(1) span').textContent);
+                    const viewsB = parseInt(b.querySelector('.stat:nth-child(1) span').textContent);
+                    return viewsB - viewsA;
                 }
                 else if (sortValue === 'answered') {
                     // Sort by number of answers

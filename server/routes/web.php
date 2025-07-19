@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -44,6 +46,26 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/answers/{id}/accept', [AnswerController::class, 'accept'])->name('answers.accept');
     Route::post('/answers/{id}/comment', [AnswerController::class, 'comment'])->name('answers.comment');
     Route::post('/answers/{id}/share', [AnswerController::class, 'share'])->name('answers.share');
+    
+    // Post/Insight routes
+    Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+    Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::post('/posts/ajax', [PostController::class, 'storeAjax'])->name('posts.store.ajax');
+    Route::post('/posts/{id}/upvote', [PostController::class, 'upvote'])->name('posts.upvote');
+    Route::post('/posts/{id}/downvote', [PostController::class, 'downvote'])->name('posts.downvote');
+    Route::get('/posts/{id}/vote-status', [PostController::class, 'getUserVoteStatus'])->name('posts.vote-status');
+    Route::post('/posts/{id}/bookmark', [PostController::class, 'bookmark'])->name('posts.bookmark');
+    Route::get('/posts/{id}/bookmark-status', [PostController::class, 'getUserBookmarkStatus'])->name('posts.bookmark-status');
+    
+    // Comment routes
+    Route::post('/posts/{postId}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
 Route::get('/user-profile', function () {
@@ -57,6 +79,9 @@ Route::get('/user-information', function () {
 Route::get('/dashboard', function () {
     return view('pages.dashboard');
 })->name('dashboard');
+
+// API route for dashboard posts (accessible without authentication)
+Route::get('/api/dashboard/posts', [PostController::class, 'getDashboardPosts'])->name('api.dashboard.posts');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

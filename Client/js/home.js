@@ -245,12 +245,27 @@ document.querySelectorAll('.question-card').forEach(card => {
   });
 });
 
-document.getElementById('qas-answer').addEventListener('click', () => {
-  document.getElementById('answer-input').focus();
-});
-document.getElementById('qas-pass').addEventListener('click', () => {
-  alert('You chose to pass on this question.');
-});
-document.getElementById('qas-bookmark').addEventListener('click', () => {
-  alert('Question bookmarked! (Feature coming soon)');
-});
+// Add event listener for answer button if it exists
+const qasAnswerElement = document.getElementById('qas-answer');
+if (qasAnswerElement) {
+  qasAnswerElement.addEventListener('click', () => {
+    const answerInput = document.getElementById('answer-input');
+    if (answerInput) {
+      answerInput.focus();
+    }
+  });
+}
+// Add event listeners only if elements exist
+const qasPassElement = document.getElementById('qas-pass');
+if (qasPassElement) {
+  qasPassElement.addEventListener('click', () => {
+    alert('You chose to pass on this question.');
+  });
+}
+
+const qasBookmarkElement = document.getElementById('qas-bookmark');
+if (qasBookmarkElement) {
+  qasBookmarkElement.addEventListener('click', () => {
+    alert('Question bookmarked! (Feature coming soon)');
+  });
+}

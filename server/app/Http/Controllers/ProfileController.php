@@ -79,7 +79,27 @@ class ProfileController extends Controller
      */
     public function questions()
     {
-        return view('pages.profile.questions');
+        $userId = Auth::id();
+        
+        // Get user's questions
+        $questions = \App\Models\Question::where('user_id', $userId)
+            ->with(['answers', 'tags'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($question) {
+                return [
+                    'id' => $question->question_id,
+                    'title' => $question->title,
+                    'description' => $question->description,
+                    'created_at' => $question->created_at->format('M d, Y'),
+                    'answers' => $question->answers->count(),
+                    'upvotes' => $question->upvotes ?? 0,
+                    'downvotes' => $question->downvotes ?? 0,
+                    'tags' => $question->tags->pluck('name')->toArray()
+                ];
+            });
+        
+        return view('pages.profile.questions', compact('questions'));
     }
 
     /**
@@ -111,6 +131,17 @@ class ProfileController extends Controller
      */
     public function bookmarks()
     {
-        return view('pages.profile.bookmarks');
+        $userId = Auth::id();
+        
+        // Get user's bookmarked posts
+        $bookmarkedPosts = \App\Models\Post::whereHas('bookmarks', function($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->with(['user', 'images', 'comments'])
+          ->orderBy('created_at', 'desc')
+          ->get();
+        
+        return view('pages.profile.bookmarks', [
+            'bookmarkedPosts' => $bookmarkedPosts
+        ]);
     }
 }
