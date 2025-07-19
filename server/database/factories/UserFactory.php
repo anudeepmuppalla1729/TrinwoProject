@@ -34,10 +34,5 @@ class UserFactory extends Factory
      * Indicate that the model's email address should be unverified.
      * Note: email verification is not implemented in this application
      */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            // No email verification in this application
-        ]);
-    }
+
 }
