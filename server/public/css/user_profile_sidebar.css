@@ -1,0 +1,28 @@
+/* User Profile Sidebar Styles */
+.follow-button {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    margin-top: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.follow-button:hover {
+    background-color: var(--primary-dark) !important;
+    transform: translateY(-2px);
+}
+
+.follow-button i {
+    margin-right: 8px;
+}
+
+/* Followed state */
+.follow-button.followed {
+    background-color: #6c757d !important;
+}
+
+.follow-button.followed:hover {
+    background-color: #5a6268 !important;
+}

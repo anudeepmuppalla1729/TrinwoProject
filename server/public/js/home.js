@@ -91,18 +91,23 @@ function renderPosts() {
       <div class="post" data-index="${index}" data-id="post-${post.id}">
         <div class="post-header">
           <div class="profile">
-            <i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>
+            <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
+              <i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>
+            </a>
             <div>
-              <strong>${post.profileName}</strong><br>
-              <small style="font-size: 1rem;">${post.studyingIn} - ${post.expertIn}</small>
-              <button style=" 
+              <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
+                <strong>${post.profileName}</strong><br>
+                <small style="font-size: 1rem;">${post.studyingIn} - ${post.expertIn}</small>
+              </a>
+              ${post.user_id === window.currentUserId ? '' : `
+              <button class="follow-btn" data-user-id="${post.user_id}" data-following="${post.isFollowing ? 'true' : 'false'}" style="
                border: 2px solid #a522b7;
-               color: black;
-               text-color: black;
+               ${post.isFollowing ? 'background-color: #a522b7; color: white;' : 'background-color: transparent; color: black;'}
                border-radius: 4px;
                cursor: pointer;
                margin-left: 5px;
-               font-size: 0.9rem;">Follow</button>
+               font-size: 0.9rem;">${post.isFollowing ? 'Following' : 'Follow'}</button>
+              `}
             </div>
           </div>
           <div>
@@ -334,6 +339,60 @@ function attachPostEvents() {
       })
       .catch(error => {
         console.error('Error bookmarking post:', error);
+      });
+    });
+  });
+  
+  // Follow button
+  document.querySelectorAll('.follow-btn').forEach((btn) => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const userId = this.dataset.userId;
+      const isFollowing = this.dataset.following === 'true';
+      
+      // Get CSRF token
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      // Determine the endpoint based on current follow status
+      const endpoint = isFollowing ? `/user/${userId}/unfollow` : `/user/${userId}/follow`;
+      
+      // Send AJAX request to follow/unfollow the user
+      fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Toggle the follow state based on the current state
+          const newFollowingState = !isFollowing;
+          
+          // Update this button
+          this.textContent = newFollowingState ? 'Following' : 'Follow';
+          this.style.backgroundColor = newFollowingState ? '#a522b7' : 'transparent';
+          this.style.color = newFollowingState ? 'white' : 'black';
+          this.dataset.following = newFollowingState.toString();
+          
+          // Update all follow buttons for this user
+          document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`).forEach(button => {
+            if (button !== this) {
+              button.textContent = newFollowingState ? 'Following' : 'Follow';
+              button.style.backgroundColor = newFollowingState ? '#a522b7' : 'transparent';
+              button.style.color = newFollowingState ? 'white' : 'black';
+              button.dataset.following = newFollowingState.toString();
+            }
+          });
+        } else {
+          console.error('Failed to update follow status:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating follow status:', error);
       });
     });
   });

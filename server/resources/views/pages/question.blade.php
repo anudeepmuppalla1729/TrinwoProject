@@ -84,6 +84,12 @@
     .user-name {
         font-weight: 600;
         color: #333;
+        text-decoration: none;
+    }
+    
+    .user-name:hover {
+        color: #c92ae0;
+        text-decoration: underline;
     }
     
     .user-location {
@@ -319,11 +325,13 @@
         <h1 class="question-title">{{ $question['title'] }}</h1>
         <div class="question-meta">
             <div class="user-info">
-                <div class="user-avatar">
-                    <i class="bi bi-person-fill"></i>
-                </div>
+                <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
+                    <div class="user-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                </a>
                 <div class="user-details">
-                    <span class="user-name">{{ $question['user'] }}</span>
+                    <a href="{{ route('user.profile', $question['user_id']) }}" class="user-name">{{ $question['user'] }}</a>
                     <span class="user-location">{{ $question['user_location'] }}</span>
                 </div>
             </div>
@@ -386,10 +394,14 @@
             @endif
             <div class="answer-meta">
                 <div class="answer-user-info">
-                    <div class="answer-user-avatar">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                    <span class="answer-user-name">{{ $answer['user'] }}</span>
+                    <a href="{{ route('user.profile', $answer['user_id']) }}" style="text-decoration: none;">
+                        <div class="answer-user-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    </a>
+                    <a href="{{ route('user.profile', $answer['user_id']) }}" style="text-decoration: none; font-weight: 600; color: #333;">
+                        <span class="answer-user-name">{{ $answer['user'] }}</span>
+                    </a>
                 </div>
                 <span>{{ $answer['created_at'] }}</span>
             </div>
