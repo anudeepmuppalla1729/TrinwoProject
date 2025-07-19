@@ -16,13 +16,10 @@ return new class extends Migration
             $table->string('first_name')->nullable()->after('name');
             $table->string('last_name')->nullable()->after('first_name');
             $table->string('username')->unique()->nullable()->after('last_name');
-            $table->enum('role', ['user', 'moderator', 'admin'])->default('user')->after('username');
+            $table->enum('role', ['user', 'admin'])->default('user')->after('username');
             $table->enum('status', ['active', 'inactive', 'banned'])->default('active')->after('role');
             $table->string('avatar')->nullable()->after('status');
             $table->timestamp('last_login_at')->nullable()->after('avatar');
-            
-            // Rename profile_pic to avatar for consistency
-            $table->renameColumn('profile_pic', 'avatar_old');
         });
     }
 
@@ -34,9 +31,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             // Drop new columns
             $table->dropColumn(['first_name', 'last_name', 'username', 'role', 'status', 'avatar', 'last_login_at']);
-            
-            // Rename back
-            $table->renameColumn('avatar_old', 'profile_pic');
+            // Do not rename avatar_old back to profile_pic
         });
     }
 };

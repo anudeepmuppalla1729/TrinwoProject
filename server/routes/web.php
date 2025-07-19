@@ -216,5 +216,8 @@ Route::middleware(['auth:admin', 'check.admin.status'])->group(function () {
         // System API
         Route::post('/system/clear-cache', [AdminController::class, 'clearCache']);
         Route::post('/system/optimize', [AdminController::class, 'optimizeSystem']);
+        Route::post('/admins', [\App\Http\Controllers\AdminController::class, 'storeAdmin']);
+        Route::get('/admins', [\App\Http\Controllers\AdminController::class, 'getAdmins']);
+        Route::delete('/admins/{id}', [\App\Http\Controllers\AdminController::class, 'deleteAdmin']);
     });
 });

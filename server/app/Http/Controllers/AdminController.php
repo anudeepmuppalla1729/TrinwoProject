@@ -544,18 +544,23 @@ class AdminController extends Controller
     // Users API
     public function usersStats()
     {
+        $activeUsers = User::where('role', 'user')->where('last_login_at', '>=', now()->subDays(7))->count();
+        $inactiveUsers = User::where('role', 'user')->where(function($q) {
+            $q->whereNull('last_login_at')->orWhere('last_login_at', '<', now()->subDays(7));
+        })->count();
+        $totalUsers = User::where('role', 'user')->count();
+        $totalAdmins = \App\Models\Admin::count();
         $stats = [
-            'total' => User::count(),
-            'active' => User::where('status', 'active')->count(),
-            'inactive' => User::where('status', 'inactive')->count(),
+            'total_accounts' => $totalUsers + $totalAdmins,
+            'active' => $activeUsers,
+            'inactive' => $inactiveUsers,
             'banned' => User::where('status', 'banned')->count(),
             'new_this_month' => User::whereMonth('created_at', now()->month)->count(),
             'new_this_week' => User::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
             'new_today' => User::whereDate('created_at', today())->count(),
             'by_role' => [
-                'users' => User::where('role', 'user')->count(),
-                'moderators' => User::where('role', 'moderator')->count(),
-                'admins' => User::where('role', 'admin')->count(),
+                'users' => $totalUsers,
+                'admins' => $totalAdmins,
             ],
             'top_contributors' => User::withCount(['questions', 'answers', 'posts'])
                 ->orderByRaw('(questions_count + answers_count + posts_count) DESC')
@@ -572,6 +577,35 @@ class AdminController extends Controller
         ];
 
         return response()->json($stats);
+    }
+
+    // Add new admin with password authentication
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string|unique:admins',
+            'name' => 'required|string|max:255',
+            'password' => 'required|string|min:8',
+            'auth_password' => 'required|string',
+        ]);
+
+        // Authenticate current admin
+        $currentAdmin = auth('admin')->user();
+        if (!$currentAdmin || !\Hash::check($request->auth_password, $currentAdmin->password)) {
+            return response()->json(['message' => 'Authentication failed. Incorrect password.'], 403);
+        }
+
+        $admin = \App\Models\Admin::create([
+            'username' => $request->username,
+            'name' => $request->name,
+            'password' => bcrypt($request->password),
+            'status' => 'active',
+        ]);
+
+        return response()->json([
+            'message' => 'Admin created successfully',
+            'admin' => $admin
+        ]);
     }
 
     public function getUsers(Request $request)
@@ -641,7 +675,7 @@ class AdminController extends Controller
             'email' => 'required|email|unique:users',
             'username' => 'required|string|unique:users|max:255',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:user,moderator,admin',
+            'role' => 'required|in:user,admin',
             'bio' => 'nullable|string|max:500'
         ]);
 
@@ -732,7 +766,7 @@ class AdminController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'username' => 'required|string|unique:users,username,' . $id . '|max:255',
-            'role' => 'required|in:user,moderator,admin',
+            'role' => 'required|in:user,admin',
             'status' => 'required|in:active,inactive,banned',
             'bio' => 'nullable|string|max:500'
         ]);
@@ -802,7 +836,7 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         
         $validated = $request->validate([
-            'role' => 'required|in:user,moderator,admin'
+            'role' => 'required|in:user,admin'
         ]);
 
         $user->update(['role' => $validated['role']]);
@@ -1201,5 +1235,23 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'System optimized successfully'
         ]);
+    }
+
+    // API to get all admins
+    public function getAdmins()
+    {
+        $admins = \App\Models\Admin::select('id', 'username', 'name', 'status', 'created_at')->get();
+        return response()->json($admins);
+    }
+
+    public function deleteAdmin($id)
+    {
+        $admin = \App\Models\Admin::findOrFail($id);
+        // Prevent admin from deleting themselves
+        if ($admin->id === auth('admin')->id()) {
+            return response()->json(['message' => 'You cannot delete your own admin account'], 400);
+        }
+        $admin->delete();
+        return response()->json(['message' => 'Admin deleted successfully']);
     }
 } 

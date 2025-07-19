@@ -30,47 +30,36 @@ class UserSeeder extends Seeder
             'bio' => 'System administrator with full access to all features.',
             'avatar' => 'https://i.pravatar.cc/150?img=1',
             'created_at' => now()->subMonths(6),
-        ]);
-
-        User::create([
-            'name' => 'Moderator User',
-            'first_name' => 'Moderator',
-            'last_name' => 'User',
-            'username' => 'moderator',
-            'email' => 'moderator@qaforum.com',
-            'password' => Hash::make('password'),
-            'role' => 'moderator',
-            'status' => 'active',
-            'bio' => 'Community moderator helping maintain forum quality.',
-            'avatar' => 'https://i.pravatar.cc/150?img=2',
-            'created_at' => now()->subMonths(4),
+            'last_login_at' => now()->subDays(2),
         ]);
 
         // Create regular users with different statuses
         $regularUsers = [
             [
-                'name' => 'John Doe',
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'username' => 'johndoe',
-                'email' => 'john@example.com',
+                'name' => 'User One',
+                'first_name' => 'User',
+                'last_name' => 'One',
+                'username' => 'userone',
+                'email' => 'userone@qaforum.com',
                 'role' => 'user',
                 'status' => 'active',
-                'bio' => 'Software developer passionate about web technologies.',
+                'bio' => 'Active user.',
                 'avatar' => 'https://i.pravatar.cc/150?img=3',
-                'created_at' => now()->subMonths(3),
+                'created_at' => now()->subMonths(2),
+                'last_login_at' => now()->subDays(1),
             ],
             [
-                'name' => 'Jane Smith',
-                'first_name' => 'Jane',
-                'last_name' => 'Smith',
-                'username' => 'janesmith',
-                'email' => 'jane@example.com',
+                'name' => 'User Two',
+                'first_name' => 'User',
+                'last_name' => 'Two',
+                'username' => 'usertwo',
+                'email' => 'usertwo@qaforum.com',
                 'role' => 'user',
                 'status' => 'active',
-                'bio' => 'Full-stack developer with expertise in React and Laravel.',
+                'bio' => 'Inactive user.',
                 'avatar' => 'https://i.pravatar.cc/150?img=4',
-                'created_at' => now()->subMonths(2),
+                'created_at' => now()->subMonths(1),
+                'last_login_at' => now()->subDays(10),
             ],
             [
                 'name' => 'Mike Johnson',
@@ -83,6 +72,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Database administrator and SQL expert.',
                 'avatar' => 'https://i.pravatar.cc/150?img=5',
                 'created_at' => now()->subMonths(5),
+                'last_login_at' => now()->subDays(5),
             ],
             [
                 'name' => 'Sarah Wilson',
@@ -95,6 +85,7 @@ class UserSeeder extends Seeder
                 'bio' => 'UI/UX designer focused on user experience.',
                 'avatar' => 'https://i.pravatar.cc/150?img=6',
                 'created_at' => now()->subMonths(1),
+                'last_login_at' => now()->subDays(3),
             ],
             [
                 'name' => 'David Brown',
@@ -107,6 +98,7 @@ class UserSeeder extends Seeder
                 'bio' => 'DevOps engineer and cloud specialist.',
                 'avatar' => 'https://i.pravatar.cc/150?img=7',
                 'created_at' => now()->subWeeks(2),
+                'last_login_at' => now()->subDays(2),
             ],
             [
                 'name' => 'Emily Davis',
@@ -119,6 +111,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Frontend developer specializing in Vue.js and modern CSS.',
                 'avatar' => 'https://i.pravatar.cc/150?img=8',
                 'created_at' => now()->subWeeks(1),
+                'last_login_at' => now()->subDays(1),
             ],
             [
                 'name' => 'Alex Thompson',
@@ -131,6 +124,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Mobile app developer with React Native experience.',
                 'avatar' => 'https://i.pravatar.cc/150?img=9',
                 'created_at' => now()->subDays(5),
+                'last_login_at' => now()->subDays(5),
             ],
             [
                 'name' => 'Lisa Garcia',
@@ -143,6 +137,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Backend developer focused on API design and microservices.',
                 'avatar' => 'https://i.pravatar.cc/150?img=10',
                 'created_at' => now()->subDays(3),
+                'last_login_at' => now()->subDays(3),
             ],
             [
                 'name' => 'Tom Anderson',
@@ -155,6 +150,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Security researcher and penetration tester.',
                 'avatar' => 'https://i.pravatar.cc/150?img=11',
                 'created_at' => now()->subDays(1),
+                'last_login_at' => now()->subDays(1),
             ],
             [
                 'name' => 'Rachel Green',
@@ -167,6 +163,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Data scientist and machine learning enthusiast.',
                 'avatar' => 'https://i.pravatar.cc/150?img=12',
                 'created_at' => now()->subHours(12),
+                'last_login_at' => now()->subHours(12),
             ],
         ];
 

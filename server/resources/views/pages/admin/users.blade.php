@@ -21,8 +21,8 @@
             <i class="fas fa-users"></i>
         </div>
         <div class="stat-info">
-            <h3 id="total-users">-</h3>
-            <p>Total Users</p>
+            <h3 id="total-accounts">-</h3>
+            <p>Total Accounts</p>
         </div>
     </div>
     
@@ -32,7 +32,7 @@
         </div>
         <div class="stat-info">
             <h3 id="active-users">-</h3>
-            <p>Active Users</p>
+            <p>Active (Last 7 Days)</p>
         </div>
     </div>
     
@@ -73,8 +73,8 @@
             <i class="fas fa-user-shield"></i>
         </div>
         <div class="stat-info">
-            <h3 id="moderators">-</h3>
-            <p>Moderators</p>
+            <h3 id="inactive-users">-</h3>
+            <p>Inactive (7+ Days)</p>
         </div>
     </div>
     
@@ -99,83 +99,92 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <div class="card-title-section">
-            <h2 class="card-title"><i class="fas fa-user-friends"></i> Active Users</h2>
-            <div id="search-results-info" class="search-results-info" style="display: none;">
-                <span id="search-results-count">0</span> results found
-            </div>
-        </div>
-        <div class="header-actions">
-            <div class="search-container">
-                <input type="text" id="user-search-input" class="search-input" placeholder="Search users..." onkeyup="usersManager.handleSearch(event)">
-                <i class="fas fa-search search-icon"></i>
-                <button type="button" id="clear-search-btn" class="clear-search-btn" onclick="usersManager.clearSearch()" style="display: none;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div id="search-loading" class="search-loading" style="display: none;">
-                    <i class="fas fa-spinner fa-spin"></i>
+<div class="tabs" id="user-admin-tabs">
+    <div class="tab active" id="users-tab" onclick="usersManager.switchTab('users')">Users</div>
+    <div class="tab" id="admins-tab" onclick="usersManager.switchTab('admins')">Admins</div>
+</div>
+
+<div id="users-section">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title-section">
+                <h2 class="card-title"><i class="fas fa-user-friends"></i> Active Users</h2>
+                <div id="search-results-info" class="search-results-info" style="display: none;">
+                    <span id="search-results-count">0</span> results found
                 </div>
             </div>
-            <button class="btn btn-outline" onclick="showUserFilters()">
-                <i class="fas fa-filter"></i> Filter
-            </button>
-            <button class="btn btn-primary" onclick="showAddUserModal()">
-                <i class="fas fa-plus"></i> Add User
-            </button>
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" id="user-search-input" class="search-input" placeholder="Search users..." onkeyup="usersManager.handleSearch(event)">
+                    <i class="fas fa-search search-icon"></i>
+                    <button type="button" id="clear-search-btn" class="clear-search-btn" onclick="usersManager.clearSearch()" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div id="search-loading" class="search-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+                <button class="btn btn-outline" onclick="showUserFilters()">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+                <button class="btn btn-primary" onclick="showAddAdminModal()">
+                    <i class="fas fa-user-plus"></i> Add Admin
+                </button>
+            </div>
         </div>
-    </div>
-    
-    <div class="card-body">
-        <div id="users-table-container">
-            <div class="loading">Loading users...</div>
+        <div class="card-body">
+            <div id="users-table-container">
+                <div class="loading">Loading users...</div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Add User Modal -->
-<div id="add-user-modal" class="modal" style="display: none;">
+<div id="admins-section" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title-section">
+                <h2 class="card-title"><i class="fas fa-user-shield"></i> Admins</h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="admins-table-container">
+                <div class="loading">Loading admins...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Admin Modal -->
+<div id="add-admin-modal" class="modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Add New User</h3>
-            <button class="modal-close" onclick="closeAddUserModal()">&times;</button>
+            <h3>Add New Admin</h3>
+            <button class="modal-close" onclick="closeAddAdminModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <form id="add-user-form" class="admin-form" action="/admin/api/users" method="POST">
+            <form id="add-admin-form" class="admin-form" action="/admin/api/admins" method="POST">
                 <div class="form-row">
                     <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="first_name" class="form-control" required>
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="last_name" class="form-control" required>
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control" required>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label>Role</label>
-                    <select name="role" class="form-control" required>
-                        <option value="user">User</option>
-                        <option value="moderator">Moderator</option>
-                        <option value="admin">Admin</option>
-                    </select>
+                    <label>Authenticate (Your Password)</label>
+                    <input type="password" name="auth_password" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Add User</button>
-                    <button type="button" class="btn btn-outline" onclick="closeAddUserModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Admin</button>
+                    <button type="button" class="btn btn-outline" onclick="closeAddAdminModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -197,7 +206,6 @@
                         <select name="role" class="form-control">
                             <option value="">All Roles</option>
                             <option value="user">User</option>
-                            <option value="moderator">Moderator</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
@@ -281,7 +289,6 @@
                         <label>Role</label>
                         <select name="role" class="form-control" required>
                             <option value="user">User</option>
-                            <option value="moderator">Moderator</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
@@ -323,6 +330,23 @@
         </div>
     </div>
 </div>
+
+<!-- Confirm Admin Delete Modal -->
+<div id="confirm-admin-delete-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button class="modal-close" onclick="closeConfirmAdminDeleteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this admin?</p>
+            <div class="form-group">
+                <button id="confirm-admin-delete-btn" class="btn btn-danger">Delete</button>
+                <button class="btn btn-outline" onclick="closeConfirmAdminDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -333,6 +357,8 @@ class UsersManager {
         this.currentFilters = {};
         this.currentUserId = null;
         this.searchTimeout = null;
+        this.currentTab = 'users';
+        this.currentAdminId = null;
         this.init();
     }
 
@@ -350,9 +376,9 @@ class UsersManager {
         });
 
         // Add user form submission
-        document.getElementById('add-user-form').addEventListener('submit', (e) => {
+        document.getElementById('add-admin-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            this.addUser();
+            this.addAdmin();
         });
 
         // Edit user form submission
@@ -386,12 +412,12 @@ class UsersManager {
 
             if (response.ok) {
                 const stats = await response.json();
-                document.getElementById('total-users').textContent = stats.total;
+                document.getElementById('total-accounts').textContent = stats.total_accounts;
                 document.getElementById('active-users').textContent = stats.active;
+                document.getElementById('inactive-users').textContent = stats.inactive;
                 document.getElementById('new-users').textContent = stats.new_this_month;
                 document.getElementById('banned-users').textContent = stats.banned;
                 document.getElementById('regular-users').textContent = stats.by_role.users;
-                document.getElementById('moderators').textContent = stats.by_role.moderators;
                 document.getElementById('admins').textContent = stats.by_role.admins;
                 document.getElementById('new-today').textContent = stats.new_today;
             }
@@ -468,7 +494,11 @@ class UsersManager {
                             <div style="color: var(--gray);">Total: ${user.total_contributions || 0}</div>
                         </div>
                     </td>
-                    <td><span class="badge badge-${this.getStatusBadgeClass(user.status)}">${user.status}</span></td>
+                    <td>
+                        <span class="badge badge-${user.status === 'banned' ? 'danger' : this.getStatusBadgeClass(this.getActiveStatus(user.last_login_at))}">
+                            ${user.status === 'banned' ? 'Banned' : (this.getActiveStatus(user.last_login_at) === 'active' ? 'Active (Last 7 Days)' : 'Inactive (7+ Days)')}
+                        </span>
+                    </td>
                     <td>
                         <div class="action-buttons">
                             <button class="action-btn btn-view" data-id="${user.id}" title="View Details">
@@ -794,7 +824,6 @@ class UsersManager {
     getRoleBadgeClass(role) {
         const classes = {
             'user': 'primary',
-            'moderator': 'warning',
             'admin': 'danger'
         };
         return classes[role] || 'gray';
@@ -897,8 +926,8 @@ class UsersManager {
         }
     }
 
-    async addUser() {
-        const form = document.getElementById('add-user-form');
+    async addAdmin() {
+        const form = document.getElementById('add-admin-form');
         const formData = new FormData(form);
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
@@ -907,7 +936,7 @@ class UsersManager {
         submitButton.textContent = 'Adding...';
 
         try {
-            const response = await fetch('/admin/api/users', {
+            const response = await fetch('/admin/api/admins', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -917,14 +946,14 @@ class UsersManager {
 
             if (response.ok) {
                 const result = await response.json();
-                window.adminDashboard.showNotification(result.message || 'User added successfully', 'success');
-                this.closeAddUserModal();
-                this.loadUsers(this.currentFilters);
+                window.adminDashboard.showNotification(result.message || 'Admin added successfully', 'success');
+                this.closeAddAdminModal();
                 this.loadStats();
+                this.loadUsers(this.currentFilters);
                 form.reset();
             } else {
                 const error = await response.json();
-                window.adminDashboard.showNotification(error.message || 'Error adding user', 'error');
+                window.adminDashboard.showNotification(error.message || 'Error adding admin', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -935,13 +964,120 @@ class UsersManager {
         }
     }
 
-    // Modal management
-    showAddUserModal() {
-        document.getElementById('add-user-modal').style.display = 'flex';
+    switchTab(tab) {
+        this.currentTab = tab;
+        document.getElementById('users-tab').classList.remove('active');
+        document.getElementById('admins-tab').classList.remove('active');
+        document.getElementById('users-section').style.display = 'none';
+        document.getElementById('admins-section').style.display = 'none';
+        if (tab === 'users') {
+            document.getElementById('users-tab').classList.add('active');
+            document.getElementById('users-section').style.display = '';
+            this.loadUsers(this.currentFilters);
+        } else {
+            document.getElementById('admins-tab').classList.add('active');
+            document.getElementById('admins-section').style.display = '';
+            this.loadAdmins();
+        }
     }
 
-    closeAddUserModal() {
-        document.getElementById('add-user-modal').style.display = 'none';
+    async loadAdmins() {
+        const container = document.getElementById('admins-table-container');
+        container.innerHTML = '<div class="loading">Loading admins...</div>';
+        try {
+            const response = await fetch('/admin/api/admins', {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const admins = await response.json();
+                container.innerHTML = this.generateAdminsTable(admins);
+            } else {
+                container.innerHTML = '<div class="error">Error loading admins</div>';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error">Network error</div>';
+        }
+    }
+
+    generateAdminsTable(admins) {
+        if (!admins.length) {
+            return '<div class="no-data">No admins found</div>';
+        }
+        let html = `
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        admins.forEach(admin => {
+            html += `
+                <tr>
+                    <td>${admin.username}</td>
+                    <td>${admin.name}</td>
+                    <td><span class="badge badge-${admin.status === 'active' ? 'success' : 'warning'}">${admin.status}</span></td>
+                    <td>${this.formatDate(admin.created_at)}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="usersManager.deleteAdmin(${admin.id})"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+        html += '</tbody></table>';
+        return html;
+    }
+
+    async deleteAdmin(adminId) {
+        this.currentAdminId = adminId;
+        document.getElementById('confirm-admin-delete-modal').style.display = 'flex';
+        document.getElementById('confirm-admin-delete-btn').onclick = async () => {
+            await this.confirmDeleteAdmin();
+        };
+    }
+
+    async confirmDeleteAdmin() {
+        if (!this.currentAdminId) return;
+        try {
+            const response = await fetch(`/admin/api/admins/${this.currentAdminId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const result = await response.json();
+                window.adminDashboard.showNotification(result.message || 'Admin deleted successfully', 'success');
+                this.closeConfirmAdminDeleteModal();
+                this.loadAdmins();
+                this.loadStats();
+            } else {
+                const error = await response.json();
+                window.adminDashboard.showNotification(error.message || 'Error deleting admin', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            window.adminDashboard.showNotification('Network error', 'error');
+        }
+    }
+
+    // Modal management
+    showAddAdminModal() {
+        document.getElementById('add-admin-modal').style.display = 'flex';
+    }
+
+    closeAddAdminModal() {
+        document.getElementById('add-admin-modal').style.display = 'none';
     }
 
     showEditUserModal() {
@@ -971,9 +1107,22 @@ class UsersManager {
         this.currentAction = null;
     }
 
+    closeConfirmAdminDeleteModal() {
+        document.getElementById('confirm-admin-delete-modal').style.display = 'none';
+        this.currentAdminId = null;
+    }
+
     // Utility methods
     formatDate(dateString) {
         return new Date(dateString).toLocaleDateString();
+    }
+
+    getActiveStatus(lastLoginAt) {
+        if (!lastLoginAt) return 'inactive';
+        const lastLogin = new Date(lastLoginAt);
+        const now = new Date();
+        const diffDays = (now - lastLogin) / (1000 * 60 * 60 * 24);
+        return diffDays <= 7 ? 'active' : 'inactive';
     }
 }
 
@@ -985,12 +1134,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Global functions for onclick handlers
-function showAddUserModal() {
-    usersManager.showAddUserModal();
+function showAddAdminModal() {
+    usersManager.showAddAdminModal();
 }
 
-function closeAddUserModal() {
-    usersManager.closeAddUserModal();
+function closeAddAdminModal() {
+    usersManager.closeAddAdminModal();
 }
 
 function showUserFilters() {
@@ -1015,6 +1164,10 @@ function closeEditUserModal() {
 
 function closeConfirmActionModal() {
     usersManager.closeConfirmActionModal();
+}
+
+function closeConfirmAdminDeleteModal() {
+    usersManager.closeConfirmAdminDeleteModal();
 }
 
 function clearUserSearch() {
