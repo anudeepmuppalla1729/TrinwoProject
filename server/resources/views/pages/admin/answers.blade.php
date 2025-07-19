@@ -123,6 +123,39 @@
         </div>
     </div>
 </div>
+
+<!-- View Answer Modal -->
+<div id="answer-details-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-comments"></i> Answer Details</h3>
+            <button class="modal-close" onclick="closeAnswerDetailsModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="answer-details-content">
+                <div class="loading">Loading answer details...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="confirm-delete-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button class="modal-close" onclick="closeConfirmDeleteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this answer? This action cannot be undone.</p>
+            <div class="form-group">
+                <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+                <button class="btn btn-outline" onclick="closeConfirmDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -131,6 +164,7 @@
 class AnswersManager {
     constructor() {
         this.currentFilters = {};
+        this.currentAnswerId = null;
         this.init();
     }
 
@@ -145,6 +179,23 @@ class AnswersManager {
         document.getElementById('answer-filter-form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.applyFilters();
+        });
+    }
+
+    setupTableEventListeners() {
+        // View answer
+        document.querySelectorAll('.btn-view').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const answerId = e.currentTarget.dataset.id;
+                this.viewAnswerDetails(answerId);
+            });
+        });
+        // Delete answer
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const answerId = e.currentTarget.dataset.id;
+                this.confirmDeleteAnswer(answerId);
+            });
         });
     }
 
@@ -183,7 +234,8 @@ class AnswersManager {
 
             if (response.ok) {
                 const answers = await response.json();
-                container.innerHTML = this.generateAnswersTable(answers);
+                container.innerHTML = this.generateAnswersTable(answers.data || []);
+                this.setupTableEventListeners();
             } else {
                 container.innerHTML = '<div class="error">Error loading answers</div>';
             }
@@ -216,7 +268,7 @@ class AnswersManager {
 
         answers.forEach(answer => {
             html += `
-                <tr>
+                <tr data-answer-id="${answer.id}">
                     <td>
                         <div style="font-weight: 500; margin-bottom: 5px;">${this.truncateText(answer.content, 80)}</div>
                     </td>
@@ -225,8 +277,8 @@ class AnswersManager {
                     </td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${answer.user.avatar || 'https://i.pravatar.cc/30?img=' + answer.user.id}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
-                            <span>${answer.user.username}</span>
+                            <img src="${answer.user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(answer.user.name || answer.user.username || 'User') + '&size=30&background=random'}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
+                            <span>${answer.user.name || answer.user.username || 'Unknown User'}</span>
                         </div>
                     </td>
                     <td>${this.formatDate(answer.created_at)}</td>
@@ -256,6 +308,51 @@ class AnswersManager {
 
         html += '</tbody></table>';
         return html;
+    }
+
+    async viewAnswerDetails(answerId) {
+        const modal = document.getElementById('answer-details-modal');
+        const content = document.getElementById('answer-details-content');
+        modal.style.display = 'flex';
+        content.innerHTML = '<div class="loading">Loading answer details...</div>';
+        try {
+            const response = await fetch(`/admin/api/answers/${answerId}`, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                content.innerHTML = this.generateAnswerDetailsHTML(data, answerId);
+                // Highlight the answer row in the main table
+                document.querySelectorAll('tr[data-answer-id]').forEach(row => {
+                    row.classList.remove('highlighted-answer');
+                });
+                const row = document.querySelector(`tr[data-answer-id='${answerId}']`);
+                if (row) row.classList.add('highlighted-answer');
+            } else {
+                content.innerHTML = '<div class="error">Failed to load answer details</div>';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            content.innerHTML = '<div class="error">Network error</div>';
+        }
+    }
+
+    generateAnswerDetailsHTML(data, answerId) {
+        return `
+            <div class="question-details">
+                <h4>Question: ${data.question.title}</h4>
+                <div style="margin-bottom: 1rem; color: #666;">Asked by: ${data.question.user_name || data.question.user_username || 'Unknown User'}</div>
+                <div style="margin-bottom: 1rem;">${data.question.content || ''}</div>
+                <h5>Answer:</h5>
+                <div class="answer-item highlighted-answer">
+                    <div style="font-weight: 500;">${data.content}</div>
+                    <div style="color: #888; font-size: 0.9rem;">By: ${data.user.name || data.user.username || 'Unknown User'} | ${this.formatDate(data.created_at)}</div>
+                </div>
+            </div>
+        `;
     }
 
     applyFilters() {
@@ -293,6 +390,33 @@ class AnswersManager {
         this.loadAnswers(this.currentFilters);
     }
 
+    confirmDeleteAnswer(answerId) {
+        this.currentAnswerId = answerId;
+        document.getElementById('confirm-delete-modal').style.display = 'flex';
+        document.getElementById('confirm-delete-btn').onclick = () => this.deleteAnswer(answerId);
+    }
+
+    async deleteAnswer(answerId) {
+        const modal = document.getElementById('confirm-delete-modal');
+        modal.style.display = 'none';
+        try {
+            const response = await fetch(`/admin/api/answers/${answerId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            });
+            if (response.ok) {
+                this.refreshAnswers();
+            } else {
+                alert('Failed to delete answer');
+            }
+        } catch (error) {
+            alert('Network error');
+        }
+    }
+
     // Utility methods
     truncateText(text, maxLength = 100) {
         if (!text) return 'N/A';
@@ -304,6 +428,11 @@ class AnswersManager {
         return new Date(dateString).toLocaleDateString();
     }
 }
+
+// Add highlight style
+const style = document.createElement('style');
+style.innerHTML = `.highlighted-answer { background: #e6f7ff !important; border-left: 4px solid #1890ff; }`;
+document.head.appendChild(style);
 
 // Initialize answers manager
 let answersManager;
@@ -327,6 +456,16 @@ function resetAnswerFilters() {
 
 function refreshAnswers() {
     answersManager.refreshAnswers();
+}
+function closeAnswerDetailsModal() {
+    document.getElementById('answer-details-modal').style.display = 'none';
+    // Remove highlight from all rows
+    document.querySelectorAll('tr[data-answer-id]').forEach(row => {
+        row.classList.remove('highlighted-answer');
+    });
+}
+function closeConfirmDeleteModal() {
+    document.getElementById('confirm-delete-modal').style.display = 'none';
 }
 </script>
 @endpush 
