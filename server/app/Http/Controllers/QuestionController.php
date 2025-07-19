@@ -32,8 +32,8 @@ class QuestionController extends Controller
                     'user' => $question->user->name,
                     'created_at' => $question->created_at->diffForHumans(),
                     'answers' => $question->answers->count(),
-                    'upvotes' => $question->upvotes ?? 0,
-                    'downvotes' => $question->downvotes ?? 0,
+                    'upvotes' => 0, // Questions don't have upvotes in this system
+                    'downvotes' => 0, // Questions don't have downvotes in this system
                     'tags' => $question->tags->pluck('name')->toArray()
                 ];
             });
@@ -156,8 +156,8 @@ class QuestionController extends Controller
             'user' => $questionModel->user->name,
             'user_location' => $questionModel->user->studying_in ?? 'Unknown Location',
             'created_at' => $questionModel->created_at->diffForHumans(),
-            'upvotes' => $questionModel->upvotes ?? 0,
-            'downvotes' => $questionModel->downvotes ?? 0,
+            'upvotes' => 0, // Questions don't have upvotes in this system
+            'downvotes' => 0, // Questions don't have downvotes in this system
             'tags' => $questionModel->tags->pluck('name')->toArray()
         ];
         
@@ -310,5 +310,36 @@ class QuestionController extends Controller
         // In a real application, you would generate a share link for the question
         // For now, we'll redirect to the question page
         return redirect()->route('question', ['id' => $id])->with('success', 'Question shared!');
+    }
+
+    /**
+     * Report a question
+     */
+    public function report(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return back()->with('error', 'You must be logged in to report.');
+        }
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+        $userId = AUTH::id();
+        $questionId = $id;
+        // Prevent duplicate reports by same user
+        $existing = \App\Models\QuestionReport::where('reporter_id', $userId)->where('question_id', $questionId)->first();
+        if ($existing) {
+            $msg = 'You have already reported this question.';
+            if ($request->expectsJson()) return response()->json(['success' => false, 'message' => $msg], 409);
+            return back()->with('error', $msg);
+        }
+        \App\Models\QuestionReport::create([
+            'reporter_id' => $userId,
+            'question_id' => $questionId,
+            'reason' => $request->reason,
+        ]);
+        $msg = 'Question reported successfully.';
+        if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
+        return back()->with('success', $msg);
     }
 }

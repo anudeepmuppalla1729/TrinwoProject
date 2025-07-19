@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PostReport;
 
 class Post extends Model
 {
@@ -11,6 +12,32 @@ class Post extends Model
     protected $fillable = [
         'user_id', 'heading', 'details', 'visibility', 'upvotes', 'downvotes'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Cascade delete related data when post is deleted
+        static::deleting(function ($post) {
+            // Delete post images
+            $post->images()->delete();
+            
+            // Delete post tags
+            $post->tags()->detach();
+            
+            // Delete comments
+            $post->comments()->delete();
+            
+            // Delete votes
+            $post->votes()->delete();
+            
+            // Delete bookmarks
+            $post->bookmarks()->delete();
+            
+            // Delete reports
+            PostReport::where('post_id', $post->post_id)->delete();
+        });
+    }
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');

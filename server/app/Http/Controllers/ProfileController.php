@@ -67,7 +67,17 @@ class ProfileController extends Controller
         $questionsCount = $user->questions()->count();
         $answersCount = $user->answers()->count();
         $postsCount = $user->posts()->count();
-        $totalUpvotes = $user->answers()->sum('upvotes') + $user->posts()->sum('upvotes');
+        
+        // Calculate total upvotes from answer_votes and post_votes tables
+        $answerUpvotes = \App\Models\AnswerVote::whereHas('answer', function($query) use ($user) {
+            $query->where('user_id', $user->user_id);
+        })->where('vote_type', 'upvote')->count();
+        
+        $postUpvotes = \App\Models\PostVote::whereHas('post', function($query) use ($user) {
+            $query->where('user_id', $user->user_id);
+        })->where('vote_type', 'upvote')->count();
+        
+        $totalUpvotes = $answerUpvotes + $postUpvotes;
 
         // Recent activity: last 3 questions, answers, and posts
         $recentQuestions = $user->questions()->latest()->take(1)->get();
@@ -122,8 +132,8 @@ class ProfileController extends Controller
                     'description' => $question->description,
                     'created_at' => $question->created_at->format('M d, Y'),
                     'answers' => $question->answers->count(),
-                    'upvotes' => $question->upvotes ?? 0,
-                    'downvotes' => $question->downvotes ?? 0,
+                    'upvotes' => 0, // Questions don't have upvotes in this system
+                    'downvotes' => 0, // Questions don't have downvotes in this system
                     'tags' => $question->tags->pluck('name')->toArray()
                 ];
             });

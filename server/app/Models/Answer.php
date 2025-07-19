@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AnswerReport;
 
 class Answer extends Model
 {
@@ -11,6 +12,20 @@ class Answer extends Model
     protected $fillable = [
         'question_id', 'user_id', 'content'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Cascade delete related data when answer is deleted
+        static::deleting(function ($answer) {
+            // Delete votes
+            $answer->votes()->delete();
+            
+            // Delete reports
+            AnswerReport::where('answer_id', $answer->answer_id)->delete();
+        });
+    }
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');

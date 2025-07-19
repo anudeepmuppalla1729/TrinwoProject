@@ -112,7 +112,7 @@ function renderPosts() {
                 <button>Not interested</button><hr>
                 <button>Bookmark</button><hr>
                 <button>Copy Link</button><hr>
-                <button>Report</button>
+                ${window.isAuthenticated ? `<button class="report-btn" data-post-id="${post.id}"><i class="fas fa-flag"></i> Report</button>` : ''}
               </div>
             </span>
             <span class="close-post">×</span>
@@ -124,7 +124,7 @@ function renderPosts() {
         <p>${post.body}</p> /* Post body */
         ${imageHtml}
         <div class="post-meta">
-          <small>Posted on ${post.created_at}</small>
+          <small>Posted on ${post.created_at}
         </div>
         <div class="comments-container" style="display: none; margin-top: 15px;">
           ${commentsHtml}
@@ -140,7 +140,7 @@ function renderPosts() {
           </button>
           <button class="action-btn downvote-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.userVote === 'downvote' ? '#dc3545' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
             <i class="bi ${post.userVote === 'downvote' ? 'bi-hand-thumbs-down-fill' : 'bi-hand-thumbs-down'}" style="font-size: 1.2rem; margin-right: 5px;"></i>
-            <span>${post.downvotes || 0}</span>
+            <span>${post.downvotes || 0}
           </button>
           <button class="action-btn comment-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
             <i class="bi bi-pencil-square" style="font-size: 1.2rem;"></i>
@@ -409,6 +409,87 @@ function attachPostEvents() {
       });
     });
   });
+
+  // Report button logic
+  document.querySelectorAll('.report-btn').forEach((btn) => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const postId = btn.getAttribute('data-post-id');
+      // Open modal
+      const reportModal = document.getElementById('reportModal');
+      const reportForm = document.getElementById('reportForm');
+      const reportIdInput = document.getElementById('reportIdInput');
+      const reasonSelect = document.getElementById('reasonSelect');
+      const detailsInput = document.getElementById('detailsInput');
+      const reportError = document.getElementById('reportError');
+      reportIdInput.value = postId;
+      reportForm.action = `/posts/${postId}/report`;
+      reasonSelect.value = '';
+      detailsInput.value = '';
+      reportError.style.display = 'none';
+      reportModal.style.display = 'flex';
+    });
+  });
+  // Modal close logic
+  const reportModal = document.getElementById('reportModal');
+  if (reportModal) {
+    const closeModalBtn = reportModal.querySelector('.close-modal');
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', function() {
+        reportModal.style.display = 'none';
+      });
+    }
+    // Close on outside click
+    reportModal.addEventListener('click', function(e) {
+      if (e.target === reportModal) reportModal.style.display = 'none';
+    });
+    // Handle form submit
+    const reportForm = document.getElementById('reportForm');
+    if (reportForm) {
+      reportForm.addEventListener('submit', function(e) {
+        const reasonSelect = document.getElementById('reasonSelect');
+        const detailsInput = document.getElementById('detailsInput');
+        const reportError = document.getElementById('reportError');
+        if (!reasonSelect.value) {
+          e.preventDefault();
+          reportError.textContent = 'Please select a reason.';
+          reportError.style.display = 'block';
+          return false;
+        }
+        e.preventDefault();
+        // Submit via AJAX
+        const postId = document.getElementById('reportIdInput').value;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        fetch(`/posts/${postId}/report`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin', // Ensure cookies/session are sent
+          body: JSON.stringify({
+            reason: reasonSelect.value,
+            details: detailsInput.value
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            reportModal.style.display = 'none';
+            alert('Report submitted successfully!');
+          } else {
+            reportError.textContent = data.message || 'Failed to submit report.';
+            reportError.style.display = 'block';
+          }
+        })
+        .catch(() => {
+          reportError.textContent = 'Failed to submit report.';
+          reportError.style.display = 'block';
+        });
+      });
+    }
+  }
 
   document.addEventListener('click', closeAllMenus);
 }

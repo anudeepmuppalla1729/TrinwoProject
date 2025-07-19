@@ -6,6 +6,13 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminController;
+use App\Mail\ReportNotification;
+use App\Models\PostReport;
+use Illuminate\Support\Facades\Mail;
+
+
 
 Route::get('/', function () {
     return view('pages.login');
@@ -47,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/answers/{id}/comment', [AnswerController::class, 'comment'])->name('answers.comment');
     Route::post('/answers/{id}/share', [AnswerController::class, 'share'])->name('answers.share');
     
-    // Post/Insight routes
+    
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
@@ -107,4 +114,96 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/user-information', [\App\Http\Controllers\UserOnboardingController::class, 'submitUserInfo']);
     Route::get('/user-interests', [\App\Http\Controllers\UserOnboardingController::class, 'showInterestsForm'])->name('user.interests');
     Route::post('/user-interests', [\App\Http\Controllers\UserOnboardingController::class, 'submitInterests']);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/posts/{id}/report', [PostController::class, 'report'])->name('posts.report');
+    Route::post('/questions/{id}/report', [QuestionController::class, 'report'])->name('questions.report');
+    Route::post('/answers/{id}/report', [AnswerController::class, 'report'])->name('answers.report');
+});
+
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+Route::middleware('auth:admin')->group(function () {
+    // Admin Dashboard Views
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/test-email', function() {
+        try {
+            $report = PostReport::with('reporter')->first();
+            if ($report) {
+                Mail::to('kvmithilesh2005@gmail.com')->send(new ReportNotification($report, 'resolved', 'post'));
+                return response()->json(['success' => true, 'message' => 'Test email sent successfully!']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'No reports found to test with']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    })->name('admin.test.email');
+    
+    Route::get('/admin/test-resolve', function() {
+        try {
+            $report = PostReport::first();
+            if ($report) {
+                $report->update(['status' => 'resolved']);
+                return response()->json(['success' => true, 'message' => 'Test resolve successful!', 'report_id' => $report->report_id]);
+            } else {
+                return response()->json(['success' => false, 'message' => 'No reports found']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    })->name('admin.test.resolve');
+    Route::get('/admin/reports', [AdminController::class, 'reports'])->name('admin.reports');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::get('/admin/questions', [AdminController::class, 'questions'])->name('admin.questions');
+    Route::get('/admin/answers', [AdminController::class, 'answers'])->name('admin.answers');
+    Route::get('/admin/posts', [AdminController::class, 'posts'])->name('admin.posts');
+    Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
+    // Admin API Endpoints
+    Route::prefix('admin/api')->group(function () {
+        // Dashboard API
+        Route::get('/dashboard/stats', [AdminController::class, 'dashboardStats']);
+        Route::get('/dashboard/recent-activity', [AdminController::class, 'recentActivity']);
+        Route::get('/dashboard/top-contributors', [AdminController::class, 'topContributors']);
+        Route::get('/dashboard/trending-topics', [AdminController::class, 'trendingTopics']);
+
+        // Reports API
+        Route::get('/reports/stats', [AdminController::class, 'reportsStats']);
+        Route::get('/reports', [AdminController::class, 'getReports']);
+        Route::get('/reports/{type}/{id}', [AdminController::class, 'getReportDetails']);
+        Route::put('/reports/{type}/{id}/status', [AdminController::class, 'updateReportStatus']);
+        Route::delete('/reports/{type}/{id}', [AdminController::class, 'deleteReport']);
+        Route::delete('/reports/{type}/{id}/content', [AdminController::class, 'deleteReportedContent']);
+
+        // Users API
+        Route::get('/users/stats', [AdminController::class, 'usersStats']);
+        Route::get('/users', [AdminController::class, 'getUsers']);
+        Route::post('/users', [AdminController::class, 'storeUser']);
+
+        // Questions API
+        Route::get('/questions/stats', [AdminController::class, 'questionsStats']);
+        Route::get('/questions', [AdminController::class, 'getQuestions']);
+
+        // Answers API
+        Route::get('/answers/stats', [AdminController::class, 'answersStats']);
+        Route::get('/answers', [AdminController::class, 'getAnswers']);
+
+        // Posts API
+        Route::get('/posts/stats', [AdminController::class, 'postsStats']);
+        Route::get('/posts', [AdminController::class, 'getPosts']);
+        Route::post('/posts', [AdminController::class, 'storePost']);
+
+        // Settings API
+        Route::post('/settings', [AdminController::class, 'updateSettings']);
+        Route::post('/settings/security', [AdminController::class, 'updateSecuritySettings']);
+        Route::post('/settings/appearance', [AdminController::class, 'updateAppearanceSettings']);
+
+        // System API
+        Route::post('/system/clear-cache', [AdminController::class, 'clearCache']);
+        Route::post('/system/optimize', [AdminController::class, 'optimizeSystem']);
+    });
 });

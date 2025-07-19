@@ -462,4 +462,35 @@ class PostController extends Controller
             'isBookmarked' => $bookmark ? true : false
         ]);
     }
+
+    /**
+     * Report a post
+     */
+    public function report(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return back()->with('error', 'You must be logged in to report.');
+        }
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+        $userId = AUTH::id();
+        $postId = $id;
+        // Prevent duplicate reports by same user
+        $existing = \App\Models\PostReport::where('reporter_id', $userId)->where('post_id', $postId)->first();
+        if ($existing) {
+            $msg = 'You have already reported this post.';
+            if ($request->expectsJson()) return response()->json(['success' => false, 'message' => $msg], 409);
+            return back()->with('error', $msg);
+        }
+        \App\Models\PostReport::create([
+            'reporter_id' => $userId,
+            'post_id' => $postId,
+            'reason' => $request->reason,
+        ]);
+        $msg = 'Post reported successfully.';
+        if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
+        return back()->with('success', $msg);
+    }
 }
