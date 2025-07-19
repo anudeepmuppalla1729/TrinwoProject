@@ -126,7 +126,7 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('adm
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-Route::middleware('auth:admin')->group(function () {
+Route::middleware(['auth:admin', 'check.admin.status'])->group(function () {
     // Admin Dashboard Views
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/test-email', function() {
@@ -183,10 +183,21 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/users/stats', [AdminController::class, 'usersStats']);
         Route::get('/users', [AdminController::class, 'getUsers']);
         Route::post('/users', [AdminController::class, 'storeUser']);
+        Route::get('/users/{id}', [AdminController::class, 'getUserDetails']);
+        Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+        Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+        Route::post('/users/{id}/ban', [AdminController::class, 'banUser']);
+        Route::post('/users/{id}/unban', [AdminController::class, 'unbanUser']);
+        Route::post('/users/{id}/role', [AdminController::class, 'changeUserRole']);
 
         // Questions API
         Route::get('/questions/stats', [AdminController::class, 'questionsStats']);
         Route::get('/questions', [AdminController::class, 'getQuestions']);
+        Route::get('/questions/{id}', [AdminController::class, 'getQuestionDetails']);
+        Route::put('/questions/{id}', [AdminController::class, 'updateQuestion']);
+        Route::delete('/questions/{id}', [AdminController::class, 'deleteQuestion']);
+        Route::post('/questions/{id}/toggle-status', [AdminController::class, 'toggleQuestionStatus']);
+        Route::post('/questions/{id}/toggle-featured', [AdminController::class, 'toggleQuestionFeatured']);
 
         // Answers API
         Route::get('/answers/stats', [AdminController::class, 'answersStats']);

@@ -20,10 +20,23 @@ class User extends Authenticatable
     protected $primaryKey = 'user_id';
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
+        'username',
         'email',
-        'password','profile_pic',
-        'phone', 'age', 'gender', 'studying_in',
-        'expert_in', 'interests', 'bio'
+        'password',
+        'role',
+        'status',
+        'avatar',
+        'last_login_at',
+        'profile_pic',
+        'phone', 
+        'age', 
+        'gender', 
+        'studying_in',
+        'expert_in', 
+        'interests', 
+        'bio'
     ];
 
     /**
@@ -78,6 +91,30 @@ class User extends Authenticatable
     public function postVotes()
     {
         return $this->hasMany(PostVote::class, 'user_id');
+    }
+
+    /**
+     * Check if the user can login
+     */
+    public function canLogin()
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if the user is banned
+     */
+    public function isBanned()
+    {
+        return $this->status === 'banned';
+    }
+
+    /**
+     * Check if the user is inactive
+     */
+    public function isInactive()
+    {
+        return $this->status === 'inactive';
     }
 
 }

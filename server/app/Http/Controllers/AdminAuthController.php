@@ -24,6 +24,13 @@ class AdminAuthController extends Controller
         $admin = Admin::where('username', $request->username)->first();
         
         if ($admin && Hash::check($request->password, $admin->password)) {
+            // Check if admin can login
+            if (!$admin->canLogin()) {
+                return back()->withErrors([
+                    'username' => 'Your admin account is currently inactive. Please contact the system administrator.',
+                ])->withInput($request->only('username'));
+            }
+            
             Auth::guard('admin')->login($admin);
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));

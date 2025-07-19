@@ -11,7 +11,7 @@ class Admin extends Authenticatable
     use HasFactory, Notifiable;
     
     protected $fillable = [
-        'username', 'password', 'name'
+        'username', 'password', 'name', 'status'
     ];
     
     protected $hidden = ['password'];
@@ -38,5 +38,21 @@ class Admin extends Authenticatable
     public function getAuthIdentifier()
     {
         return $this->getAttribute($this->getAuthIdentifierName());
+    }
+
+    /**
+     * Check if the admin can login
+     */
+    public function canLogin()
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if the admin is inactive
+     */
+    public function isInactive()
+    {
+        return $this->status === 'inactive';
     }
 } 
