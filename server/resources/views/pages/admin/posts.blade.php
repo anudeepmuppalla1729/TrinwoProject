@@ -25,33 +25,33 @@
             <p>Total Posts</p>
         </div>
     </div>
-    
     <div class="stat-card">
         <div class="stat-icon" style="background: rgba(76, 201, 240, 0.1); color: var(--success);">
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-calendar-day"></i>
         </div>
         <div class="stat-info">
-            <h3 id="published-posts">-</h3>
-            <p>Published</p>
+            <h3 id="today-posts">-</h3>
+            <p>Today</p>
         </div>
     </div>
-    
     <div class="stat-card">
         <div class="stat-icon" style="background: rgba(248, 150, 30, 0.1); color: var(--warning);">
-            <i class="fas fa-edit"></i>
+            <i class="fas fa-calendar-week"></i>
         </div>
         <div class="stat-info">
-            <h3 id="draft-posts">-</h3>
-            <p>Drafts</p>
+            <h3 id="week-posts">-</h3>
+            <p>This Week</p>
         </div>
     </div>
-</div>
-
-<div class="tabs">
-    <div class="tab active" data-target="all-posts">All Posts</div>
-    <div class="tab" data-target="published-posts">Published</div>
-    <div class="tab" data-target="draft-posts">Drafts</div>
-    <div class="tab" data-target="archived-posts">Archived</div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(220, 53, 69, 0.1); color: var(--danger);">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div class="stat-info">
+            <h3 id="month-posts">-</h3>
+            <p>This Month</p>
+        </div>
+    </div>
 </div>
 
 <div class="card">
@@ -61,15 +61,43 @@
             <button class="btn btn-outline" onclick="showPostFilters()">
                 <i class="fas fa-filter"></i> Filter
             </button>
-            <button class="btn btn-primary" onclick="showAddPostModal()">
-                <i class="fas fa-plus"></i> Create Post
-            </button>
         </div>
     </div>
-    
     <div class="card-body">
         <div id="posts-table-container">
             <div class="loading">Loading posts...</div>
+        </div>
+    </div>
+</div>
+
+<!-- View Post Modal -->
+<div id="post-details-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-file-alt"></i> Post Details</h3>
+            <button class="modal-close" onclick="closePostDetailsModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="post-details-content">
+                <div class="loading">Loading post details...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="confirm-delete-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button class="modal-close" onclick="closeConfirmDeleteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div class="form-group">
+                <button id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+                <button class="btn btn-outline" onclick="closeConfirmDeleteModal()">Cancel</button>
+            </div>
         </div>
     </div>
 </div>
@@ -194,52 +222,36 @@
 class PostsManager {
     constructor() {
         this.currentFilters = {};
-        this.currentTab = 'all-posts';
+        this.currentPostId = null;
         this.init();
     }
-
     init() {
         this.loadStats();
         this.loadPosts();
         this.setupEventListeners();
     }
-
     setupEventListeners() {
-        // Filter form submission
         document.getElementById('post-filter-form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.applyFilters();
         });
-
-        // Add post form submission
         document.getElementById('add-post-form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.addPost();
         });
-
-        // Tab functionality
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 this.switchTab(e.target);
             });
         });
     }
-
     switchTab(clickedTab) {
-        // Remove active class from all tabs
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-        
-        // Add active class to clicked tab
         clickedTab.classList.add('active');
-        
-        // Update current tab
         this.currentTab = clickedTab.getAttribute('data-target');
-        
-        // Update filters and reload
         this.currentFilters.status = this.getStatusFromTab(this.currentTab);
         this.loadPosts(this.currentFilters);
     }
-
     getStatusFromTab(tab) {
         const statusMap = {
             'all-posts': '',
@@ -249,7 +261,6 @@ class PostsManager {
         };
         return statusMap[tab] || '';
     }
-
     async loadStats() {
         try {
             const response = await fetch('/admin/api/posts/stats', {
@@ -258,22 +269,20 @@ class PostsManager {
                     'Accept': 'application/json'
                 }
             });
-
             if (response.ok) {
                 const stats = await response.json();
                 document.getElementById('total-posts').textContent = stats.total;
-                document.getElementById('published-posts').textContent = stats.published;
-                document.getElementById('draft-posts').textContent = stats.draft;
+                document.getElementById('today-posts').textContent = stats.today;
+                document.getElementById('week-posts').textContent = stats.week;
+                document.getElementById('month-posts').textContent = stats.month;
             }
         } catch (error) {
             console.error('Error loading stats:', error);
         }
     }
-
     async loadPosts(filters = {}) {
         const container = document.getElementById('posts-table-container');
         container.innerHTML = '<div class="loading">Loading posts...</div>';
-
         try {
             const queryString = new URLSearchParams(filters).toString();
             const response = await fetch(`/admin/api/posts?${queryString}`, {
@@ -282,10 +291,10 @@ class PostsManager {
                     'Accept': 'application/json'
                 }
             });
-
             if (response.ok) {
                 const posts = await response.json();
-                container.innerHTML = this.generatePostsTable(posts);
+                container.innerHTML = this.generatePostsTable(posts.data || []);
+                this.setupTableEventListeners();
             } else {
                 container.innerHTML = '<div class="error">Error loading posts</div>';
             }
@@ -294,12 +303,10 @@ class PostsManager {
             container.innerHTML = '<div class="error">Network error</div>';
         }
     }
-
     generatePostsTable(posts) {
         if (!posts.length) {
             return '<div class="no-data">No posts found</div>';
         }
-
         let html = `
             <table class="table">
                 <thead>
@@ -307,86 +314,152 @@ class PostsManager {
                         <th>Title</th>
                         <th>Author</th>
                         <th>Date</th>
-                        <th>Views</th>
                         <th>Comments</th>
-                        <th>Status</th>
+                        <th>Upvotes</th>
+                        <th>Downvotes</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
         `;
-
         posts.forEach(post => {
             html += `
-                <tr>
-                    <td>
-                        <div>
-                            <div style="font-weight: 500; margin-bottom: 5px;">${this.truncateText(post.title, 60)}</div>
-                            <div style="font-size: 0.85rem; color: var(--gray);">${this.truncateText(post.content, 80)}</div>
-                        </div>
-                    </td>
+                <tr data-post-id="${post.id}">
+                    <td>${this.truncateText(post.title, 80)}</td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${post.user.avatar || 'https://i.pravatar.cc/30?img=' + post.user.id}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
-                            <span>${post.user.username}</span>
+                            <img src="${post.user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user.name || post.user.username || 'User') + '&size=30&background=random'}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
+                            <span>${post.user.name || post.user.username || 'Unknown User'}</span>
                         </div>
                     </td>
                     <td>${this.formatDate(post.created_at)}</td>
-                    <td>${post.views_count || 0}</td>
                     <td>${post.comments_count || 0}</td>
-                    <td><span class="badge badge-${this.getStatusBadgeClass(post.status)}">${post.status}</span></td>
+                    <td>${post.upvotes || 0}</td>
+                    <td>${post.downvotes || 0}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="action-btn btn-view" data-id="${post.id}" data-type="post">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn btn-edit" data-id="${post.id}" data-type="post">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn btn-delete" data-id="${post.id}" data-type="post">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="action-btn btn-view" data-id="${post.id}"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn btn-delete" data-id="${post.id}"><i class="fas fa-trash"></i></button>
                         </div>
                     </td>
                 </tr>
             `;
         });
-
         html += '</tbody></table>';
         return html;
     }
-
-    getStatusBadgeClass(status) {
-        const classes = {
-            'published': 'success',
-            'draft': 'warning',
-            'archived': 'danger'
-        };
-        return classes[status] || 'gray';
+    setupTableEventListeners() {
+        document.querySelectorAll('.btn-view').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const postId = e.currentTarget.dataset.id;
+                this.viewPostDetails(postId);
+            });
+        });
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const postId = e.currentTarget.dataset.id;
+                this.confirmDeletePost(postId);
+            });
+        });
     }
-
+    async viewPostDetails(postId) {
+        const modal = document.getElementById('post-details-modal');
+        const content = document.getElementById('post-details-content');
+        modal.style.display = 'flex';
+        content.innerHTML = '<div class="loading">Loading post details...</div>';
+        try {
+            const response = await fetch(`/admin/api/posts/${postId}`, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                content.innerHTML = this.generatePostDetailsHTML(data);
+                // Highlight the post row in the main table
+                document.querySelectorAll('tr[data-post-id]').forEach(row => {
+                    row.classList.remove('highlighted-post');
+                });
+                const row = document.querySelector(`tr[data-post-id='${postId}']`);
+                if (row) row.classList.add('highlighted-post');
+            } else {
+                content.innerHTML = '<div class="error">Failed to load post details</div>';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            content.innerHTML = '<div class="error">Network error</div>';
+        }
+    }
+    generatePostDetailsHTML(data) {
+        let imagesHtml = '';
+        if (data.images && data.images.length) {
+            imagesHtml = '<div class="post-images">' + data.images.map(url => `<img src="/storage/${url}" style="max-width: 120px; margin-right: 10px;">`).join('') + '</div>';
+        }
+        let commentsHtml = '';
+        if (data.comments && data.comments.length) {
+            commentsHtml = '<div class="post-comments"><h5>Comments:</h5>' + data.comments.map(c => `<div class="comment-item"><b>${c.user}</b>: ${c.text} <span style="color:#888;font-size:0.9rem;">${this.formatDate(c.created_at)}</span></div>`).join('') + '</div>';
+        }
+        return `
+            <div class="post-details-modal-content">
+                <h4>${data.title}</h4>
+                <div style="margin-bottom: 1rem; color: #666;">By: ${data.user.name || data.user.username || 'Unknown User'}</div>
+                <div style="margin-bottom: 1rem;">${data.content}</div>
+                ${imagesHtml}
+                ${commentsHtml}
+                <div style="margin-top: 1rem; color: #888; font-size: 0.9rem;">Created: ${this.formatDate(data.created_at)}</div>
+            </div>
+        `;
+    }
+    confirmDeletePost(postId) {
+        this.currentPostId = postId;
+        document.getElementById('confirm-delete-modal').style.display = 'flex';
+        document.getElementById('confirm-delete-btn').onclick = () => this.deletePost(postId);
+    }
+    async deletePost(postId) {
+        const modal = document.getElementById('confirm-delete-modal');
+        modal.style.display = 'none';
+        const loader = document.getElementById('loader-overlay');
+        loader.style.display = 'flex';
+        try {
+            const response = await fetch(`/admin/api/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            });
+            loader.style.display = 'none';
+            if (response.ok) {
+                this.loadStats();
+                this.loadPosts(this.currentFilters);
+                showToast('Post deleted successfully!', 'success');
+            } else {
+                showToast('Failed to delete post', 'error');
+            }
+        } catch (error) {
+            loader.style.display = 'none';
+            showToast('Network error', 'error');
+        }
+    }
     applyFilters() {
         const form = document.getElementById('post-filter-form');
         const formData = new FormData(form);
         const filters = {};
-
         for (const [key, value] of formData.entries()) {
             if (value) {
                 filters[key] = value;
             }
         }
-
         this.currentFilters = filters;
         this.loadPosts(filters);
         this.closePostFilterModal();
     }
-
     resetPostFilters() {
         document.getElementById('post-filter-form').reset();
         this.currentFilters = {};
         this.loadPosts();
     }
-
     async addPost() {
         const form = document.getElementById('add-post-form');
         const formData = new FormData(form);
@@ -424,61 +497,104 @@ class PostsManager {
             submitButton.textContent = originalText;
         }
     }
-
     showAddPostModal() {
         document.getElementById('add-post-modal').style.display = 'flex';
     }
-
     closeAddPostModal() {
         document.getElementById('add-post-modal').style.display = 'none';
     }
-
     showPostFilterModal() {
         document.getElementById('post-filter-modal').style.display = 'flex';
     }
-
     closePostFilterModal() {
         document.getElementById('post-filter-modal').style.display = 'none';
     }
-
-    // Utility methods
+    formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString();
+    }
     truncateText(text, maxLength = 100) {
         if (!text) return 'N/A';
         if (text.length <= maxLength) return text;
         return text.substring(0, maxLength) + '...';
     }
+}
+// Add highlight style
+const style = document.createElement('style');
+style.innerHTML = `.highlighted-post { background: #e6f7ff !important; border-left: 4px solid #1890ff; }`;
+document.head.appendChild(style);
 
-    formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString();
-    }
+// Loader Overlay
+const loaderOverlay = document.createElement('div');
+loaderOverlay.id = 'loader-overlay';
+loaderOverlay.style.display = 'none';
+loaderOverlay.style.position = 'fixed';
+loaderOverlay.style.top = '0';
+loaderOverlay.style.left = '0';
+loaderOverlay.style.width = '100vw';
+loaderOverlay.style.height = '100vh';
+loaderOverlay.style.background = 'rgba(255,255,255,0.6)';
+loaderOverlay.style.zIndex = '9999';
+loaderOverlay.style.alignItems = 'center';
+loaderOverlay.style.justifyContent = 'center';
+loaderOverlay.innerHTML = '<div class="loading-spinner" style="border:4px solid #f3f3f3;border-top:4px solid #4361ee;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;"></div>';
+document.body.appendChild(loaderOverlay);
+
+// Toast Notification
+const toastContainer = document.createElement('div');
+toastContainer.id = 'toast-container';
+toastContainer.style.position = 'fixed';
+toastContainer.style.top = '30px';
+toastContainer.style.right = '30px';
+toastContainer.style.zIndex = '10000';
+toastContainer.style.display = 'flex';
+toastContainer.style.flexDirection = 'column';
+toastContainer.style.gap = '10px';
+document.body.appendChild(toastContainer);
+
+const styleElement = document.createElement('style');
+styleElement.innerHTML = `
+    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    .toast{min-width:220px;max-width:350px;padding:16px 24px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1rem;display:flex;align-items:center;gap:12px;animation:fadeIn 0.3s;}
+    .toast-success{background:#e6f9f0;color:#1b7f5a;border-left:5px solid #1b7f5a;}
+    .toast-error{background:#fff0f0;color:#b91c1c;border-left:5px solid #b91c1c;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+`;
+document.head.appendChild(styleElement);
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.innerHTML = (type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>') + message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(() => container.removeChild(toast), 300);
+    }, 2500);
 }
 
-// Initialize posts manager
 let postsManager;
-
 document.addEventListener('DOMContentLoaded', () => {
     postsManager = new PostsManager();
 });
-
-// Global functions for onclick handlers
-function showAddPostModal() {
-    postsManager.showAddPostModal();
-}
-
-function closeAddPostModal() {
-    postsManager.closeAddPostModal();
-}
-
 function showPostFilters() {
     postsManager.showPostFilterModal();
 }
-
 function closePostFilterModal() {
     postsManager.closePostFilterModal();
 }
-
 function resetPostFilters() {
     postsManager.resetPostFilters();
+}
+function closePostDetailsModal() {
+    document.getElementById('post-details-modal').style.display = 'none';
+    document.querySelectorAll('tr[data-post-id]').forEach(row => {
+        row.classList.remove('highlighted-post');
+    });
+}
+function closeConfirmDeleteModal() {
+    document.getElementById('confirm-delete-modal').style.display = 'none';
 }
 </script>
 @endpush 

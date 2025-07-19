@@ -140,7 +140,7 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('adm
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-Route::middleware('auth:admin')->group(function () {
+Route::middleware(['auth:admin', 'check.admin.status'])->group(function () {
     // Admin Dashboard Views
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/test-email', function() {
@@ -197,19 +197,33 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/users/stats', [AdminController::class, 'usersStats']);
         Route::get('/users', [AdminController::class, 'getUsers']);
         Route::post('/users', [AdminController::class, 'storeUser']);
+        Route::get('/users/{id}', [AdminController::class, 'getUserDetails']);
+        Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+        Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+        Route::post('/users/{id}/ban', [AdminController::class, 'banUser']);
+        Route::post('/users/{id}/unban', [AdminController::class, 'unbanUser']);
+        Route::post('/users/{id}/role', [AdminController::class, 'changeUserRole']);
 
         // Questions API
         Route::get('/questions/stats', [AdminController::class, 'questionsStats']);
         Route::get('/questions', [AdminController::class, 'getQuestions']);
+        Route::get('/questions/{id}', [AdminController::class, 'getQuestionDetails']);
+        Route::put('/questions/{id}', [AdminController::class, 'updateQuestion']);
+        Route::delete('/questions/{id}', [AdminController::class, 'deleteQuestion']);
+        Route::post('/questions/{id}/toggle-status', [AdminController::class, 'toggleQuestionStatus']);
+        Route::post('/questions/{id}/toggle-featured', [AdminController::class, 'toggleQuestionFeatured']);
 
         // Answers API
         Route::get('/answers/stats', [AdminController::class, 'answersStats']);
         Route::get('/answers', [AdminController::class, 'getAnswers']);
+        Route::get('/answers/{id}', [AdminController::class, 'getAnswerDetails']);
+        Route::delete('/answers/{id}', [AdminController::class, 'deleteAnswer']);
 
         // Posts API
         Route::get('/posts/stats', [AdminController::class, 'postsStats']);
         Route::get('/posts', [AdminController::class, 'getPosts']);
-        Route::post('/posts', [AdminController::class, 'storePost']);
+        Route::get('/posts/{id}', [AdminController::class, 'getPostDetails']);
+        Route::delete('/posts/{id}', [AdminController::class, 'deletePost']);
 
         // Settings API
         Route::post('/settings', [AdminController::class, 'updateSettings']);
@@ -219,5 +233,8 @@ Route::middleware('auth:admin')->group(function () {
         // System API
         Route::post('/system/clear-cache', [AdminController::class, 'clearCache']);
         Route::post('/system/optimize', [AdminController::class, 'optimizeSystem']);
+        Route::post('/admins', [\App\Http\Controllers\AdminController::class, 'storeAdmin']);
+        Route::get('/admins', [\App\Http\Controllers\AdminController::class, 'getAdmins']);
+        Route::delete('/admins/{id}', [\App\Http\Controllers\AdminController::class, 'deleteAdmin']);
     });
 });
