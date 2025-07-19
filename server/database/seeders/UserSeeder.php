@@ -9,6 +9,8 @@ use App\Models\Question;
 use App\Models\Answer;
 use App\Models\Post;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -17,11 +19,14 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Helper to generate a random date within the last 30 days
+        function randomLastLoginAt() {
+            return now()->subDays(rand(0, 30))->subHours(rand(0, 23))->subMinutes(rand(0, 59));
+        }
+
         // Create admin users
         User::create([
             'name' => 'Admin User',
-            'first_name' => 'Admin',
-            'last_name' => 'User',
             'username' => 'admin',
             'email' => 'admin@qaforum.com',
             'password' => Hash::make('password'),
@@ -30,15 +35,13 @@ class UserSeeder extends Seeder
             'bio' => 'System administrator with full access to all features.',
             'avatar' => 'https://i.pravatar.cc/150?img=1',
             'created_at' => now()->subMonths(6),
-            'last_login_at' => now()->subDays(2),
+            'last_login_at' => randomLastLoginAt(),
         ]);
 
         // Create regular users with different statuses
         $regularUsers = [
             [
                 'name' => 'User One',
-                'first_name' => 'User',
-                'last_name' => 'One',
                 'username' => 'userone',
                 'email' => 'userone@qaforum.com',
                 'role' => 'user',
@@ -46,12 +49,10 @@ class UserSeeder extends Seeder
                 'bio' => 'Active user.',
                 'avatar' => 'https://i.pravatar.cc/150?img=3',
                 'created_at' => now()->subMonths(2),
-                'last_login_at' => now()->subDays(1),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'User Two',
-                'first_name' => 'User',
-                'last_name' => 'Two',
                 'username' => 'usertwo',
                 'email' => 'usertwo@qaforum.com',
                 'role' => 'user',
@@ -59,12 +60,10 @@ class UserSeeder extends Seeder
                 'bio' => 'Inactive user.',
                 'avatar' => 'https://i.pravatar.cc/150?img=4',
                 'created_at' => now()->subMonths(1),
-                'last_login_at' => now()->subDays(10),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'Mike Johnson',
-                'first_name' => 'Mike',
-                'last_name' => 'Johnson',
                 'username' => 'mikejohnson',
                 'email' => 'mike@example.com',
                 'role' => 'user',
@@ -72,7 +71,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Database administrator and SQL expert.',
                 'avatar' => 'https://i.pravatar.cc/150?img=5',
                 'created_at' => now()->subMonths(5),
-                'last_login_at' => now()->subDays(5),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'Sarah Wilson',
@@ -85,7 +84,7 @@ class UserSeeder extends Seeder
                 'bio' => 'UI/UX designer focused on user experience.',
                 'avatar' => 'https://i.pravatar.cc/150?img=6',
                 'created_at' => now()->subMonths(1),
-                'last_login_at' => now()->subDays(3),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'David Brown',
@@ -98,7 +97,7 @@ class UserSeeder extends Seeder
                 'bio' => 'DevOps engineer and cloud specialist.',
                 'avatar' => 'https://i.pravatar.cc/150?img=7',
                 'created_at' => now()->subWeeks(2),
-                'last_login_at' => now()->subDays(2),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'Emily Davis',
@@ -111,7 +110,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Frontend developer specializing in Vue.js and modern CSS.',
                 'avatar' => 'https://i.pravatar.cc/150?img=8',
                 'created_at' => now()->subWeeks(1),
-                'last_login_at' => now()->subDays(1),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'Alex Thompson',
@@ -124,7 +123,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Mobile app developer with React Native experience.',
                 'avatar' => 'https://i.pravatar.cc/150?img=9',
                 'created_at' => now()->subDays(5),
-                'last_login_at' => now()->subDays(5),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'Lisa Garcia',
@@ -137,7 +136,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Backend developer focused on API design and microservices.',
                 'avatar' => 'https://i.pravatar.cc/150?img=10',
                 'created_at' => now()->subDays(3),
-                'last_login_at' => now()->subDays(3),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'Tom Anderson',
@@ -150,7 +149,7 @@ class UserSeeder extends Seeder
                 'bio' => 'Security researcher and penetration tester.',
                 'avatar' => 'https://i.pravatar.cc/150?img=11',
                 'created_at' => now()->subDays(1),
-                'last_login_at' => now()->subDays(1),
+                'last_login_at' => randomLastLoginAt(),
             ],
             [
                 'name' => 'Rachel Green',
@@ -163,14 +162,12 @@ class UserSeeder extends Seeder
                 'bio' => 'Data scientist and machine learning enthusiast.',
                 'avatar' => 'https://i.pravatar.cc/150?img=12',
                 'created_at' => now()->subHours(12),
-                'last_login_at' => now()->subHours(12),
+                'last_login_at' => randomLastLoginAt(),
             ],
         ];
 
         foreach ($regularUsers as $userData) {
-            User::create(array_merge($userData, [
-                'password' => Hash::make('password'),
-            ]));
+            User::create($userData);
         }
 
         // Create some content for users to demonstrate the admin functionality

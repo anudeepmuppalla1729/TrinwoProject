@@ -478,9 +478,9 @@ class UsersManager {
                 <tr>
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${user.avatar || 'https://i.pravatar.cc/40?img=' + user.id}" alt="User" style="border-radius: 50%; width: 40px; height: 40px;">
+                            <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || user.username || 'User') + '&size=40&background=random'}" alt="User" style="border-radius: 50%; width: 40px; height: 40px;">
                             <div>
-                                <div>${user.first_name || 'N/A'} ${user.last_name || 'N/A'}</div>
+                                <div>${user.name || 'N/A'}</div>
                                 <div style="font-size: 0.85rem; color: var(--gray);">@${user.username || 'N/A'}</div>
                                 <div style="font-size: 0.8rem; color: var(--gray);">${user.email}</div>
                             </div>
@@ -625,7 +625,7 @@ class UsersManager {
         return `
             <div class="user-details">
                 <div class="user-header">
-                    <img src="${user.avatar || 'https://i.pravatar.cc/100?img=' + user.id}" alt="User" style="border-radius: 50%; width: 100px; height: 100px;">
+                    <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || user.username || 'User') + '&size=100&background=random'}" alt="User" style="border-radius: 50%; width: 100px; height: 100px;">
                     <div class="user-info">
                         <h3>${user.first_name || 'N/A'} ${user.last_name || 'N/A'}</h3>
                         <p><strong>Username:</strong> @${user.username || 'N/A'}</p>

@@ -333,7 +333,7 @@ class QuestionsManager {
                     </td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${question.user.avatar || 'https://i.pravatar.cc/30?img=' + question.user.id}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
+                            <img src="${question.user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(question.user.name || question.user.username || 'User') + '&size=40&background=random'}" alt="User" style="border-radius: 50%; width: 40px; height: 40px;">
                             <span>${question.user.username}</span>
                         </div>
                     </td>

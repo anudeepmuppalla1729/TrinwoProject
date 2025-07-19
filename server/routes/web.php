@@ -216,11 +216,14 @@ Route::middleware(['auth:admin', 'check.admin.status'])->group(function () {
         // Answers API
         Route::get('/answers/stats', [AdminController::class, 'answersStats']);
         Route::get('/answers', [AdminController::class, 'getAnswers']);
+        Route::get('/answers/{id}', [AdminController::class, 'getAnswerDetails']);
+        Route::delete('/answers/{id}', [AdminController::class, 'deleteAnswer']);
 
         // Posts API
         Route::get('/posts/stats', [AdminController::class, 'postsStats']);
         Route::get('/posts', [AdminController::class, 'getPosts']);
-        Route::post('/posts', [AdminController::class, 'storePost']);
+        Route::get('/posts/{id}', [AdminController::class, 'getPostDetails']);
+        Route::delete('/posts/{id}', [AdminController::class, 'deletePost']);
 
         // Settings API
         Route::post('/settings', [AdminController::class, 'updateSettings']);

@@ -569,7 +569,7 @@ class AdminController extends Controller
                 ->map(function($user) {
                     return [
                         'id' => $user->user_id,
-                        'name' => $user->first_name . ' ' . $user->last_name,
+                        'name' => $user->name,
                         'username' => $user->username,
                         'total_contributions' => $user->questions_count + $user->answers_count + $user->posts_count
                     ];
@@ -622,8 +622,7 @@ class AdminController extends Controller
         $users = User::withCount(['questions', 'answers', 'posts'])
             ->when($query, function($q) use ($query) {
                 return $q->where(function($subQ) use ($query) {
-                    $subQ->where('first_name', 'like', "%{$query}%")
-                         ->orWhere('last_name', 'like', "%{$query}%")
+                    $subQ->where('name', 'like', "%{$query}%")
                          ->orWhere('username', 'like', "%{$query}%")
                          ->orWhere('email', 'like', "%{$query}%");
                 });
@@ -646,8 +645,7 @@ class AdminController extends Controller
         $users->getCollection()->transform(function ($user) {
             return [
                 'id' => $user->user_id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
+                'name' => $user->name,
                 'username' => $user->username,
                 'email' => $user->email,
                 'avatar' => $user->avatar,
@@ -699,7 +697,7 @@ class AdminController extends Controller
     public function getUserDetails($id)
     {
         try {
-            $user = User::withCount(['questions', 'answers', 'posts'])
+            $user = \App\Models\User::withCount(['questions', 'answers', 'posts'])
                 ->with(['questions' => function($q) {
                     $q->latest()->limit(5);
                 }, 'answers' => function($q) {
@@ -712,8 +710,7 @@ class AdminController extends Controller
             return response()->json([
                 'user' => [
                     'id' => $user->user_id,
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
+                    'name' => $user->name,
                     'username' => $user->username,
                     'email' => $user->email,
                     'avatar' => $user->avatar,
@@ -790,6 +787,10 @@ class AdminController extends Controller
             ], 400);
         }
 
+        if ($user->email) {
+            \Mail::to($user->email)->send(new \App\Mail\UserActionNotification($user, 'user_deleted'));
+        }
+
         // Delete user's content (questions, answers, posts, etc.)
         $user->questions()->delete();
         $user->answers()->delete();
@@ -815,6 +816,10 @@ class AdminController extends Controller
         }
 
         $user->update(['status' => 'banned']);
+
+        if ($user->email) {
+            \Mail::to($user->email)->send(new \App\Mail\UserActionNotification($user, 'user_banned'));
+        }
 
         return response()->json([
             'message' => 'User banned successfully'
@@ -1038,14 +1043,16 @@ class AdminController extends Controller
     public function deleteQuestion($id)
     {
         try {
-            $question = Question::findOrFail($id);
-            
-            // Delete related data first
-            $question->answers()->delete();
-            // Questions don't have votes in this system
-            $question->tags()->detach();
+            $question = Question::with('user')->findOrFail($id);
+            $user = $question->user;
             $question->delete();
-
+            if ($user && $user->email) {
+                \Mail::to($user->email)->send(new \App\Mail\UserActionNotification(
+                    $user,
+                    'question_deleted',
+                    ['question_title' => $question->title ?? '']
+                ));
+            }
             return response()->json([
                 'message' => 'Question deleted successfully'
             ]);
@@ -1088,41 +1095,141 @@ class AdminController extends Controller
     public function answersStats()
     {
         $stats = [
-            'total' => Answer::count(),
-            'accepted' => Answer::where('is_accepted', true)->count(),
-            'top_rated' => Answer::where('rating', '>=', 4)->count(),
+            'total' => \App\Models\Answer::count(),
+            'accepted' => \App\Models\Question::whereNotNull('accepted_answer_id')->count(),
         ];
-
         return response()->json($stats);
     }
 
     public function getAnswers(Request $request)
     {
-        $answers = Answer::with(['user', 'question'])
-            ->withCount(['votes'])
-            ->orderBy('created_at', 'desc')
-            ->limit(20)
-            ->get()
-            ->map(function ($answer) {
-                return [
-                    'id' => $answer->id,
-                    'content' => $answer->content,
-                    'user' => [
-                        'id' => $answer->user->id,
-                        'username' => $answer->user->username,
-                        'avatar' => $answer->user->avatar
-                    ],
-                    'question' => [
-                        'id' => $answer->question->id,
-                        'title' => $answer->question->title
-                    ],
-                    'created_at' => $answer->created_at,
-                    'votes_count' => $answer->votes_count,
-                    'rating' => $answer->rating ?? 0
-                ];
-            });
+        $query = \App\Models\Answer::with(['user', 'question'])
+            ->withCount(['votes']);
 
-        return response()->json($answers);
+        // Filtering
+        if ($request->has('status') && $request->status) {
+            if ($request->status === 'accepted') {
+                $query->where('is_accepted', true);
+            } elseif ($request->status === 'pending') {
+                $query->whereNull('is_accepted')->orWhere('is_accepted', false);
+            }
+        }
+        if ($request->has('rating') && $request->rating) {
+            switch ($request->rating) {
+                case 'high':
+                    $query->where('rating', '>=', 4);
+                    break;
+                case 'medium':
+                    $query->whereBetween('rating', [2, 3]);
+                    break;
+                case 'low':
+                    $query->where('rating', '<=', 1);
+                    break;
+            }
+        }
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Sorting
+        $sort = $request->get('sort', 'latest');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'most_votes':
+                $query->orderBy('votes_count', 'desc');
+                break;
+            case 'highest_rated':
+                $query->orderBy('rating', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        // Pagination (default 20 per page)
+        $perPage = (int)($request->get('per_page', 20));
+        $answers = $query->paginate($perPage);
+
+        $data = $answers->map(function ($answer) {
+            return [
+                'id' => $answer->answer_id,
+                'content' => $answer->content,
+                'user' => [
+                    'id' => $answer->user->user_id,
+                    'username' => $answer->user->username,
+                    'name' => $answer->user->name,
+                    'avatar' => $answer->user->avatar
+                ],
+                'question' => [
+                    'id' => $answer->question->question_id,
+                    'title' => $answer->question->title
+                ],
+                'created_at' => $answer->created_at,
+                'votes_count' => $answer->votes_count,
+                'rating' => $answer->rating ?? 0
+            ];
+        });
+
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'current_page' => $answers->currentPage(),
+                'per_page' => $answers->perPage(),
+                'total' => $answers->total(),
+                'last_page' => $answers->lastPage(),
+            ]
+        ]);
+    }
+
+    // View answer details
+    public function getAnswerDetails($id)
+    {
+        $answer = \App\Models\Answer::with(['user', 'question.user'])
+            ->withCount(['votes'])
+            ->findOrFail($id);
+        return response()->json([
+            'id' => $answer->answer_id,
+            'content' => $answer->content,
+            'user' => [
+                'id' => $answer->user->user_id,
+                'username' => $answer->user->username,
+                'name' => $answer->user->name,
+                'avatar' => $answer->user->avatar,
+                'email' => $answer->user->email ?? null
+            ],
+            'question' => [
+                'id' => $answer->question->question_id,
+                'title' => $answer->question->title,
+                'user_name' => $answer->question->user->name ?? null,
+                'user_username' => $answer->question->user->username ?? null,
+                'content' => $answer->question->description ?? '',
+            ],
+            'created_at' => $answer->created_at,
+            'votes_count' => $answer->votes_count,
+            'rating' => $answer->rating ?? 0,
+            'is_accepted' => $answer->is_accepted ?? false
+        ]);
+    }
+
+    // Delete answer (admin)
+    public function deleteAnswer($id)
+    {
+        $answer = \App\Models\Answer::with('user', 'question')->findOrFail($id);
+        $user = $answer->user;
+        $question = $answer->question;
+        $answer->delete();
+        if ($user && $user->email) {
+            \Mail::to($user->email)->send(new \App\Mail\UserActionNotification(
+                $user,
+                'answer_deleted',
+                ['question_title' => $question->title ?? '']
+            ));
+        }
+        return response()->json(['message' => 'Answer deleted successfully']);
     }
 
     // Posts API
@@ -1130,63 +1237,112 @@ class AdminController extends Controller
     {
         $stats = [
             'total' => Post::count(),
-            'published' => Post::where('status', 'published')->count(),
-            'draft' => Post::where('status', 'draft')->count(),
+            'today' => Post::whereDate('created_at', today())->count(),
+            'week' => Post::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'month' => Post::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count(),
         ];
-
         return response()->json($stats);
     }
 
     public function getPosts(Request $request)
     {
-        $posts = Post::with(['user'])
-            ->withCount(['comments'])
-            ->orderBy('created_at', 'desc')
-            ->limit(20)
-            ->get()
-            ->map(function ($post) {
-                return [
-                    'id' => $post->id,
-                    'title' => $post->title,
-                    'content' => $post->content,
-                    'user' => [
-                        'id' => $post->user->id,
-                        'username' => $post->user->username,
-                        'avatar' => $post->user->avatar
-                    ],
-                    'created_at' => $post->created_at,
-                    'views_count' => $post->views_count ?? 0,
-                    'comments_count' => $post->comments_count,
-                    'status' => $post->status
-                ];
+        $query = Post::with(['user', 'images', 'comments.user']);
+        // Filtering (add more as needed)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('heading', 'like', "%{$search}%")
+                  ->orWhere('details', 'like', "%{$search}%");
             });
-
-        return response()->json($posts);
+        }
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+        $sort = $request->get('sort', 'latest');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+        $perPage = (int)($request->get('per_page', 20));
+        $posts = $query->paginate($perPage);
+        $data = $posts->map(function ($post) {
+            return [
+                'id' => $post->post_id ?? $post->id,
+                'title' => $post->heading ?? $post->title,
+                'content' => $post->details ?? $post->content,
+                'user' => [
+                    'id' => $post->user->user_id ?? $post->user->id,
+                    'name' => $post->user->name,
+                    'username' => $post->user->username,
+                    'avatar' => $post->user->avatar
+                ],
+                'images' => $post->images->map(function($img) { return $img->image_url; }),
+                'comments_count' => $post->comments->count(),
+                'upvotes' => $post->upvotes ?? 0,
+                'downvotes' => $post->downvotes ?? 0,
+                'created_at' => $post->created_at,
+                'status' => $post->status ?? 'published',
+            ];
+        });
+        return response()->json([
+            'data' => $data,
+            'pagination' => [
+                'current_page' => $posts->currentPage(),
+                'per_page' => $posts->perPage(),
+                'total' => $posts->total(),
+                'last_page' => $posts->lastPage(),
+            ]
+        ]);
     }
 
-    public function storePost(Request $request)
+    public function getPostDetails($id)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'required|string',
-            'status' => 'required|in:published,draft',
-            'tags' => 'nullable|string'
-        ]);
-
-        $post = Post::create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'category' => $validated['category'],
-            'status' => $validated['status'],
-            'user_id' => auth()->id(),
-            'tags' => $validated['tags']
-        ]);
-
+        $post = Post::with(['user', 'images', 'comments.user'])->findOrFail($id);
         return response()->json([
-            'message' => 'Post created successfully',
-            'post' => $post
+            'id' => $post->post_id ?? $post->id,
+            'title' => $post->heading ?? $post->title,
+            'content' => $post->details ?? $post->content,
+            'user' => [
+                'id' => $post->user->user_id ?? $post->user->id,
+                'name' => $post->user->name,
+                'username' => $post->user->username,
+                'avatar' => $post->user->avatar
+            ],
+            'images' => $post->images->map(function($img) { return $img->image_url; }),
+            'comments' => $post->comments->map(function($c) {
+                return [
+                    'id' => $c->comment_id,
+                    'text' => $c->comment_text,
+                    'user' => $c->user ? ($c->user->name ?? $c->user->username ?? 'Unknown') : 'Unknown',
+                    'created_at' => $c->created_at
+                ];
+            }),
+            'upvotes' => $post->upvotes ?? 0,
+            'downvotes' => $post->downvotes ?? 0,
+            'created_at' => $post->created_at,
+            'status' => $post->status ?? 'published',
         ]);
+    }
+
+    public function deletePost($id)
+    {
+        $post = Post::with('user')->findOrFail($id);
+        $user = $post->user;
+        $post->delete();
+        if ($user && $user->email) {
+            \Mail::to($user->email)->send(new \App\Mail\UserActionNotification(
+                $user,
+                'post_deleted',
+                ['post_title' => $post->heading ?? $post->title ?? '']
+            ));
+        }
+        return response()->json(['message' => 'Post deleted successfully']);
     }
 
     // Settings API
