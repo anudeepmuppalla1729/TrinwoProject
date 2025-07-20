@@ -218,9 +218,9 @@ function renderAnswerQuestionsView() {
             <span style="display:flex;align-items:center;gap:0.7rem;">
               <span class="question-options" style="font-size:1.5rem;cursor:pointer;">&#8942;
                 <div class="options-menu">
-                  <button >Answer</button<hr>
-                  <button>Pass</button><hr>
-                  <button>Bookmark</button>
+                  <div>Answer</div><hr>
+                  <div>Pass</div><hr>
+                  <div>Bookmark</div>
                 </div>
               </span>
               <span class="close-question" data-index="${idx}" style="font-size:1.5rem;cursor:pointer;">&times;</span>
@@ -261,62 +261,11 @@ function renderAnswerQuestionsView() {
       opt.querySelector('.options-menu').classList.toggle('active');
     });
   });
-  document.addEventListener('click', closeAllMenus);
-}
-
-answerQuestionButton.addEventListener('click', function(e) {
-  e.preventDefault();
-  renderAnswerQuestionsView();
 });
-
-
-// Client/js/home.js
-document.addEventListener('DOMContentLoaded', () => {
-  const cards = document.querySelectorAll('.question-card');
-
-  cards.forEach(card => {
-    card.addEventListener('click', () => {
-      const questionData = {
-        id: card.dataset.id,
-        title: card.dataset.title,
-        body: card.dataset.body
-      };
-
-      // Save question to localStorage
-      localStorage.setItem('selectedQuestion', JSON.stringify(questionData));
-
-      // Go to question details page
-      window.location.href = 'question.html';
-    });
-  });
-});
-
 
 const newsFeedButton = document.querySelector('.dashboard_items .menu a'); // First <a> in .menu is News Feed
 
 newsFeedButton.addEventListener('click', function(e) {
   e.preventDefault();
   renderPosts();
-});
-
-// Handle click on hardcoded question cards (bottom of home.html)
-document.querySelectorAll('.question-card').forEach(card => {
-  card.addEventListener('click', () => {
-    const id = card.getAttribute('data-id');
-    const title = card.getAttribute('data-title');
-    const body = card.getAttribute('data-body');
-    const question = { id, title, body };
-    localStorage.setItem('selectedQuestion', JSON.stringify(question));
-    window.location.href = 'question.html';
-  });
-});
-
-document.getElementById('qas-answer').addEventListener('click', () => {
-  document.getElementById('answer-input').focus();
-});
-document.getElementById('qas-pass').addEventListener('click', () => {
-  alert('You chose to pass on this question.');
-});
-document.getElementById('qas-bookmark').addEventListener('click', () => {
-  alert('Question bookmarked! (Feature coming soon)');
 });
