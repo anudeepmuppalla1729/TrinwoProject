@@ -14,20 +14,23 @@ use Illuminate\Support\Facades\Mail;
 
 
 
-Route::get('/', function () {
-    return view('pages.login');
-})->name('login');
+Route::middleware(['guest'])->group(function () {
+    Route::get('/', function () {
+        return view('pages.login');
+    })->name('login');
 
-Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
-Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
-Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
 
-Route::get('/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])->name('register');
-Route::post('/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
+    Route::get('/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
 
-Route::get('/interests', function () {
-    return view('pages.interests');
-})->name('interests');
+    Route::get('/interests', function () {
+        return view('pages.interests');
+    })->name('interests');
+});
+
+Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout')->middleware('auth');
 
 Route::get('/questions', [QuestionController::class, 'index'])->name('questions');
 Route::get('/question/{id?}', [QuestionController::class, 'show'])->name('question');
@@ -85,7 +88,7 @@ Route::get('/user-information', function () {
 
 Route::get('/dashboard', function () {
     return view('pages.dashboard');
-})->name('dashboard');
+})->name('dashboard')->middleware('auth');
 
 // User profile viewing routes
 Route::get('/user/{userId}', [ProfileController::class, 'viewProfile'])->name('user.profile');
