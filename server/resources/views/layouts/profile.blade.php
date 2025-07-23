@@ -33,6 +33,7 @@
         @if (session('success'))
             <div class="alert alert-success custom-flash-message flash-toast">
                 <i class="fas fa-check-circle"></i> {{ session('success') }}
+                &nbsp;&nbsp;
                 <button class="flash-dismiss" onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
         @endif

@@ -44,7 +44,7 @@ class QuestionController extends Controller
                     'excerpt' => substr($question->description, 0, 200) . (strlen($question->description) > 200 ? '...' : ''),
                     'user' => $question->user->name,
                     'user_id' => $question->user->user_id,
-                    'avatar' => $question->user->avatar,
+                    'avatar' => $question->user->avatar_url,
                     'created_at' => $question->created_at->diffForHumans(),
                     'answers' => $question->answers->count(),
                     'upvotes' => 0, // Questions don't have upvotes in this system
@@ -413,5 +413,94 @@ class QuestionController extends Controller
         $msg = 'Question reported successfully.';
         if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
         return back()->with('success', $msg);
+    }
+    
+    /**
+     * Search questions by title, description, or tags
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        
+        // If query is empty, return all questions (similar to index method)
+        if (empty($query)) {
+            $questions = Question::with(['user', 'tags', 'answers'])
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function($question) use ($userId) {
+                    // Check if the question is bookmarked by the current user
+                    $isBookmarked = false;
+                    if ($userId) {
+                        $isBookmarked = QuestionBookmark::where('user_id', $userId)
+                            ->where('question_id', $question->question_id)
+                            ->exists();
+                    }
+                    
+                    return [
+                        'id' => $question->question_id,
+                        'title' => $question->title,
+                        'excerpt' => substr($question->description, 0, 200) . (strlen($question->description) > 200 ? '...' : ''),
+                        'user' => $question->user->name,
+                        'user_id' => $question->user->user_id,
+                        'avatar' => $question->user->avatar_url,
+                        'created_at' => $question->created_at->diffForHumans(),
+                        'answers' => $question->answers->count(),
+                        'upvotes' => 0, // Questions don't have upvotes in this system
+                        'downvotes' => 0, // Questions don't have downvotes in this system
+                        'tags' => $question->tags->pluck('name')->toArray(),
+                        'is_bookmarked' => $isBookmarked
+                    ];
+                });
+                
+            return response()->json([
+                'success' => true,
+                'questions' => $questions
+            ]);
+        }
+        
+        // Get the current user ID if authenticated
+        $userId = Auth::id();
+        
+        // Search questions by title, description, or tags
+        $questions = Question::with(['user', 'tags', 'answers'])
+            ->where('title', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
+            ->orWhereHas('tags', function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($question) use ($userId) {
+                // Check if the question is bookmarked by the current user
+                $isBookmarked = false;
+                if ($userId) {
+                    $isBookmarked = QuestionBookmark::where('user_id', $userId)
+                        ->where('question_id', $question->question_id)
+                        ->exists();
+                }
+                
+                return [
+                    'id' => $question->question_id,
+                    'title' => $question->title,
+                    'excerpt' => substr($question->description, 0, 200) . (strlen($question->description) > 200 ? '...' : ''),
+                    'user' => $question->user->name,
+                    'user_id' => $question->user->user_id,
+                    'avatar' => $question->user->avatar_url,
+                    'created_at' => $question->created_at->diffForHumans(),
+                    'answers' => $question->answers->count(),
+                    'upvotes' => 0, // Questions don't have upvotes in this system
+                    'downvotes' => 0, // Questions don't have downvotes in this system
+                    'tags' => $question->tags->pluck('name')->toArray(),
+                    'is_bookmarked' => $isBookmarked
+                ];
+            });
+            
+        return response()->json([
+            'success' => true,
+            'questions' => $questions
+        ]);
     }
 }

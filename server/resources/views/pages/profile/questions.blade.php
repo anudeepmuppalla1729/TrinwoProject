@@ -45,17 +45,7 @@ use Illuminate\Support\Str;
 </div>
 
 
-@if(session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
-@endif
 
-@if(session('error'))
-<div class="alert alert-danger">
-    {{ session('error') }}
-</div>
-@endif
 
 @if(count($questions) > 0)
     @foreach($questions as $question)
@@ -72,11 +62,10 @@ use Illuminate\Support\Str;
             <span><i class="fas fa-thumbs-up"></i> {{ $question['upvotes'] }} upvotes</span>
         </div>
         <div class="card-actions">
-            <a href="{{ route('questions.edit', ['id' => $question['id']]) }}" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</a>
             <form action="{{ route('questions.destroy', ['id' => $question['id']]) }}" method="POST" style="display: inline;" class="delete-question-form">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-outline delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                <button type="button" class="btn btn-outline delete-btn" data-question-id="{{ $question['id'] }}"><i class="fas fa-trash"></i> Delete</button>
             </form>
         </div>
     </div>
@@ -84,23 +73,81 @@ use Illuminate\Support\Str;
 @else
     <div class="empty-state">
         <p>You haven't asked any questions yet.</p>
-        <a href="{{ route('questions.create') }}" class="btn btn-primary">Ask a Question</a>
+        <br>
+        <a href="{{ route('questions.create') }}" class="btn btn-primary" style="text-decoration: none;">Ask a Question</a>
     </div>
 @endif
 @endsection
 
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s ease;">
+    <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:320px; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative; transform:translateY(20px); transition:transform 0.3s ease;">
+        <button type="button" class="close-delete-modal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:var(--primary-color); cursor:pointer;">&times;</button>
+        <h3 style="color:#dc3545; margin-bottom:1rem;"><i class="fas fa-exclamation-triangle"></i> Delete Question</h3>
+        <p style="margin-bottom:1.5rem; color:#333;">Are you sure you want to delete this question? This action cannot be undone and will delete all associated answers and votes.</p>
+        <div style="display:flex; justify-content:flex-end; gap:1rem;">
+            <button type="button" class="cancel-delete-btn" style="background:none; border:1px solid #ccc; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.backgroundColor='#f8f8f8'" onmouseout="this.style.backgroundColor='transparent'">Cancel</button>
+            <button type="button" class="confirm-delete-btn" style="background-color:#dc3545; color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.backgroundColor='#c82333'" onmouseout="this.style.backgroundColor='#dc3545'">Delete</button>
+        </div>
+        <input type="hidden" id="deleteQuestionId">
+    </div>
+</div>
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Add event listeners to all delete buttons
-        document.querySelectorAll('.delete-question-form').forEach(form => {
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                if (confirm('Are you sure you want to delete this question? This action cannot be undone and will delete all associated answers and votes.')) {
-                    this.submit();
-                }
+        // Delete confirmation modal functionality
+        let deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        let deleteQuestionId = document.getElementById('deleteQuestionId');
+        
+        // Delete button functionality
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                let questionId = this.getAttribute('data-question-id');
+                deleteQuestionId.value = questionId;
+                deleteConfirmModal.style.display = 'flex';
+                // Trigger reflow to ensure transition works
+                void deleteConfirmModal.offsetWidth;
+                deleteConfirmModal.style.opacity = '1';
+                // Animate modal content
+                const modalContent = deleteConfirmModal.querySelector('.modal-content');
+                setTimeout(() => {
+                    modalContent.style.transform = 'translateY(0)';
+                }, 10);
             });
+        });
+        
+        // Function to close delete modal with animation
+        function closeDeleteModal() {
+            deleteConfirmModal.style.opacity = '0';
+            const modalContent = deleteConfirmModal.querySelector('.modal-content');
+            modalContent.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                deleteConfirmModal.style.display = 'none';
+            }, 300); // Match transition duration
+        }
+        
+        // Close delete modal button
+        document.querySelector('.close-delete-modal').addEventListener('click', function() {
+            closeDeleteModal();
+        });
+        
+        // Cancel delete button
+        document.querySelector('.cancel-delete-btn').addEventListener('click', function() {
+            closeDeleteModal();
+        });
+        
+        // Confirm delete button
+        document.querySelector('.confirm-delete-btn').addEventListener('click', function() {
+            let questionId = deleteQuestionId.value;
+            let form = document.querySelector(`.delete-btn[data-question-id="${questionId}"]`).closest('form');
+            form.submit();
+        });
+        
+        // Close delete modal on outside click
+        deleteConfirmModal.addEventListener('click', function(e) {
+            if(e.target === deleteConfirmModal) closeDeleteModal();
         });
     });
 </script>
