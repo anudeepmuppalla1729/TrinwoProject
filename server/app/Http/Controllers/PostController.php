@@ -165,7 +165,7 @@ class PostController extends Controller
             'heading' => 'required|string|max:255',
             'details' => 'required|string',
             'visibility' => 'required|in:public,private',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $post = Post::create([
@@ -177,7 +177,7 @@ class PostController extends Controller
 
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 's3');
+            $imagePath = $request->file('image')->store('posts', config('filesystems.default'));
             
             PostImage::create([
                 'post_id' => $post->post_id,

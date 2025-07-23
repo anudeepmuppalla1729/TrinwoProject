@@ -412,14 +412,24 @@ document.addEventListener('DOMContentLoaded', function() {
         if (imageInput) {
             imageInput.addEventListener('change', function() {
                 if (this.files && this.files[0]) {
-                    selectedImage = this.files[0];
+                    const file = this.files[0];
+                    const fileType = file.type;
+                    
+                    // Validate file type
+                    if (fileType !== 'image/png' && fileType !== 'image/jpeg' && fileType !== 'image/jpg') {
+                        showToast('Please select only PNG, JPEG, or JPG image files', 'error');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    selectedImage = file;
                     
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         selectedImagePreview.src = e.target.result;
                         selectedImageContainer.style.display = 'block';
                     };
-                    reader.readAsDataURL(this.files[0]);
+                    reader.readAsDataURL(file);
                 }
             });
         }

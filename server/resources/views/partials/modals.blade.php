@@ -81,7 +81,7 @@
             </button>
         </div>
         
-        <input type="file" id="insight-image-input" style="display: none;" accept="image/*">
+        <input type="file" id="insight-image-input" style="display: none;" accept="image/png,image/jpeg,image/jpg">
         
         <div class="modal-actions">
             <button class="cancel-btn">Cancel</button>
