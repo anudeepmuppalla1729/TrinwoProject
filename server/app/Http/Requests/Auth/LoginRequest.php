@@ -49,6 +49,25 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if the authenticated user can login
+        $user = Auth::user();
+        if ($user && !$user->canLogin()) {
+            // Logout the user immediately
+            Auth::logout();
+            
+            RateLimiter::hit($this->throttleKey());
+
+            if ($user->isBanned()) {
+                throw ValidationException::withMessages([
+                    'email' => 'Your account has been banned. Please contact the administrator for more information.',
+                ]);
+            } elseif ($user->isInactive()) {
+                throw ValidationException::withMessages([
+                    'email' => 'Your account is currently inactive. Please contact the administrator to reactivate your account.',
+                ]);
+            }
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

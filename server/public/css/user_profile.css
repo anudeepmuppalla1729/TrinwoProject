@@ -6,9 +6,9 @@
 }
 
 :root {
-  --primary: #c92ae0;
-  --primary-light: #e8b3f0;
-  --primary-dark: #9a22ad;
+  --primary: rgb(42, 60, 98);
+  --primary-light: rgb(42, 60, 98);
+  --primary-dark: rgb(42, 60, 98);
   --text: #333;
   --text-light: #666;
   --bg: #f8f9fa;
@@ -277,6 +277,34 @@ body {
   font-size: 0.8rem;
   color: var(--text-light);
 }
+@media (max-width: 600px){
+  .flw{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+  .fol{
+    display:flex;
+    justify-content: center;
+    align-items:center;
+  }
+  .yans{
+    display:flex;
+    justify-content: center;
+    align-items:center;
+  }
+  .yque{
+     display:flex;
+    justify-content: center;
+    align-items:center;
+
+  }
+  .ypos{
+     display:flex;
+    justify-content: center;
+    align-items:center;
+  }
+} 
 
 @media (max-width: 768px) {
   .top-bar {

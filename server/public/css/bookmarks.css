@@ -54,7 +54,7 @@
 .options-menu button {
   width: 100%;
   padding: 0.6rem 1rem;
-  background: #c92ae0;
+  background: rgb(42, 60, 98);
   border: none;
   text-align: left;
   font-size: 0.9rem;
@@ -65,7 +65,7 @@
 
 /* Hover effect */
 .options-menu button:hover {
-  background: #de9ce8;
+  background:rgb(42, 60, 98);
   color: #fff;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .action-btn.active {
-  color: #a522b7;
+  color: rgb(42, 60, 98);
 }
 
 .action-btn.active:hover {
@@ -112,5 +112,5 @@
 
 /* Remove bookmark button */
 .remove-bookmark:hover {
-  background: #de9ce8;
+  background: rgb(42, 60, 98);
 }

@@ -74,7 +74,7 @@ html, body {
 }
 
 h1 {
-    background: #c92ae0;
+    background: rgb(42, 60, 98);
     color: rgb(252, 248, 248);
     padding: 0.4rem 1rem;
     border-radius: 0.4rem;
@@ -142,7 +142,7 @@ h1 {
     width: 24px;
     height: 24px;
     background: white;
-    border: 2px solid #c92ae0;
+    border: 2px solid rgb(42, 60, 98);
     border-radius: 50%;
     box-shadow: 0 0 3px rgba(0,0,0,0.3);
 }
@@ -159,7 +159,7 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    background: #c92ae0;
+    background: rgb(42, 60, 98);
     color: rgb(250, 247, 247);
     font-size: 1.1rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -167,7 +167,7 @@ button {
 }
 
 button:hover {
-    background: #a522b7;
+    background: rgb(42, 60, 98);
 }
 
 .continue-btn{

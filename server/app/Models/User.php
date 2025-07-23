@@ -20,11 +20,21 @@ class User extends Authenticatable
     protected $primaryKey = 'user_id';
     protected $fillable = [
         'name',
+        'username',
         'email',
-        'password','profile_pic',
-        'phone', 'age', 'gender', 'studying_in',
-        'expert_in', 'interests'
-
+        'password',
+        'role',
+        'status',
+        'avatar',
+        'last_login_at',
+        'profile_pic',
+        'phone', 
+        'age', 
+        'gender', 
+        'studying_in',
+        'expert_in', 
+        'interests', 
+        'bio'
     ];
 
     /**
@@ -34,7 +44,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -45,9 +54,25 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected $appends = [
+        'avatar_url',
+    ];
+
+    /**
+     * Get the full S3 URL for the user's avatar.
+     *
+     * @return string|null
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return \Storage::disk('s3')->url($this->avatar);
+        }
+        return null;
     }
 
 
@@ -70,6 +95,10 @@ class User extends Authenticatable
     public function following() {
         return $this->hasMany(Follower::class, 'follower_user_id');
     }
+    
+    public function isFollowing(User $user) {
+        return $this->following()->where('user_id', $user->user_id)->exists();
+    }
 
     public function comments()
     {
@@ -79,6 +108,38 @@ class User extends Authenticatable
     public function postVotes()
     {
         return $this->hasMany(PostVote::class, 'user_id');
+    }
+
+    /**
+     * Check if the user can login
+     */
+    public function canLogin()
+    {
+        return $this->status === 'active';
+    }
+
+    /**
+     * Check if the user is banned
+     */
+    public function isBanned()
+    {
+        return $this->status === 'banned';
+    }
+
+    /**
+     * Check if the user is inactive
+     */
+    public function isInactive()
+    {
+        return $this->status === 'inactive';
+    }
+    
+    /**
+     * Get the questions bookmarked by the user
+     */
+    public function bookmarkedQuestions()
+    {
+        return $this->belongsToMany(Question::class, 'question_bookmarks', 'user_id', 'question_id');
     }
 
 }

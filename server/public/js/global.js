@@ -1,5 +1,43 @@
 // Global JavaScript for handling modals across all pages
 document.addEventListener('DOMContentLoaded', function() {
+    // Global toast notification function
+    function showToast(message, type = 'info') {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.style.position = 'fixed';
+            container.style.top = '24px';
+            container.style.right = '24px';
+            container.style.zIndex = '99999';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '12px';
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        toast.style.minWidth = '220px';
+        toast.style.maxWidth = '350px';
+        toast.style.padding = '14px 22px';
+        toast.style.borderRadius = '6px';
+        toast.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+        toast.style.fontSize = '1rem';
+        toast.style.display = 'flex';
+        toast.style.alignItems = 'center';
+        toast.style.gap = '12px';
+        toast.style.animation = 'fadeIn 0.3s';
+        toast.style.background = type === 'success' ? '#e6f9f0' : type === 'error' ? '#fff0f0' : '#f0f4ff';
+        toast.style.color = type === 'success' ? '#1b7f5a' : type === 'error' ? '#b91c1c' : '#1a237e';
+        toast.style.borderLeft = '5px solid ' + (type === 'success' ? '#1b7f5a' : type === 'error' ? '#b91c1c' : '#1a237e');
+        toast.innerHTML = (type === 'success' ? '<i class="fas fa-check-circle"></i>' : type === 'error' ? '<i class="fas fa-exclamation-circle"></i>' : '<i class="fas fa-info-circle"></i>') + message;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-20px)';
+            setTimeout(() => container.removeChild(toast), 300);
+        }, 2500);
+    }
     // Modal handling for Ask Question
     const askButton = document.querySelector('.ask-btn'); // top navbar ask button
     const sidebarAskButton = document.querySelector('.sidebar-ask-btn'); // sidebar ask button
@@ -182,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const tagsHiddenField = document.getElementById('tags-hidden');
                 
                 if (question === '') {
-                    alert('Please enter your question');
+                    showToast('Please enter your question', 'error');
                     return;
                 }
                 
@@ -215,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success) {
                         // Show success message
-                        alert('Question posted successfully!');
+                        showToast('Question posted successfully!', 'success');
                         
                         // Clear the form and close the modal
                         questionTextarea.value = '';
@@ -239,13 +277,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
                         } else {
                             // Show general error message
-                            alert('Error posting question: ' + (data.message || 'Unknown error'));
+                            showToast('Error posting question: ' + (data.message || 'Unknown error'), 'error');
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error posting question:', error);
-                    alert('Error posting question. Please try again.');
+                    showToast('Error posting question. Please try again.', 'error');
                 })
                 .finally(() => {
                     // Reset button state
@@ -314,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const privacy = insightPrivacySelect.value;
                 
                 if (insight === '') {
-                    alert('Please enter your insight');
+                    showToast('Please enter your insight', 'error');
                     return;
                 }
                 
@@ -343,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message);
+                        showToast(data.message, 'info');
                         
                         // Clear the form and close the modal
                         insightHeading.value = '';
@@ -352,12 +390,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         selectedImageContainer.style.display = 'none';
                         closeInsightModal();
                     } else {
-                        alert('Error: ' + (data.message || 'Failed to submit insight'));
+                        showToast('Error: ' + (data.message || 'Failed to submit insight'), 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while submitting your insight');
+                    showToast('An error occurred while submitting your insight', 'error');
                 });
             });
         }
@@ -374,14 +412,24 @@ document.addEventListener('DOMContentLoaded', function() {
         if (imageInput) {
             imageInput.addEventListener('change', function() {
                 if (this.files && this.files[0]) {
-                    selectedImage = this.files[0];
+                    const file = this.files[0];
+                    const fileType = file.type;
+                    
+                    // Validate file type
+                    if (fileType !== 'image/png' && fileType !== 'image/jpeg' && fileType !== 'image/jpg') {
+                        showToast('Please select only PNG, JPEG, or JPG image files', 'error');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    selectedImage = file;
                     
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         selectedImagePreview.src = e.target.result;
                         selectedImageContainer.style.display = 'block';
                     };
-                    reader.readAsDataURL(this.files[0]);
+                    reader.readAsDataURL(file);
                 }
             });
         }

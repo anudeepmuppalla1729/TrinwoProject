@@ -1,5 +1,6 @@
+/* home.mobile.css */
 @media (max-width: 600px) {
-  /* Hamburger menu button */
+  /* Hamburger menu */
   .hamburger {
     display: inline-flex;
     align-items: center;
@@ -11,234 +12,301 @@
     color: #222;
     z-index: 1201;
   }
-  .ask-btn { display: none; }
 
-  /* Navbar adjustments */
+  
+@media (max-width: 600px) {
   .navbar {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 8px 4px;
-    gap: 15px;
-    min-height: 20px;
-    margin-left: 0;
-  }
-  .nav-links {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    flex: 1 1 auto;
+    padding: 8px 12px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
-  .nav-left { gap: 2px; margin-left: 0; font-size: 1rem; }
-  .search-box {
-    max-width: 200px;
-    min-width: 140px;
-    flex: 0 1 200px;
-    font-size: 1.05rem;
-  }
-  .search-box input {
-    font-size: 1.1rem;
-    width: 140px;
-    min-width: 0;
-    padding: 0.2rem 0.4rem;
+  .logo{
+    display:none;
   }
 
-  /* Sidebar as drawer with corner backgrounds */
+  .nav-left {
+    display: flex;
+    width:50px;
+    margin-left: 20px;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .nav-links {
+   margin-right:13px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 25px;
+    background-color: #f0f0f0;
+    margin-left:50px;
+    max-width: 200px;
+    flex: 1;
+  }
+
+  .search-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  .aks{
+    display:none;
+  }
+}
+
+  /* Sidebar Drawer */
   .dashboard_items {
-    position: fixed;
-    left: 0;
+    
     top: 56px;
+    left: 0;
     width: 80vw;
-    max-width: 320px;
-    height: calc(100vh - 56px);
+    max-width: 220px;
+    height: 90vh;
     background: #eceaea;
     z-index: 1200;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-    box-shadow: 2px 0 12px rgba(0,0,0,0.18);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.18);
     border-radius: 0 12px 12px 0;
     padding: 1.2rem 0.7rem;
     font-size: 1.1rem;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     overflow-y: auto;
   }
-  .dashboard_items::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 38px;
-    height: 38px;
-    background: url('../assets/bottom_left.png') no-repeat left bottom/contain;
-    z-index: 1;
-    pointer-events: none;
-  }
-  .dashboard_items::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 50px;
-    height: 50px;
-    background: url('../assets/bottom-right.png') no-repeat right bottom/contain;
-    z-index: 1;
-    pointer-events: none;
-  }
+
   body.sidebar-open .dashboard_items {
     transform: translateX(0);
   }
+
   body.sidebar-open::before {
     content: '';
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.3);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
     z-index: 1199;
   }
-  .dashboard_items .menu {
+
+  .dashboard_items::before,
+  .dashboard_items::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+
+  .menu {
     margin-top: 20px;
     gap: 0.7rem;
   }
-  .dashboard_items .menu a,
-  .settings-logout a {
+
+  .menu a, .settings-logout a {
     padding: 0.7rem 0.5rem;
     margin-bottom: 0.5rem;
   }
-  .dashboard_items .menu a i { font-size: 1rem; }
-  .settings-logout { padding-top: 0.5rem; margin-bottom: 0.5rem; }
-  .sidebar-corner { width: 32px; height: 32px; opacity: 0.7; }
 
-  /* Main layout stacks vertically */
-  .home_container { padding: 0; margin: 0; display: block; }
-  .home_content { margin-left: 0; padding: 0.5rem 0.2rem; height: auto; min-height: 100vh; box-sizing: border-box; }
+  .menu a i {
+    font-size: 1rem;
+  }
 
-  /* Question box: input and icon in a row, actions below */
+  .settings-logout {
+    padding-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Layout */
+  .home_container {
+    padding: 0;
+    margin: 0;
+    display: block;
+  }
+
+  .home_content {
+    margin-left: 0;
+    padding: 0.5rem 0.2rem;
+    height: auto;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  /* Ask Question */
   .question-box {
     display: flex;
-    flex-direction: row;
-    align-items: center;
     flex-wrap: wrap;
+    align-items: left;
     gap: 0.3rem;
+    width:100%;
     padding: 0.5rem;
-    border-radius: 10px;
-    font-size: 1rem;
-    margin-bottom: 1rem;
     background: #f5f5f5;
-    position: relative;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
   }
+
+  .user-icon {
+    font-size: 1.5rem;
+    color: #555;
+    margin-left: 0.2rem;
+  }
+
   .question-input {
     flex: 1 1 auto;
     font-size: 1rem;
-    padding: 0.7rem 0.7rem 0.7rem 0.7rem;
+    padding: 0.7rem;
     border-radius: 8px;
     border: 1px solid #ccc;
     background: white;
-    margin-right: 0.3rem;
-    min-width: 0;
-    margin-bottom: 0;
   }
-  .user-icon {
-    position: static;
-    font-size: 1.5rem;
-    color: #555;
-    margin-right: 0;
-    margin-left: 0.2rem;
-    margin-bottom: 0;
-  }
+
   .question-actions {
-    order: 2;
     width: 100%;
     margin-top: 0.5rem;
     display: flex;
-    flex-direction: row;
     gap: 0.7rem;
-    justify-content: flex-start;
   }
-  .image-btn, .privacy-select {
+
+  .image-btn,
+  .privacy-select {
     flex: 1 1 0;
     max-width: 45%;
-    min-width: 0;
     font-size: 0.95rem;
     padding: 0.5rem 0.7rem;
     border-radius: 8px;
-    margin: 0;
     box-sizing: border-box;
   }
 
   /* Posts */
   .posts-container {
-    margin: 12px 8px 12px 8px;
+    margin: 12px 8px;
   }
-  .post { padding: 0.7rem; border-radius: 12px; margin-bottom: 1.2rem; font-size: 1rem; }
-  .post-header { flex-direction: row; gap: 0.5rem; }
-  .profile i { font-size: 1.2rem; }
-  .close-post { font-size: 1.3rem; }
-  .post-actions { gap: 0.3rem; font-size: 0.95rem; }
-  .post-actions button { font-size: 0.95rem; padding: 0.4rem 0.7rem; border-radius: 8px; margin: 0; box-sizing: border-box; }
 
-  /* Modal box (if used on mobile) */
+  .post {
+    padding: 0.7rem;
+    border-radius: 12px;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+  }
+
+  .post-header {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .profile i {
+    font-size: 1.2rem;
+  }
+
+  .close-post {
+    font-size: 1.3rem;
+  }
+
+  .post-actions {
+    gap: 0.3rem;
+    font-size: 0.95rem;
+  }
+
+  .post-actions button {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+  }
+
+  /* Modal */
   .modal-box {
     width: 90vw;
     max-width: 350px;
-    min-width: unset;
     padding: 0.5rem;
     font-size: 0.98rem;
     box-sizing: border-box;
   }
+
   .modal-title {
-    margin-left: 0;
     font-size: 1.05rem;
   }
+
   .image-upload-icon {
     right: 8px;
     bottom: 80px;
     font-size: 1rem;
   }
-  
-  /* Tags input mobile styles */
+
+  /* Tags Input */
   .tags-input-container {
-    margin-top: 8px;
-    margin-bottom: 8px;
+    margin: 8px 0;
   }
-  
+
   .tags-input {
     padding: 8px 12px;
     font-size: 0.95rem;
   }
-  
+
   .tags-suggestions {
     max-height: 120px;
   }
-  
+
   .tags-suggestions div {
     padding: 6px 12px;
     font-size: 0.9rem;
   }
-  
+
   .selected-tags {
     gap: 6px;
     margin-top: 8px;
   }
-  
+
   .selected-tags .tag {
     padding: 3px 6px;
     font-size: 0.85rem;
   }
-  
+
   .error-message {
     font-size: 11px;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    margin: 4px 0 8px;
     padding: 4px;
   }
 
-  /* Mobile/PC contact toggles */
-  .mobile-contact { display: inline-flex !important; align-items: center; }
-  .pc-contact { display: none !important; }
-  .nav-links i, .mobile-contact i { font-size: 1.1rem; }
-  .nav-links .fa-bell, .nav-links .fa-regular.fa-bell { display: none !important; }
+  /* Contact Icons Toggle */
+  .mobile-contact {
+    display: inline-flex !important;
+    align-items: center;
+  }
+
+  .pc-contact {
+    display: none !important;
+  }
+
+  .nav-links i,
+  .mobile-contact i {
+    font-size: 1.1rem;
+  }
+
+  .nav-links .fa-bell,
+  .nav-links .fa-regular.fa-bell {
+    display: none !important;
+  }
 }

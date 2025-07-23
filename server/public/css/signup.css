@@ -1,22 +1,29 @@
 /* General */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: rgba(0,0,0,0.03);
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
 
 .signup-container {
   display: flex;
-  min-height: 100vh;
+  height: 87vh;
+  width: 60vw;
+  margin-top: 5vh;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
 }
 
 .signup-left {
   flex: 1;
-  min-width: 0;
-  min-height: 95vh;
+  width: 50%;
+  height: 100%;
   background-image: url("../assets/signup_bg_upscaled.png");
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-color:rgba(0,0,0,0.03) /* fallback color */;
@@ -36,7 +43,7 @@ body {
 }
 .signup-right {
   flex: 1;
-  background: rgba(0,0,0,0.03);
+  background: rgb(212, 213, 213);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,7 +52,6 @@ body {
   border-bottom-right-radius: 20px;
   overflow: hidden;
   /* Add two background images in the top-right and bottom-right corners */
-  background-image: url('../assets/top-right.png'), url('../assets/bottom-right.png');
   background-position: top right, bottom right;
   background-repeat: no-repeat, no-repeat;
   background-size: 120px 120px, 120px 120px;
@@ -53,8 +59,10 @@ body {
   
 .signup-form-wrapper {
   background-color: white;
-  border-radius: 20px;
+  border-radius: 0 20px 20px 0;
   padding: 2.5rem;
+  padding-top: 1.5rem;
+  height: 100%;
   width: 100%;
   max-width: 450px;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
@@ -105,12 +113,12 @@ body {
 }
   
 .form-input:focus {
-  border-color: #9b59b6;
+  border-color: rgb(42, 60, 98);
 }
   
 .form-note {
   font-size: 0.8rem;
-  color: #666;
+  color: #f5f2f2;
 }
   
 .form-checkbox {
@@ -122,16 +130,17 @@ body {
   
 .btn-signup {
   width: 100%;
-  background-color: #d3b4f3;
+  background-color: rgb(42, 60, 98);
   border: none;
   padding: 0.75rem;
   border-radius: 8px;
+  color: white;
   font-weight: bold;
   transition: background-color 0.3s;
 }
   
 .btn-signup:hover {
-  background-color: #c8a4f0;
+  background-color: rgb(42, 60, 98);
 }
   
 .form-divider {
@@ -167,7 +176,7 @@ body {
 }
   
 .form-link {
-  color: #9b59b6;
+  color: rgb(42, 60, 98);
   text-decoration: none;
   font-weight: 500;
 }

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('description');
             $table->enum('visibility', ['public', 'private'])->default('public');
             $table->boolean('is_closed')->default(false);
+            $table->integer('upvotes')->default(0);
+            $table->integer('downvotes')->default(0);
             $table->timestamps();
         });
         

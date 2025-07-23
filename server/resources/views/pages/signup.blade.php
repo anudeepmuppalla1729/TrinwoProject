@@ -66,22 +66,12 @@
                 <div class="error-message"></div>
             </div>
             <div class="form-group form-checkbox">
-                <input class="form-check-input" type="checkbox" id="terms" name="terms" />
-                <span class="icon-divider"></span>
-                <label class="form-check-label" for="terms">I agree to all terms &amp; Conditions (optional)</label>
+                
             </div>
             <div class="form-group">
                 <button class="btn-signup" type="submit">Sign up</button>
             </div>
-            <p class="form-divider">or continue with</p>
-            <div class="social-buttons">
-                <button type="button" class="btn-social">
-                    <i class="bi bi-google"></i> Google
-                </button>
-                <button type="button" class="btn-social">
-                    <i class="bi bi-facebook"></i> Facebook
-                </button>
-            </div>
+        
             <p class="form-footer">
                 Already have an account?
                 <a href="{{ route('login') }}" class="form-link">Sign in</a>

@@ -4,6 +4,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const questionCards = document.querySelectorAll('.question-card');
     const searchInput = document.getElementById('question-search');
     const sortSelect = document.getElementById('sort-questions');
+    const questionsList = document.querySelector('.questions-list');
+    
+    // Check if there are no questions at all
+    if (questionCards.length === 0 && questionsList) {
+        // Create a message for no questions available
+        const noQuestionsMessage = document.createElement('div');
+        noQuestionsMessage.className = 'alert alert-info';
+        noQuestionsMessage.style.padding = '20px';
+        noQuestionsMessage.style.borderRadius = '12px';
+        noQuestionsMessage.style.backgroundColor = '#f8f9fa';
+        noQuestionsMessage.style.border = '1px solid #e9ecef';
+        noQuestionsMessage.style.marginTop = '20px';
+        noQuestionsMessage.style.textAlign = 'center';
+        noQuestionsMessage.innerHTML = `
+            <p style="color: #6c757d; font-size: 1.1rem; margin-bottom: 0;">
+                <i class="bi bi-question-circle" style="margin-right: 10px;"></i>
+                No questions available. Be the first to ask a question!
+            </p>
+        `;
+        questionsList.appendChild(noQuestionsMessage);
+    }
     
     // Add staggered animation to question cards on page load
     if (questionCards.length > 0) {
@@ -72,6 +93,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+            
+            // Hide any existing no questions message when searching
+            const existingNoQuestionsMsg = questionsList.querySelector('.alert.alert-info:not(.no-search-results)');
+            if (existingNoQuestionsMsg && searchTerm !== '') {
+                existingNoQuestionsMsg.style.display = 'none';
+            } else if (existingNoQuestionsMsg && searchTerm === '') {
+                existingNoQuestionsMsg.style.display = 'block';
+            }
             
             questionCards.forEach(card => {
                 const title = card.querySelector('.question-title').textContent.toLowerCase();
@@ -91,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         card.style.opacity = '1';
                         card.style.transform = 'translateY(0)';
                     }, 10);
+                    visibleCount++;
                 } else {
                     card.style.opacity = '0';
                     card.style.transform = 'translateY(10px)';
@@ -99,6 +130,50 @@ document.addEventListener('DOMContentLoaded', function() {
                     }, 300); // Match transition duration
                 }
             });
+            
+            // Check if no results are found
+            let noResultsMessage = document.querySelector('.no-search-results');
+            
+            if (visibleCount === 0 && searchTerm !== '') {
+                // Create no results message if it doesn't exist
+                if (!noResultsMessage) {
+                    noResultsMessage = document.createElement('div');
+                    noResultsMessage.className = 'alert alert-info no-search-results';
+                    noResultsMessage.style.padding = '20px';
+                    noResultsMessage.style.borderRadius = '12px';
+                    noResultsMessage.style.backgroundColor = '#f8f9fa';
+                    noResultsMessage.style.border = '1px solid #e9ecef';
+                    noResultsMessage.style.marginTop = '20px';
+                    noResultsMessage.style.textAlign = 'center';
+                    noResultsMessage.innerHTML = `
+                        <p style="color: #6c757d; font-size: 1.1rem; margin-bottom: 0;">
+                            <i class="bi bi-search" style="margin-right: 10px;"></i>
+                            No questions found matching "${searchTerm}"
+                        </p>
+                    `;
+                    questionsList.appendChild(noResultsMessage);
+                } else {
+                    // Update existing message
+                    noResultsMessage.innerHTML = `
+                        <p style="color: #6c757d; font-size: 1.1rem; margin-bottom: 0;">
+                            <i class="bi bi-search" style="margin-right: 10px;"></i>
+                            No questions found matching "${searchTerm}"
+                        </p>
+                    `;
+                    noResultsMessage.style.display = 'block';
+                }
+            } else if (noResultsMessage) {
+                // Hide the message if we have results or empty search
+                noResultsMessage.style.display = 'none';
+                
+                // Show the original no questions message if search is empty and there are no questions
+                if (searchTerm === '' && questionCards.length === 0) {
+                    const existingNoQuestionsMsg = questionsList.querySelector('.alert.alert-info:not(.no-search-results)');
+                    if (existingNoQuestionsMsg) {
+                        existingNoQuestionsMsg.style.display = 'block';
+                    }
+                }
+            }
         });
     }
     

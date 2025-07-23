@@ -40,7 +40,10 @@ use Illuminate\Support\Str;
 @endphp
 
 @section('main_content')
-<h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">Your Questions</h2>
+<div class="yque">
+    <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">Your Questions</h2>
+</div>
+
 
 @if(session('success'))
 <div class="alert alert-success">

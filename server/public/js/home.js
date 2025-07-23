@@ -56,21 +56,26 @@ function renderPosts() {
   posts.forEach((post, index) => {
     // Format comments if they exist
     const commentsHtml = post.comments && post.comments.length > 0 
-      ? post.comments.map(comment => `
-        <div class="comment-item" data-comment-id="${comment.id}" style="padding: 10px; margin-bottom: 10px; border: 1px solid #e0e0e0; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-          <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
-            <div style="display: flex; align-items: center;">
-              <i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
-              <div>
-                <strong style="color: #a522b7;">${comment.user}</strong>
-                <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${comment.created_at}</small>
+      ? post.comments.map(comment => {
+          const commentProfileImgHtml = comment.avatar && comment.avatar.length > 0
+            ? `<img src="${comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
+            : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`;
+          return `
+            <div class="comment-item" data-comment-id="${comment.id}" style="padding: 10px; margin-bottom: 10px; border: 1px solid #e0e0e0; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                  ${commentProfileImgHtml}
+                  <div>
+                    <strong style="color: #a522b7;">${comment.user}</strong>
+                    <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${comment.created_at}</small>
+                  </div>
+                </div>
+                ${comment.is_owner ? `<button class="delete-comment-btn" data-comment-id="${comment.id}" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 0.9rem;"><i class="bi bi-trash"></i></button>` : ''}
               </div>
+              <div class="comment-text" style="max-height: 100px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word;">${comment.text}</div>
             </div>
-            ${comment.is_owner ? `<button class="delete-comment-btn" data-comment-id="${comment.id}" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 0.9rem;"><i class="bi bi-trash"></i></button>` : ''}
-          </div>
-          <div class="comment-text" style="max-height: 100px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word;">${comment.text}</div>
-        </div>
-      `).join('') 
+          `;
+        }).join('') 
       : `<p style="text-align: center; color: #777; font-style: italic; padding: 10px;">No comments yet</p>`;
       
     // Add style to hide scrollbar for Webkit browsers (Chrome, Safari, newer Edge)
@@ -87,22 +92,32 @@ function renderPosts() {
       ? `<div class="post-image" style><img src="${post.imageUrl}" alt="${post.title}" style="max-width: 100%; margin-top: 10px; border-radius: 8px;"></div>` 
       : '';
     
+    // Profile image HTML
+    const profileImgHtml = post.avatar && post.avatar.length > 0
+      ? `<img src="${post.avatar}" alt="Profile" style="width:2rem;height:2rem;border-radius:50%;object-fit:cover;margin-right:7px;">`
+      : `<i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>`;
+    
     postsContainer.innerHTML += `
       <div class="post" data-index="${index}" data-id="post-${post.id}">
         <div class="post-header">
           <div class="profile">
-            <i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>
+            <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
+              ${profileImgHtml}
+            </a>
             <div>
-              <strong>${post.profileName}</strong><br>
-              <small style="font-size: 1rem;">${post.studyingIn} - ${post.expertIn}</small>
-              <button style=" 
+              <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
+                <strong>${post.profileName}</strong><br>
+                <small style="font-size: 1rem;">${post.studyingIn} - ${post.expertIn}</small>
+              </a>
+              ${post.user_id === window.currentUserId ? '' : `
+              <button class="follow-btn" data-user-id="${post.user_id}" data-following="${post.isFollowing ? 'true' : 'false'}" style="
                border: 2px solid #a522b7;
-               color: black;
-               text-color: black;
+               ${post.isFollowing ? 'background-color: #a522b7; color: white;' : 'background-color: transparent; color: black;'}
                border-radius: 4px;
                cursor: pointer;
                margin-left: 5px;
-               font-size: 0.9rem;">Follow</button>
+               font-size: 0.9rem;">${post.isFollowing ? 'Following' : 'Follow'}</button>
+              `}
             </div>
           </div>
           <div>
@@ -112,7 +127,7 @@ function renderPosts() {
                 <button>Not interested</button><hr>
                 <button>Bookmark</button><hr>
                 <button>Copy Link</button><hr>
-                <button>Report</button>
+                ${window.isAuthenticated ? `<button class="report-btn" data-post-id="${post.id}"><i class="fas fa-flag"></i> Report</button>` : ''}
               </div>
             </span>
             <span class="close-post">×</span>
@@ -121,10 +136,10 @@ function renderPosts() {
         <hr>
         <h2>${post.title}</h2>
         
-        <p>${post.body}</p> /* Post body */
+        <p>${post.body}</p> 
         ${imageHtml}
         <div class="post-meta">
-          <small>Posted on ${post.created_at}</small>
+          <small>Posted on ${post.created_at}
         </div>
         <div class="comments-container" style="display: none; margin-top: 15px;">
           ${commentsHtml}
@@ -140,7 +155,7 @@ function renderPosts() {
           </button>
           <button class="action-btn downvote-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.userVote === 'downvote' ? '#dc3545' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
             <i class="bi ${post.userVote === 'downvote' ? 'bi-hand-thumbs-down-fill' : 'bi-hand-thumbs-down'}" style="font-size: 1.2rem; margin-right: 5px;"></i>
-            <span>${post.downvotes || 0}</span>
+            <span>${post.downvotes || 0}
           </button>
           <button class="action-btn comment-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
             <i class="bi bi-pencil-square" style="font-size: 1.2rem;"></i>
@@ -337,6 +352,60 @@ function attachPostEvents() {
       });
     });
   });
+  
+  // Follow button
+  document.querySelectorAll('.follow-btn').forEach((btn) => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const userId = this.dataset.userId;
+      const isFollowing = this.dataset.following === 'true';
+      
+      // Get CSRF token
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      // Determine the endpoint based on current follow status
+      const endpoint = isFollowing ? `/user/${userId}/unfollow` : `/user/${userId}/follow`;
+      
+      // Send AJAX request to follow/unfollow the user
+      fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Toggle the follow state based on the current state
+          const newFollowingState = !isFollowing;
+          
+          // Update this button
+          this.textContent = newFollowingState ? 'Following' : 'Follow';
+          this.style.backgroundColor = newFollowingState ? '#a522b7' : 'transparent';
+          this.style.color = newFollowingState ? 'white' : 'black';
+          this.dataset.following = newFollowingState.toString();
+          
+          // Update all follow buttons for this user
+          document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`).forEach(button => {
+            if (button !== this) {
+              button.textContent = newFollowingState ? 'Following' : 'Follow';
+              button.style.backgroundColor = newFollowingState ? '#a522b7' : 'transparent';
+              button.style.color = newFollowingState ? 'white' : 'black';
+              button.dataset.following = newFollowingState.toString();
+            }
+          });
+        } else {
+          console.error('Failed to update follow status:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating follow status:', error);
+      });
+    });
+  });
 
   // Close post button
   document.querySelectorAll('.close-post').forEach((btn) => {
@@ -401,7 +470,7 @@ function attachPostEvents() {
       commentForm.querySelector('.submit-comment').addEventListener('click', function() {
         const commentText = commentForm.querySelector('textarea').value.trim();
         if (!commentText) {
-          alert('Please enter a comment');
+          showToast('Please enter a comment', 'error');
           return;
         }
         
@@ -409,6 +478,110 @@ function attachPostEvents() {
       });
     });
   });
+
+  // Report button logic
+  document.querySelectorAll('.report-btn').forEach((btn) => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const postId = btn.getAttribute('data-post-id');
+      // Open modal
+      const reportModal = document.getElementById('reportModal');
+      const reportForm = document.getElementById('reportForm');
+      const reportIdInput = document.getElementById('reportIdInput');
+      const reasonSelect = document.getElementById('reasonSelect');
+      const detailsInput = document.getElementById('detailsInput');
+      const reportError = document.getElementById('reportError');
+      reportIdInput.value = postId;
+      reportForm.action = `/posts/${postId}/report`;
+      reasonSelect.value = '';
+      detailsInput.value = '';
+      reportError.style.display = 'none';
+      reportModal.style.display = 'flex';
+    });
+  });
+  // Modal close logic
+  const reportModal = document.getElementById('reportModal');
+  if (reportModal) {
+    const closeModalBtn = reportModal.querySelector('.close-modal');
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', function() {
+        reportModal.style.display = 'none';
+      });
+    }
+    // Close on outside click
+    reportModal.addEventListener('click', function(e) {
+      if (e.target === reportModal) reportModal.style.display = 'none';
+    });
+    // Handle form submit
+    const reportForm = document.getElementById('reportForm');
+    if (reportForm) {
+      reportForm.addEventListener('submit', function(e) {
+        const reasonSelect = document.getElementById('reasonSelect');
+        const detailsInput = document.getElementById('detailsInput');
+        const reportError = document.getElementById('reportError');
+        if (!reasonSelect.value) {
+          e.preventDefault();
+          reportError.textContent = 'Please select a reason.';
+          reportError.style.display = 'block';
+          return false;
+        }
+        e.preventDefault();
+        // Submit via AJAX
+        const postId = document.getElementById('reportIdInput').value;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        fetch(`/posts/${postId}/report`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin', // Ensure cookies/session are sent
+          body: JSON.stringify({
+            reason: reasonSelect.value,
+            details: detailsInput.value
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            reportModal.style.display = 'none';
+            
+            // Create and show success notification
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success';
+            alertDiv.textContent = 'Report submitted successfully!';
+            alertDiv.style.padding = '10px 15px';
+            alertDiv.style.marginBottom = '15px';
+            alertDiv.style.borderRadius = '5px';
+            alertDiv.style.backgroundColor = '#d4edda';
+            alertDiv.style.color = '#155724';
+            alertDiv.style.border = '1px solid #c3e6cb';
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.left = '50%';
+            alertDiv.style.transform = 'translateX(-50%)';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            
+            document.body.appendChild(alertDiv);
+            
+            // Remove alert after 2 seconds
+            setTimeout(() => {
+              alertDiv.remove();
+            }, 2000);
+          } else {
+            reportError.textContent = data.message || 'Failed to submit report.';
+            reportError.style.display = 'block';
+          }
+        })
+        .catch(() => {
+          reportError.textContent = 'Failed to submit report.';
+          reportError.style.display = 'block';
+        });
+      });
+    }
+  }
 
   document.addEventListener('click', closeAllMenus);
 }
@@ -458,7 +631,9 @@ async function submitComment(postId, commentText, postElement, commentForm) {
       newComment.innerHTML = `
         <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
           <div style="display: flex; align-items: center;">
-            <i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
+            ${data.comment.avatar && data.comment.avatar.length > 0
+              ? `<img src="${data.comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
+              : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`}
             <div>
               <strong style="color: #a522b7;">${data.comment.user}</strong>
               <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${data.comment.created_at}</small>
@@ -480,11 +655,11 @@ async function submitComment(postId, commentText, postElement, commentForm) {
       // Remove the comment form
       commentForm.remove();
     } else {
-      alert(data.message || 'Failed to add comment');
+      showToast(data.message || 'Failed to add comment', 'error');
     }
   } catch (error) {
     console.error('Error submitting comment:', error);
-    alert('Failed to submit comment. Please try again.');
+    showToast('Failed to submit comment. Please try again.', 'error');
   }
 }
 
@@ -529,11 +704,11 @@ async function deleteComment(commentId, commentElement, postElement) {
         commentsContainer.innerHTML = `<p style="text-align: center; color: #777; font-style: italic; padding: 10px;">No comments yet</p>`;
       }
     } else {
-      alert(data.message || 'Failed to delete comment');
+      showToast(data.message || 'Failed to delete comment', 'error');
     }
   } catch (error) {
     console.error('Error deleting comment:', error);
-    alert('Failed to delete comment. Please try again.');
+    showToast('Failed to delete comment. Please try again.', 'error');
   }
 }
 
@@ -587,8 +762,8 @@ document.getElementById('qas-answer').addEventListener('click', () => {
   document.getElementById('answer-input').focus();
 });
 document.getElementById('qas-pass').addEventListener('click', () => {
-  alert('You chose to pass on this question.');
+  showToast('You chose to pass on this question.', 'info');
 });
 document.getElementById('qas-bookmark').addEventListener('click', () => {
-  alert('Question bookmarked! (Feature coming soon)');
+  showToast('Question bookmarked! (Feature coming soon)', 'info');
 });

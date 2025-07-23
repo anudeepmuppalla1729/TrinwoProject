@@ -5,11 +5,10 @@
 <style>
     .questions-container {
         width: 100%;
-
         padding: 20px;
         font-family: 'Segoe UI', sans-serif;
-        background: white;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        background: #fff;
+
         border-radius: 12px;
     }
     
@@ -23,13 +22,12 @@
     }
     
     .question-card {
-        background-color: #fff;
+        background-color: rgb(236, 234, 234);
         border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        padding: 25px;
-        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 20px;
         transition: all 0.3s ease;
-        border-left: 5px solid #c92ae0;
         position: relative;
         overflow: hidden;
     }
@@ -52,12 +50,13 @@
     }
     
     .question-title {
-        font-size: 20px;
-        font-weight: bold;
+        font-size: 18px;
+        font-weight: 600;
         color: #333;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         position: relative;
         z-index: 1;
+        line-height: 1.3;
     }
     
     .question-title a {
@@ -67,40 +66,40 @@
     }
     
     .question-title a:hover {
-        color: #c92ae0;
+        color:  rgb(42, 60, 98);
         text-decoration: underline;
     }
     
     .question-meta {
         display: flex;
         justify-content: space-between;
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px dashed #eee;
+        color: #777;
+        font-size: 13px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid black;
     }
     
     .user-info {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
     
     .user-avatar {
-        width: 35px;
-        height: 35px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         background-color: #f0f0f0;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid #c92ae0;
+        border: 1px solid #eaeaea;
     }
     
     .user-avatar i {
         font-size: 18px;
-        color: #c92ae0;
+        color:  rgb(42, 60, 98);
     }
     
     .user-name {
@@ -110,20 +109,19 @@
     
     .question-excerpt {
         color: #444;
-        line-height: 1.7;
-        margin-bottom: 18px;
-        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        font-size: 14px;
     }
     
     .question-stats {
         display: flex;
         flex-wrap: wrap;
-        gap: 15px;
-        font-size: 14px;
-        background-color: #f9f9f9;
-        padding: 12px 15px;
-        border-radius: 8px;
-        margin-top: 15px;
+        gap: 12px;
+        font-size: 13px;
+        padding: 10px 0;
+        margin-top: 10px;
+        border-top: 1px solid black;
     }
     
     .stat {
@@ -134,30 +132,29 @@
     }
     
     .stat:hover {
-        transform: translateY(-2px);
-        color: #c92ae0;
+
+        color:  rgb(42, 60, 98);
     }
     
     .stat i {
         font-size: 16px;
-        color: #c92ae0;
     }
     
     .question-tags {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        margin-top: 15px;
+        margin-top: 12px;
+        margin-bottom: 10px;
     }
     
     .tag {
-        background-color: #e1ecf4;
-        color: #39739d;
-        padding: 6px 10px;
-        border-radius: 20px;
-        font-size: 12px;
+        background-color: #f0f0f0;
+        color: #555;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
         transition: all 0.2s ease;
-        border: 1px solid transparent;
     }
     
     .tag:hover {
@@ -174,14 +171,14 @@
     }
     
     .page-btn {
-        background: linear-gradient(135deg, #c92ae0, #a522b7);
+        background: linear-gradient(135deg,  rgb(42, 60, 98),  rgb(42, 60, 98));
         border: none;
         color: white;
         padding: 10px 18px;
         border-radius: 30px;
         cursor: pointer;
         font-weight: 500;
-        box-shadow: 0 4px 10px rgba(201, 42, 224, 0.3);
+        box-shadow: 0 4px 10px  rgb(42, 60, 98);
         transition: all 0.3s ease;
         min-width: 40px;
         display: flex;
@@ -190,9 +187,9 @@
     }
     
     .page-btn:hover {
-        background: linear-gradient(135deg, #a522b7, #8e1e9e);
+        background: linear-gradient(135deg,  rgb(42, 60, 98),  rgb(42, 60, 98));
         transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(201, 42, 224, 0.4);
+        box-shadow: 0 6px 15px  rgb(42, 60, 98);
     }
     
     .page-btn.disabled {
@@ -244,8 +241,42 @@
     }
     
     .search-box i {
-        color: #c92ae0;
+        color:  rgb(42, 60, 98);
         font-size: 16px;
+    }
+    
+    .question-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid black;
+    }
+    
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: none;
+        border: none;
+        color: #555;
+        cursor: pointer;
+        font-size: 13px;
+        padding: 5px 8px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+    
+    .action-btn:hover {
+        color:  rgb(42, 60, 98);
+    }
+    
+    .bookmark-btn.bookmarked {
+        color:  rgb(42, 60, 98);
+    }
+    
+    .bookmark-btn.bookmarked i {
+        color:  rgb(42, 60, 98);
     }
     
     .filter-options select {
@@ -266,12 +297,12 @@
     
     .filter-options select:focus {
         outline: none;
-        border-color: #c92ae0;
+        border-color:  rgb(42, 60, 98);
         box-shadow: 0 2px 12px rgba(201, 42, 224, 0.15);
     }
     
     .ask-question-btn {
-        background: linear-gradient(135deg, #c92ae0, #a522b7);
+        background:  rgb(42, 60, 98);
         border: none;
         color: white;
         padding: 12px 24px;
@@ -282,7 +313,7 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        box-shadow: 0 4px 15px rgba(201, 42, 224, 0.3);
+        box-shadow: 0 4px 15px  rgb(42, 60, 98);
         transition: all 0.3s ease;
     }
     
@@ -291,9 +322,9 @@
     }
     
     .ask-question-btn:hover {
-        background: linear-gradient(135deg, #a522b7, #8e1e9e);
+        background: linear-gradient(135deg,  rgb(42, 60, 98),  rgb(42, 60, 98));
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(201, 42, 224, 0.4);
+        box-shadow: 0 6px 20px  rgb(42, 60, 98);
     }
     
     .back-btn {
@@ -315,7 +346,7 @@
     }
     
     .back-btn:hover {
-        color: #c92ae0;
+        color:  rgb(42, 60, 98);
         background-color: #f0f0f0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
@@ -323,6 +354,23 @@
     .back-btn:hover i {
         transform: translateX(-3px);
     }
+   @media (max-width: 600px) {
+    .search-filter-container{
+      align-items:left;
+    }
+    .filter-options{
+        width:75px;
+     
+    }
+    #sort-questions{
+        font-size:small;
+        width:90px;
+    }
+    .stat span{
+        font-size:13px;
+        
+    }
+   }
 </style>
 @endpush
 
@@ -340,7 +388,7 @@
                 </div>
                 <div class="filter-options">
                     <select id="sort-questions">
-                        <option value="newest">Newest</option>
+                        <option value="newest">New</option>
                         <option value="popular">Most Popular</option>
                         <option value="answered">Most Answered</option>
                     </select>
@@ -351,42 +399,102 @@
         {{-- Questions data is now passed from the controller --}}
         
         <div class="questions-list">
-            @foreach($questions as $question)
-            <div class="question-card">
-                <h2 class="question-title">
-                    <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
-                </h2>
-                <div class="question-meta">
-                    <div class="user-info">
-                        <div class="user-avatar">
-                            <i class="bi bi-person-fill"></i>
+            @if(count($questions) > 0)
+                @foreach($questions as $question)
+                <div class="question-card">
+                    <div class="question-meta">
+                        <div class="user-info">
+                            <a href="{{ route('user.profile', parameters: $question['user_id']) }}" style="text-decoration: none;">
+                                <div class="user-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                            </a>
+                            <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
+                                <span class="user-name">{{ $question['user'] }}</span>
+                            </a>
                         </div>
-                        <span class="user-name">{{ $question['user'] }}</span>
+                        <span>{{ $question['created_at'] }}</span>
                     </div>
-                    <span>{{ $question['created_at'] }}</span>
-                </div>
-                <div class="question-excerpt">{{ $question['excerpt'] }}</div>
-                <div class="question-tags">
-                    @foreach($question['tags'] as $tag)
-                    <span class="tag">{{ $tag }}</span>
-                    @endforeach
-                </div>
-                <div class="question-stats">
-                    <div class="stat">
-                        <i class="bi bi-chat-left-text"></i>
-                        <span>{{ $question['answers'] }} answers</span>
+                    <h2 class="question-title">
+                        <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
+                    </h2>
+                    <div class="question-excerpt">{{ $question['excerpt'] }}</div>
+                    <div class="question-tags">
+                        @foreach($question['tags'] as $tag)
+                        <span class="tag">{{ $tag }}</span>
+                        @endforeach
                     </div>
-                    <div class="stat">
-                        <i class="bi bi-hand-thumbs-up"></i>
-                        <span>{{ $question['upvotes'] }} upvotes</span>
+
+                    <div class="question-actions">
+                        @auth
+                        <form method="POST" action="{{ route('questions.bookmark', ['id' => $question['id']]) }}" class="d-inline bookmark-form">
+                            @csrf
+                            <button type="submit" class="action-btn bookmark-btn {{ $question['is_bookmarked'] ? 'bookmarked' : '' }}">
+                                <i class="bi {{ $question['is_bookmarked'] ? 'bi-bookmark-fill' : 'bi-bookmark' }}"></i>
+                                <span>{{ $question['is_bookmarked'] ? 'Bookmarked' : 'Bookmark' }}</span>
+                                
+                            </button>
+                        </form>
+                        @endauth
+                        <div class="stat" >
+                            <i class="bi bi-chat-left-text"></i>
+                            <span>{{ $question['answers'] }} answers</span>
+                                </div>
+                        @auth
+                        <form method="POST" action="{{ route('questions.report', ['id' => $question['id']]) }}" class="d-inline report-form">
+                            @csrf
+                            <button type="button" class="action-btn report-btn" data-type="question" data-id="{{ $question['id'] }}">
+                                <i class="fas fa-flag"></i> Report
+                            </button>
+                        </form>
+                        @endauth
                     </div>
+                    
                 </div>
-            </div>
-            @endforeach
+                @endforeach
+            @else
+                <div class="alert alert-info" style="padding: 20px; border-radius: 12px; background-color: #f8f9fa; border: 1px solid #e9ecef; margin-top: 20px;">
+                    <p style="text-align: center; color: #6c757d; font-size: 1.1rem; margin-bottom: 0;">
+                        <i class="bi bi-info-circle" style="margin-right: 10px;"></i>
+                        No questions available. Be the first to ask a question!
+                    </p>
+                </div>
+            @endif
         </div>
 
     </div>
 </div>
+    @auth
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+        <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:320px; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
+            <button type="button" class="close-modal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:#c92ae0; cursor:pointer;">&times;</button>
+            <h3 style="color:#c92ae0; margin-bottom:1rem;">Report Question</h3>
+            <form id="reportForm" method="POST">
+                @csrf
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="report_id" id="reportIdInput">
+                <div style="margin-bottom:1rem;">
+                    <label for="reason" style="font-weight:600; color:#333;">Reason</label>
+                    <select name="reason" id="reasonSelect" required style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc; margin-top:0.5rem;">
+                        <option value="">Select a reason</option>
+                        <option value="Spam">Spam</option>
+                        <option value="Abusive">Abusive or harmful</option>
+                        <option value="Off-topic">Off-topic</option>
+                        <option value="Inappropriate">Inappropriate content</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label for="details" style="font-weight:600; color:#333;">Details (optional)</label>
+                    <textarea name="details" id="detailsInput" rows="3" style="width:100%; border-radius:6px; border:1px solid #ccc; padding:0.5rem;"></textarea>
+                </div>
+                <button type="submit" class="submit-report-btn" style="background:linear-gradient(135deg,#c92ae0,#a522b7); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
+                <div id="reportError" style="color:#dc3545; margin-top:0.7rem; display:none;"></div>
+            </form>
+        </div>
+    </div>
+    @endauth
 @endsection
 
 @push('scripts')
@@ -397,9 +505,92 @@
         document.querySelectorAll('.pagination .page-btn').forEach(button => {
             button.addEventListener('click', function() {
                 if (!this.classList.contains('disabled')) {
-                    alert('Pagination feature coming soon!');
+                    showToast('Pagination feature coming soon!', 'info');
                 }
             });
+        });
+
+        // Bookmark functionality with AJAX
+        const bookmarkForms = document.querySelectorAll('.bookmark-form');
+        bookmarkForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const url = this.getAttribute('action');
+                const button = this.querySelector('.bookmark-btn');
+                const icon = button.querySelector('i');
+                const text = button.querySelector('span');
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button appearance
+                        if (data.isBookmarked) {
+                            button.classList.add('bookmarked');
+                            icon.classList.remove('bi-bookmark');
+                            icon.classList.add('bi-bookmark-fill');
+                            text.textContent = 'Bookmarked';
+                        } else {
+                            button.classList.remove('bookmarked');
+                            icon.classList.remove('bi-bookmark-fill');
+                            icon.classList.add('bi-bookmark');
+                            text.textContent = 'Bookmark';
+                        }
+                        
+                        // Show success message
+                        showToast(data.message, 'success');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+
+        let reportModal = document.getElementById('reportModal');
+        let reportForm = document.getElementById('reportForm');
+        let reportIdInput = document.getElementById('reportIdInput');
+        let reasonSelect = document.getElementById('reasonSelect');
+        let detailsInput = document.getElementById('detailsInput');
+        let reportError = document.getElementById('reportError');
+        let currentAction = '';
+        document.querySelectorAll('.report-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                let id = btn.getAttribute('data-id');
+                reportIdInput.value = id;
+                // Set form action
+                currentAction = "{{ route('questions.report', ['id' => '__ID__']) }}".replace('__ID__', id);
+                reportForm.action = currentAction;
+                reasonSelect.value = '';
+                detailsInput.value = '';
+                reportError.style.display = 'none';
+                reportModal.style.display = 'flex';
+            });
+        });
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            reportModal.style.display = 'none';
+        });
+        reportForm.addEventListener('submit', function(e) {
+            if(!reasonSelect.value) {
+                e.preventDefault();
+                reportError.textContent = 'Please select a reason.';
+                reportError.style.display = 'block';
+                return false;
+            }
+        });
+        // Close modal on outside click
+        reportModal.addEventListener('click', function(e) {
+            if(e.target === reportModal) reportModal.style.display = 'none';
         });
     });
 </script>

@@ -1,0 +1,357 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary:rgb(230, 232, 235);
+    --primary-light:rgb(42, 60, 98);
+    --primary-dark: rgb(230, 232, 235);
+    --white: #ffffff;
+    --black: #000000;
+    --gray-light: #f5f5f5;
+    --gray: #e0e0e0;
+    --gray-dark: #9e9e9e;
+    --danger: #e53935;
+    --success: #43a047;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #f7f4f4;
+    display: flex;
+    min-height: 100vh;
+}
+
+
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+}
+
+.settings-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.settings-header {
+    margin-bottom: 30px;
+}
+
+.settings-title {
+    font-size: 2.5rem;
+    color: var(--black);
+    margin-bottom: 10px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.settings-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 80px;
+    height: 4px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.settings-subtitle {
+    color: var(--gray-dark);
+    font-weight: 400;
+    font-size: 1.1rem;
+}
+
+.settings-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+
+.settings-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 25px !important;
+    padding-bottom: 15px !important;
+    border-bottom: 1px solid var(--gray) !important;
+    justify-content: flex-start !important;
+}
+
+.card-header i {
+    background: var(--primary-light) !important;
+    color: var(--primary) !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.3rem !important;
+    margin-right: 15px !important;
+
+}
+
+.card-title {
+    font-size: 1.5rem !important;
+    color: var(--black) !important;
+    font-weight: 600 !important;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-col {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--gray);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(201, 42, 224, 0.2);
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+}
+
+.radio-option input {
+    width: auto;
+    margin-right: 8px;
+}
+
+.interests-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.interest-tag {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.interest-tag i {
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.interest-tag i:hover {
+    color: var(--danger);
+}
+
+.btn {
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 5px 15px rgba(201, 42, 224, 0.4);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--gray);
+    color: #555;
+}
+
+.btn-outline:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.password-strength {
+    height: 5px;
+    background: var(--gray);
+    border-radius: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.password-strength-meter {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.strength-weak {
+    background: var(--danger);
+    width: 30%;
+}
+
+.strength-medium {
+    background: #ff9800;
+    width: 60%;
+}
+
+.strength-strong {
+    background: var(--success);
+    width: 100%;
+}
+
+.password-info {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: var(--gray-dark);
+}
+
+.profile-picture-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgb(42, 60, 98);
+    position: relative;
+    margin-right: 25px;
+    border: 3px solid #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.profile-picture::after {
+    content: attr(data-initials);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 1px;
+    display: none;
+    pointer-events: none;
+}
+.profile-picture:not(:has(img))::after {
+    display: block;
+}
+
+.upload-btn {
+    position: relative;
+}
+
+.upload-btn input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+@media (max-width:600px){
+    
+    .pset{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+}
+
+@media (max-width: 992px) {
+
+    
+    .main-content {
+        margin-left: 0;
+    }
+
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px 15px;
+    }
+    
+    .settings-card {
+        padding: 20px;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .card-header i {
+        margin-bottom: 15px;
+    }
+    
+}

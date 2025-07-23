@@ -40,24 +40,13 @@
                             <input type="password" name="password" class="form-input" placeholder="Enter your password" required />
                         </div>
                     </div>
-                    <div class="form-group form-checkbox">
-                        <input class="form-check-input" type="checkbox" id="remember" name="remember" />
-                        <span class="icon-divider"></span>
-                        <label class="form-check-label" for="remember">Remember me</label>
+  
                         <p><a href="#" class="form-link ms-auto">Forgot Password?</a></p>
-                    </div>
+
                     <div class="form-group">
                         <button class="btn-signup" type="submit">Login</button>
                     </div>
-                    <p class="form-divider">or continue with</p>
-                    <div class="social-buttons">
-                        <button type="button" class="btn-social">
-                            <i class="bi bi-google"></i> Google
-                        </button>
-                        <button type="button" class="btn-social">
-                            <i class="bi bi-facebook"></i> Facebook
-                        </button>
-                    </div>
+    
                     <p class="form-footer">
                         Don't have an account?
                         <a href="{{ route('register') }}" class="form-link">Sign up</a>

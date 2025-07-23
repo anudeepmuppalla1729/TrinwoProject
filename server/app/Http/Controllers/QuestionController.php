@@ -8,8 +8,10 @@ use App\Models\Tag;
 use App\Models\QuestionTag;
 use App\Models\QuestionBookmark;
 use App\Models\User;
+use App\Models\QuestionReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class QuestionController extends Controller
 {
@@ -20,21 +22,35 @@ class QuestionController extends Controller
      */
     public function index()
     {
+        // Get the current user ID if authenticated
+        $userId = Auth::id();
+        
         // Fetch questions from the database
         $questions = Question::with(['user', 'tags'])
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function($question) {
+            ->map(function($question) use ($userId) {
+                // Check if the question is bookmarked by the current user
+                $isBookmarked = false;
+                if ($userId) {
+                    $isBookmarked = QuestionBookmark::where('user_id', $userId)
+                        ->where('question_id', $question->question_id)
+                        ->exists();
+                }
+                
                 return [
                     'id' => $question->question_id,
                     'title' => $question->title,
                     'excerpt' => substr($question->description, 0, 200) . (strlen($question->description) > 200 ? '...' : ''),
                     'user' => $question->user->name,
+                    'user_id' => $question->user->user_id,
+                    'avatar' => $question->user->avatar,
                     'created_at' => $question->created_at->diffForHumans(),
                     'answers' => $question->answers->count(),
-                    'upvotes' => $question->upvotes ?? 0,
-                    'downvotes' => $question->downvotes ?? 0,
-                    'tags' => $question->tags->pluck('name')->toArray()
+                    'upvotes' => 0, // Questions don't have upvotes in this system
+                    'downvotes' => 0, // Questions don't have downvotes in this system
+                    'tags' => $question->tags->pluck('name')->toArray(),
+                    'is_bookmarked' => $isBookmarked
                 ];
             });
             
@@ -148,17 +164,28 @@ class QuestionController extends Controller
         $questionModel = Question::with(['user', 'tags', 'answers.user'])
             ->findOrFail($id);
             
+        // Check if the question is bookmarked by the current user
+        $isBookmarked = false;
+        if (Auth::check()) {
+            $isBookmarked = QuestionBookmark::where('user_id', Auth::id())
+                ->where('question_id', $id)
+                ->exists();
+        }
+            
         // Format the question data
         $question = [
             'id' => $questionModel->question_id,
             'title' => $questionModel->title,
             'description' => $questionModel->description,
             'user' => $questionModel->user->name,
+            'user_id' => $questionModel->user->user_id,
+            'avatar' => $questionModel->user->avatar_url ?? '',
             'user_location' => $questionModel->user->studying_in ?? 'Unknown Location',
             'created_at' => $questionModel->created_at->diffForHumans(),
-            'upvotes' => $questionModel->upvotes ?? 0,
-            'downvotes' => $questionModel->downvotes ?? 0,
-            'tags' => $questionModel->tags->pluck('name')->toArray()
+            'upvotes' => 0, // Questions don't have upvotes in this system
+            'downvotes' => 0, // Questions don't have downvotes in this system
+            'tags' => $questionModel->tags->pluck('name')->toArray(),
+            'is_bookmarked' => $isBookmarked
         ];
         
         // Format the answers data
@@ -167,6 +194,8 @@ class QuestionController extends Controller
                 'id' => $answer->answer_id,
                 'content' => $answer->content,
                 'user' => $answer->user->name,
+                'user_id' => $answer->user->user_id,
+                'avatar' => $answer->user->avatar_url ?? '',
                 'created_at' => $answer->created_at->diffForHumans(),
                 'upvotes' => $answer->getUpvotesCount(),
                 'downvotes' => $answer->getDownvotesCount(),
@@ -294,9 +323,52 @@ class QuestionController extends Controller
      */
     public function bookmark($id)
     {
-        // In a real application, you would bookmark the question in the database
-        // For now, we'll redirect to the question page
-        return redirect()->route('question', ['id' => $id])->with('success', 'Question bookmarked!');
+        try {
+            $userId = Auth::id();
+            $questionId = $id;
+            
+            // Check if the question existsy
+            $question = Question::findOrFail($questionId);
+            
+            // Check if the question is already bookmarked by the user
+            $bookmark = QuestionBookmark::where('user_id', $userId)
+                ->where('question_id', $questionId)
+                ->first();
+                
+            if ($bookmark) {
+                // If already bookmarked, remove the bookmark
+                $bookmark->delete();
+                $message = 'Bookmark removed!';
+                $isBookmarked = false;
+            } else {
+                // If not bookmarked, add a bookmark
+                QuestionBookmark::create([
+                    'user_id' => $userId,
+                    'question_id' => $questionId
+                ]);
+                $message = 'Question bookmarked!';
+                $isBookmarked = true;
+            }
+            
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'isBookmarked' => $isBookmarked
+                ]);
+            }
+            
+            return redirect()->back()->with('success', $message);
+        } catch (\Exception $e) {
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -310,5 +382,36 @@ class QuestionController extends Controller
         // In a real application, you would generate a share link for the question
         // For now, we'll redirect to the question page
         return redirect()->route('question', ['id' => $id])->with('success', 'Question shared!');
+    }
+
+    /**
+     * Report a question
+     */
+    public function report(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return back()->with('error', 'You must be logged in to report.');
+        }
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+        $userId = AUTH::id();
+        $questionId = $id;
+        // Prevent duplicate reports by same user
+        $existing = \App\Models\QuestionReport::where('reporter_id', $userId)->where('question_id', $questionId)->first();
+        if ($existing) {
+            $msg = 'You have already reported this question.';
+            if ($request->expectsJson()) return response()->json(['success' => false, 'message' => $msg], 409);
+            return back()->with('error', $msg);
+        }
+        \App\Models\QuestionReport::create([
+            'reporter_id' => $userId,
+            'question_id' => $questionId,
+            'reason' => $request->reason,
+        ]);
+        $msg = 'Question reported successfully.';
+        if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
+        return back()->with('success', $msg);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\PostBookmark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -53,7 +54,7 @@ class PostController extends Controller
 
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('post_images', 'public');
+            $imagePath = $request->file('image')->store('posts', 's3');
             
             PostImage::create([
                 'post_id' => $post->post_id,
@@ -125,7 +126,7 @@ class PostController extends Controller
         
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('post_images', 'public');
+            $imagePath = $request->file('image')->store('posts', 's3');
             
             PostImage::create([
                 'post_id' => $post->post_id,
@@ -151,7 +152,7 @@ class PostController extends Controller
         
         $post->delete();
         
-        return redirect()->route('posts.index')
+        return redirect()->route('profile.posts')
             ->with('success', 'Post deleted successfully!');
     }
     
@@ -164,7 +165,7 @@ class PostController extends Controller
             'heading' => 'required|string|max:255',
             'details' => 'required|string',
             'visibility' => 'required|in:public,private',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $post = Post::create([
@@ -176,7 +177,7 @@ class PostController extends Controller
 
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('post_images', 'public');
+            $imagePath = $request->file('image')->store('posts', config('filesystems.default'));
             
             PostImage::create([
                 'post_id' => $post->post_id,
@@ -210,7 +211,14 @@ class PostController extends Controller
             ->map(function ($post) use ($userId) {
                 $imageUrl = null;
                 if ($post->images->count() > 0) {
-                    $imageUrl = Storage::url($post->images->first()->image_url);
+                    $imgPath = $post->images->first()->image_url;
+                    if (!empty($imgPath)) {
+                        if (Str::startsWith($imgPath, 'http')) {
+                            $imageUrl = $imgPath;
+                        } else {
+                            $imageUrl = Storage::disk('s3')->url($imgPath);
+                        }
+                    }
                 }
                 
                 // Get user's vote on this post if logged in
@@ -226,9 +234,18 @@ class PostController extends Controller
                     $userBookmark = $post->getUserBookmark($userId) ? true : false;
                 }
                 
+                // Check if the current user is following the post author
+                $isFollowing = false;
+                if ($userId && $post->user->user_id !== $userId) {
+                    $currentUser = Auth::user();
+                    $isFollowing = $currentUser->following()->where('user_id', $post->user->user_id)->exists();
+                }
+                
                 return [
                     'id' => $post->post_id,
+                    'user_id' => $post->user->user_id,
                     'profileName' => $post->user->name,
+                    'avatar' => $post->user->avatar_url, // Add avatar_url for profile pic
                     'studyingIn' => $post->user->studying_in ?? 'Member',
                     'expertIn' => $post->user->expert_in ?? 'Member',
                     'title' => $post->heading,
@@ -240,6 +257,7 @@ class PostController extends Controller
                             'id' => $comment->comment_id,
                             'text' => $comment->comment_text,
                             'user' => $comment->user->name,
+                            'avatar' => $comment->user->avatar_url ?? '',
                             'created_at' => $comment->created_at->format('M d, Y'),
                             'is_owner' => auth()->check() && $comment->user_id === auth()->id()
                         ];
@@ -249,7 +267,8 @@ class PostController extends Controller
                     'commentCount' => $post->comments->count(),
                     'userVote' => $userVote, // Add user's vote status
                     'isBookmarked' => $userBookmark, // Add user's bookmark status
-                    'user_bookmark' => $userBookmark ? true : null // For compatibility with frontend code
+                    'user_bookmark' => $userBookmark ? true : null, // For compatibility with frontend code
+                    'isFollowing' => $isFollowing // Add whether the current user is following the post author
                 ];
             });
 
@@ -461,5 +480,36 @@ class PostController extends Controller
             'success' => true,
             'isBookmarked' => $bookmark ? true : false
         ]);
+    }
+
+    /**
+     * Report a post
+     */
+    public function report(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return back()->with('error', 'You must be logged in to report.');
+        }
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+        $userId = AUTH::id();
+        $postId = $id;
+        // Prevent duplicate reports by same user
+        $existing = \App\Models\PostReport::where('reporter_id', $userId)->where('post_id', $postId)->first();
+        if ($existing) {
+            $msg = 'You have already reported this post.';
+            if ($request->expectsJson()) return response()->json(['success' => false, 'message' => $msg], 409);
+            return back()->with('error', $msg);
+        }
+        \App\Models\PostReport::create([
+            'reporter_id' => $userId,
+            'post_id' => $postId,
+            'reason' => $request->reason,
+        ]);
+        $msg = 'Post reported successfully.';
+        if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
+        return back()->with('success', $msg);
     }
 }

@@ -1,4 +1,4 @@
- @extends('layouts.profile')
+@extends('layouts.profile')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/user_profile_posts.css') }}">
 @endpush
@@ -7,8 +7,10 @@
 @section('main_content')
 <div class="top-bar">
     <h1 class="page-title">
-        <i class="fas fa-file-alt"></i>
-        <span>Your Posts</span>
+        <div class="ypos">
+              <span>Your Posts</span>
+        </div>
+       
     </h1>
     <div class="filter-bar">
         <button class="filter-btn active">All Posts</button>
@@ -18,278 +20,217 @@
         <button class="filter-btn">Tutorials</button>
     </div>
 </div>
-<!-- Posts Statistics -->
-<div class="posts-stats">
-    <div class="stat-card">
-        <div class="stat-value">42</div>
-        <div class="stat-label">Total Posts</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">24.8K</div>
-        <div class="stat-label">Total Views</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">1.4K</div>
-        <div class="stat-label">Total Comments</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-value">3.7K</div>
-        <div class="stat-label">Total Shares</div>
-    </div>
-</div>
+
 <!-- Posts Grid -->
 <div class="posts-grid">
-    <!-- Post 1 -->
-    <div class="post-card">
-        <div class="post-header">
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Web Development" class="post-image">
-            <div class="post-category">Tutorial</div>
-        </div>
-        <div class="post-body">
-            <div class="post-meta">
-                <div class="post-date">
-                    <i class="far fa-calendar"></i> May 15, 2023
+    @forelse($posts as $post)
+        <div class="post-card">
+            <div class="post-header">
+                @if(!empty(Auth::user()->avatar))
+                    <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover; margin-bottom: 8px;">
+                @else
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=32" alt="{{ Auth::user()->name }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover; margin-bottom: 8px;">
+                @endif
+                @if($post->images && $post->images->count() > 0)
+                    @php
+                        $img = $post->images->first();
+                        $imgUrl = $img->image_url;
+                    @endphp
+                    @if(!empty($imgUrl))
+                        @if(Str::startsWith($imgUrl, 'http'))
+                            <img src="{{ $imgUrl }}" alt="{{ $post->heading }}" class="post-image">
+                        @else
+                            <img src="{{ Storage::disk('s3')->url($imgUrl) }}" alt="{{ $post->heading }}" class="post-image">
+                        @endif
+                    @endif
+                    <div class="post-category">{{ ucfirst($post->category ?? 'General') }}</div>
+                @else
+                    <div class="post-header-placeholder">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                @endif
+            </div>
+            <div class="post-body">
+                <div class="post-meta">
+                    <div class="post-date">
+                        <i class="far fa-calendar"></i> {{ $post->created_at->format('M d, Y') }}
+                    </div>
                 </div>
-                <div class="post-read-time">
-                    <i class="far fa-clock"></i> 8 min read
+                <h3 class="post-title">{{ $post->heading }}</h3>
+                <p class="post-excerpt">{{ $post->details }}</p>
+            </div>
+            <div class="post-footer">
+                <div class="post-stats">
+                    <div class="post-stat">
+                        <i class="far fa-comment"></i> {{ $post->comments->count() }} comments
+                    </div>
+                </div>
+                <div class="post-actions">
+                    <form method="POST" action="{{ route('posts.destroy', $post->post_id) }}" class="delete-post-form" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="action-btn delete-btn" title="Delete post">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                    @auth
+                    <span class="options" style="position:relative;">
+                        <i class="bi bi-three-dots-vertical" style="font-size:1.2rem; cursor:pointer;"></i>
+                        <div class="options-menu" style="display:none; position:absolute; right:0; top:24px; background:#fff; border:1px solid #eee; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); min-width:120px; z-index:10;">
+                            <button class="remove-bookmark" data-post-id="{{ $post->post_id }}">Remove Bookmark</button><hr>
+                            <button>Copy Link</button><hr>
+                            <form method="POST" action="{{ route('posts.report', ['id' => $post->post_id]) }}" class="d-inline report-form" style="width:100%;">
+                                @csrf
+                                <button type="button" class="action-btn report-btn" data-type="post" data-id="{{ $post->post_id }}" style="width:100%; text-align:left; color:#dc3545; background:none; border:none; padding:8px 12px;"> <i class="fas fa-flag"></i> Report</button>
+                            </form>
+                        </div>
+                    </span>
+                    @endauth
                 </div>
             </div>
-            <h3 class="post-title">Mastering React Hooks: A Comprehensive Guide</h3>
-            <p class="post-excerpt">
-                Learn how to effectively use React Hooks to simplify your components and manage state without classes. This guide covers useState, useEffect, and custom hooks with practical examples.
-            </p>
+            @if($post->comments->count())
+                <div class="post-comments">
+                    <strong><i class="far fa-comments"></i> Comments ({{ $post->comments->count() }}):</strong>
+                    <ul>
+                        @foreach($post->comments as $comment)
+                            <li>{{ $comment->comment_text }} <small>— {{ $comment->user->name ?? 'Unknown' }}</small></li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <div class="post-stat">
-                    <i class="far fa-eye"></i> 2.4K
-                </div>
-                <div class="post-stat">
-                    <i class="far fa-comment"></i> 87
-                </div>
-                <div class="post-stat">
-                    <i class="fas fa-heart"></i> 324
-                </div>
-            </div>
-            <div class="post-actions">
-                <button class="action-btn">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn">
-                    <i class="fas fa-trash"></i>
-                </button>
+    @empty
+        <div class="post-card">
+            <div class="post-header">
+                <h3 class="post-title">You have not posted anything yet.</h3>
             </div>
         </div>
-    </div>
-    <!-- Post 2 -->
-    <div class="post-card">
-        <div class="post-header">
-            <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="UI Design" class="post-image">
-            <div class="post-category">Design</div>
-        </div>
-        <div class="post-body">
-            <div class="post-meta">
-                <div class="post-date">
-                    <i class="far fa-calendar"></i> May 10, 2023
-                </div>
-                <div class="post-read-time">
-                    <i class="far fa-clock"></i> 6 min read
-                </div>
+    @endforelse
+</div>
+@auth
+<!-- Report Modal -->
+<div id="reportModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:320px; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
+        <button type="button" class="close-modal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:#c92ae0; cursor:pointer;">&times;</button>
+        <h3 style="color:#c92ae0; margin-bottom:1rem;">Report Post</h3>
+        <form id="reportForm" method="POST">
+            @csrf
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="report_id" id="reportIdInput">
+            <div style="margin-bottom:1rem;">
+                <label for="reason" style="font-weight:600; color:#333;">Reason</label>
+                <select name="reason" id="reasonSelect" required style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid #ccc; margin-top:0.5rem;">
+                    <option value="">Select a reason</option>
+                    <option value="Spam">Spam</option>
+                    <option value="Abusive">Abusive or harmful</option>
+                    <option value="Off-topic">Off-topic</option>
+                    <option value="Inappropriate">Inappropriate content</option>
+                    <option value="Other">Other</option>
+                </select>
             </div>
-            <h3 class="post-title">The Future of UI: Neumorphism and Beyond</h3>
-            <p class="post-excerpt">
-                Explore the latest trends in UI design, from neumorphism to glassmorphism. Discover how these styles create depth and realism in digital interfaces and when to use them effectively.
-            </p>
-        </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <div class="post-stat">
-                    <i class="far fa-eye"></i> 3.7K
-                </div>
-                <div class="post-stat">
-                    <i class="far fa-comment"></i> 124
-                </div>
-                <div class="post-stat">
-                    <i class="fas fa-heart"></i> 512
-                </div>
+            <div style="margin-bottom:1rem;">
+                <label for="details" style="font-weight:600; color:#333;">Details (optional)</label>
+                <textarea name="details" id="detailsInput" rows="3" style="width:100%; border-radius:6px; border:1px solid #ccc; padding:0.5rem;"></textarea>
             </div>
-            <div class="post-actions">
-                <button class="action-btn">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- Post 3 -->
-    <div class="post-card">
-        <div class="post-header">
-            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="JavaScript" class="post-image">
-            <div class="post-category">Tech</div>
-        </div>
-        <div class="post-body">
-            <div class="post-meta">
-                <div class="post-date">
-                    <i class="far fa-calendar"></i> May 5, 2023
-                </div>
-                <div class="post-read-time">
-                    <i class="far fa-clock"></i> 10 min read
-                </div>
-            </div>
-            <h3 class="post-title">JavaScript Performance Optimization Techniques</h3>
-            <p class="post-excerpt">
-                Discover advanced techniques to optimize your JavaScript applications. Learn about lazy loading, memoization, debouncing, and other methods to improve your app's performance.
-            </p>
-        </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <div class="post-stat">
-                    <i class="far fa-eye"></i> 5.2K
-                </div>
-                <div class="post-stat">
-                    <i class="far fa-comment"></i> 92
-                </div>
-                <div class="post-stat">
-                    <i class="fas fa-heart"></i> 687
-                </div>
-            </div>
-            <div class="post-actions">
-                <button class="action-btn">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- Post 4 -->
-    <div class="post-card">
-        <div class="post-header">
-            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Web Design" class="post-image">
-            <div class="post-category">Design</div>
-        </div>
-        <div class="post-body">
-            <div class="post-meta">
-                <div class="post-date">
-                    <i class="far fa-calendar"></i> Apr 28, 2023
-                </div>
-                <div class="post-read-time">
-                    <i class="far fa-clock"></i> 7 min read
-                </div>
-            </div>
-            <h3 class="post-title">Responsive Design Principles for Modern Websites</h3>
-            <p class="post-excerpt">
-                Learn the core principles of responsive web design that every developer should know. From fluid grids to flexible images, master the techniques that make websites work on any device.
-            </p>
-        </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <div class="post-stat">
-                    <i class="far fa-eye"></i> 4.1K
-                </div>
-                <div class="post-stat">
-                    <i class="far fa-comment"></i> 76
-                </div>
-                <div class="post-stat">
-                    <i class="fas fa-heart"></i> 421
-                </div>
-            </div>
-            <div class="post-actions">
-                <button class="action-btn">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- Post 5 -->
-    <div class="post-card">
-        <div class="post-header">
-            <img src="https://images.unsplash.com/photo-1550439062-609e1531270e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Node.js" class="post-image">
-            <div class="post-category">Backend</div>
-        </div>
-        <div class="post-body">
-            <div class="post-meta">
-                <div class="post-date">
-                    <i class="far fa-calendar"></i> Apr 22, 2023
-                </div>
-                <div class="post-read-time">
-                    <i class="far fa-clock"></i> 9 min read
-                </div>
-            </div>
-            <h3 class="post-title">Building RESTful APIs with Node.js and Express</h3>
-            <p class="post-excerpt">
-                Step-by-step guide to creating robust RESTful APIs using Node.js and Express. Learn about routing, middleware, error handling, and best practices for API development.
-            </p>
-        </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <div class="post-stat">
-                    <i class="far fa-eye"></i> 3.2K
-                </div>
-                <div class="post-stat">
-                    <i class="far fa-comment"></i> 58
-                </div>
-                <div class="post-stat">
-                    <i class="fas fa-heart"></i> 289
-                </div>
-            </div>
-            <div class="post-actions">
-                <button class="action-btn">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- Post 6 -->
-    <div class="post-card">
-        <div class="post-header">
-            <img src="https://images.unsplash.com/photo-1579403124614-197f69d8187b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="CSS" class="post-image">
-            <div class="post-category">Frontend</div>
-        </div>
-        <div class="post-body">
-            <div class="post-meta">
-                <div class="post-date">
-                    <i class="far fa-calendar"></i> Apr 15, 2023
-                </div>
-                <div class="post-read-time">
-                    <i class="far fa-clock"></i> 5 min read
-                </div>
-            </div>
-            <h3 class="post-title">Advanced CSS Grid Techniques for Layouts</h3>
-            <p class="post-excerpt">
-                Unlock the full potential of CSS Grid with these advanced techniques. Learn how to create complex responsive layouts with minimal code and maximum flexibility.
-            </p>
-        </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <div class="post-stat">
-                    <i class="far fa-eye"></i> 2.9K
-                </div>
-                <div class="post-stat">
-                    <i class="far fa-comment"></i> 42
-                </div>
-                <div class="post-stat">
-                    <i class="fas fa-heart"></i> 198
-                </div>
-            </div>
-            <div class="post-actions">
-                <button class="action-btn">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="action-btn">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
+            <button type="submit" class="submit-report-btn" style="background:linear-gradient(135deg,#c92ae0,#a522b7); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
+            <div id="reportError" style="color:#dc3545; margin-top:0.7rem; display:none;"></div>
+        </form>
     </div>
 </div>
-@endsection 
+@endauth
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Report modal functionality
+        let reportModal = document.getElementById('reportModal');
+        let reportForm = document.getElementById('reportForm');
+        let reportIdInput = document.getElementById('reportIdInput');
+        let reasonSelect = document.getElementById('reasonSelect');
+        let detailsInput = document.getElementById('detailsInput');
+        let reportError = document.getElementById('reportError');
+        let currentAction = '';
+        
+        // Options menu toggle
+        document.querySelectorAll('.bi-three-dots-vertical').forEach(dots => {
+            dots.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const optionsMenu = this.nextElementSibling;
+                // Close all other open menus first
+                document.querySelectorAll('.options-menu').forEach(menu => {
+                    if (menu !== optionsMenu) {
+                        menu.style.display = 'none';
+                    }
+                });
+                // Toggle this menu
+                optionsMenu.style.display = optionsMenu.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+        
+        // Close options menu when clicking outside
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.options-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        });
+        
+        // Prevent menu from closing when clicking inside it
+        document.querySelectorAll('.options-menu').forEach(menu => {
+            menu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+        
+        // Report button functionality
+        document.querySelectorAll('.report-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                let id = btn.getAttribute('data-id');
+                reportIdInput.value = id;
+                // Set form action
+                currentAction = "{{ route('posts.report', ['id' => '__ID__']) }}".replace('__ID__', id);
+                reportForm.action = currentAction;
+                reasonSelect.value = '';
+                detailsInput.value = '';
+                reportError.style.display = 'none';
+                reportModal.style.display = 'flex';
+            });
+        });
+        
+        // Close modal button
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            reportModal.style.display = 'none';
+        });
+        
+        // Report form validation
+        reportForm.addEventListener('submit', function(e) {
+            if(!reasonSelect.value) {
+                e.preventDefault();
+                reportError.textContent = 'Please select a reason.';
+                reportError.style.display = 'block';
+                return false;
+            }
+        });
+        
+        // Close modal on outside click
+        reportModal.addEventListener('click', function(e) {
+            if(e.target === reportModal) reportModal.style.display = 'none';
+        });
+        
+        // Copy link functionality
+        document.querySelectorAll('.options-menu button').forEach(button => {
+            if (button.textContent.trim() === 'Copy Link') {
+                button.addEventListener('click', function() {
+                    const postId = this.closest('.options').querySelector('.remove-bookmark').getAttribute('data-post-id');
+                    const url = `${window.location.origin}/posts/${postId}`;
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert('Link copied to clipboard!');
+                    }).catch(err => {
+                        console.error('Could not copy text: ', err);
+                    });
+                });
+            }
+        });
+    });
+</script>
+@endpush
+@endsection

@@ -1,20 +1,38 @@
 <div class="sidebar">
     <div class="profile-header">
-        <div class="profile-pic"></div>
-        <h2 class="profile-name">Alex Morgan</h2>
-        <p class="profile-title">Senior Developer & Tech Enthusiast</p>
+        <div class="profile-pic profile-picture" @if(!Auth::user()->avatar) data-initials="{{ strtoupper(collect(explode(' ', Auth::user()->name))->map(fn($w)=>$w[0])->join('')) }}" @endif>
+            @if(!empty(Auth::user()->avatar))
+                <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile Picture" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+            @else
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=100" alt="{{ Auth::user()->name }}">
+            @endif
+        </div>
+        <h2 class="profile-name">{{ Auth::user()->name }}</h2>
+        <p class="profile-title">
+            @if(Auth::user()->bio)
+                {{ Auth::user()->bio }}
+            @elseif(Auth::user()->expert_in || Auth::user()->studying_in)
+                {{ Auth::user()->studying_in }}{{ Auth::user()->studying_in && Auth::user()->expert_in ? ' - ' : '' }}{{ Auth::user()->expert_in }}
+            @else
+                Member
+            @endif
+        </p>
         <div class="stats">
             <div class="stat-item">
-                <span class="sidebar-stat-value">1.2K</span>
+                <span class="sidebar-stat-value">{{ Auth::user()->followers()->count() }}</span>
                 <span class="sidebar-stat-label">Followers</span>
             </div>
             <div class="stat-item">
-                <span class="sidebar-stat-value">850</span>
+                <span class="sidebar-stat-value">{{ Auth::user()->following()->count() }}</span>
                 <span class="sidebar-stat-label">Following</span>
             </div>
         </div>
     </div>
     <div class="nav-links">
+        <a href="{{ route('dashboard') }}" class="nav-item main-feed">
+            <i class="fas fa-home"></i>
+            <span>Main Feed</span>
+        </a>
         <a href="{{ route('profile.dashboard') }}" class="nav-item @if(Route::is('profile.dashboard')) active @endif">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
@@ -42,6 +60,10 @@
         <a href="{{ route('profile.bookmarks') }}" class="nav-item @if(Route::is('profile.bookmarks')) active @endif">
             <i class="fas fa-bookmark"></i>
             <span>Bookmarks</span>
+        </a>
+        <a href="{{ route('profile.settings') }}" class="nav-item @if(Route::is('profile.settings')) active @endif">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
         </a>
     </div>
     <!-- <div class="nav-links">

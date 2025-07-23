@@ -30,6 +30,7 @@
             padding: 2rem;
             border-radius: 16px;
             width: 95%;
+            height: 95%;
             max-width: 1000px;
             position: relative;
             text-align: center;
@@ -375,6 +376,15 @@
         </div>
     </div>
 
+    <div id="skip-confirm-modal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); align-items:center; justify-content:center; z-index:9999;">
+        <div class="modal-content" style="background:#fff; padding:32px 24px; border-radius:8px; max-width:350px; text-align:center; box-shadow:0 2px 16px rgba(0,0,0,0.15);">
+            <h3 style="margin-bottom:16px;">Skip Interest Selection?</h3>
+            <p style="margin-bottom:24px;">You can update your preferences later in settings. Are you sure you want to skip?</p>
+            <button id="confirmSkipBtn" class="btn btn-primary" style="margin-right:12px;">Yes, Skip</button>
+            <button id="cancelSkipBtn" class="btn btn-outline">Cancel</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const interestBoxes = document.querySelectorAll('.interest-box');
@@ -403,8 +413,14 @@
             
             // Skip button functionality
             document.querySelector('.skip-btn').addEventListener('click', function() {
-                alert('Skipping interest selection. You can update your preferences later in settings.');
+                document.getElementById('skip-confirm-modal').style.display = 'flex';
+            });
+            document.getElementById('cancelSkipBtn').addEventListener('click', function() {
+                document.getElementById('skip-confirm-modal').style.display = 'none';
+            });
+            document.getElementById('confirmSkipBtn').addEventListener('click', function() {
                 // Here you would typically redirect or proceed to the next step
+                window.location.href = '/dashboard';
             });
             
             // Continue button functionality
@@ -429,7 +445,7 @@
                         }
                     })
                     .catch(error => {
-                        alert('Failed to submit interests: ' + error.message);
+                        showToast('Failed to submit interests: ' + error.message, 'error');
                     });
                 }
             });
