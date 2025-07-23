@@ -16,4 +16,15 @@
         <a href="#"><i class="fa-regular fa-bell"></i></a>
         <a href="/profile/dashboard"><i class="bi bi-person-circle"></i></a>
     </div>
-</nav> 
+    <style>
+        @media (max-width: 768px) {
+            .navbar .search-box {
+                display: none !important;
+            }
+
+            .navbar .logo {
+                display: none !important;
+            }
+        }
+    </style>
+</nav>
