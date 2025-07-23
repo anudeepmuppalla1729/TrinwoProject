@@ -126,7 +126,7 @@ function renderPosts() {
         <hr>
         <h2>${post.title}</h2>
         
-        <p>${post.body}</p> /* Post body */
+        <p>${post.body}</p> 
         ${imageHtml}
         <div class="post-meta">
           <small>Posted on ${post.created_at}
