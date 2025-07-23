@@ -171,7 +171,7 @@
     }
     
     .page-btn {
-        background: linear-gradient(135deg,  rgb(42, 60, 98),  rgb(42, 60, 98););
+        background: linear-gradient(135deg,  rgb(42, 60, 98),  rgb(42, 60, 98));
         border: none;
         color: white;
         padding: 10px 18px;
@@ -187,7 +187,7 @@
     }
     
     .page-btn:hover {
-        background: linear-gradient(135deg,  rgb(42, 60, 98);,  rgb(42, 60, 98););
+        background: linear-gradient(135deg,  rgb(42, 60, 98),  rgb(42, 60, 98));
         transform: translateY(-2px);
         box-shadow: 0 6px 15px  rgb(42, 60, 98);
     }
@@ -302,7 +302,7 @@
     }
     
     .ask-question-btn {
-        background: linear-gradient(135deg,  rgb(42, 60, 98);,  rgb(42, 60, 98););
+        background:  rgb(42, 60, 98);
         border: none;
         color: white;
         padding: 12px 24px;
