@@ -1,0 +1,175 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+html, body {
+    max-height: 100%;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0;
+}
+
+/* generic corner style */
+.corner {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.top-left {
+    top: 0;
+    left: 0;
+    background-image: url('../assets/top-left.png');
+    height: 50px;
+    width: 50px;
+}
+
+.top-right {
+    top: 0;
+    right: 0;
+    background-image: url('../assets/top-right.png');
+    height: 50px;
+    width: 50px;
+}
+
+.bottom-left {
+    bottom: 0;
+    left: 0;
+    height: 50px;
+    width: 50px;
+    background-image: url('../assets/bottom_left.png');
+}
+
+.bottom-right {
+    bottom: 0;
+    right: 0;
+    height: 50px;
+    width: 50px;
+    background-image: url('../assets/bottom-right.png');
+}
+
+.container {
+    background: rgba(0,0,0,0.03);
+    padding: 1rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 1000px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+h1 {
+    background: rgb(42, 60, 98);
+    color: rgb(252, 248, 248);
+    padding: 0.4rem 1rem;
+    border-radius: 0.4rem;
+    display: inline-block;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    gap: 1rem;
+    padding: 0.5rem;
+}
+.interest-box {
+    position: relative;
+    border: 2px solid transparent; /* baseline */
+    border-radius: 8px;
+    border:3px solid;
+    overflow: hidden;
+    cursor: pointer;
+    background: #fafafa;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.interest-box:hover {
+    transform: scale(1.03);
+}
+.interest-box.selected {
+    border-color: black;
+    box-shadow: 0 0 8px rgba(0,0,0,0.5); /* optional shadow for emphasis */
+}
+
+
+.interest-box img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.interest-box span {
+    position: absolute;
+    bottom: 70px;
+    left: 0;
+    right: 0;
+    font-weight: bold;
+    color: white;
+    padding: 0.4rem;
+    font-size: 25px;
+    text-align: center;
+    text-shadow:
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+      -1px 1px 0 #000,
+       1px 1px 0 #000,
+       2px 2px 4px rgba(0,0,0,0.5); /* Sharp black border + soft shadow */
+}
+
+.interest-box::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 2px solid rgb(42, 60, 98);
+    border-radius: 50%;
+    box-shadow: 0 0 3px rgba(0,0,0,0.3);
+}
+
+.buttons {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+button {
+    padding: 0.4rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: rgb(42, 60, 98);
+    color: rgb(250, 247, 247);
+    font-size: 1.1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: rgb(42, 60, 98);
+}
+
+.continue-btn{
+    margin-right: 50px;
+}

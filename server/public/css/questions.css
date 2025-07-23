@@ -1,0 +1,124 @@
+/* Questions page styles */
+
+.questions-list {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 300px;
+}
+
+.question-item {
+  background-color: rgb(237, 233, 233);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.question-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.question-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.question-item h3 a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.question-item h3 a:hover {
+  color: rgb(42, 60, 98);
+}
+
+.question-item p {
+  color: #555;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.question-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.question-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.question-meta i {
+  color: rgb(42, 60, 98);
+}
+
+.search-container {
+  display: flex;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.search-container input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px 0 0 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-container button {
+  background: rgb(42, 60, 98);
+  color: white;
+  border: none;
+  padding: 0 20px;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-container button:hover {
+  background: rgb(42, 60, 98);
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.page-btn {
+  background: rgb(42, 60, 98);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.page-btn:hover {
+  background: rgb(42, 60, 98);
+}
+
+.page-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.page-number {
+  font-size: 0.9rem;
+  color: #666;
+}
