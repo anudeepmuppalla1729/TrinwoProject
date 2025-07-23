@@ -66,7 +66,7 @@ function renderPosts() {
                 <div style="display: flex; align-items: center;">
                   ${commentProfileImgHtml}
                   <div>
-                    <strong style="color: #a522b7;">${comment.user}</strong>
+                    <strong style="color: rgb(49, 60, 95);">${comment.user}</strong>
                     <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${comment.created_at}</small>
                   </div>
                 </div>
@@ -111,8 +111,8 @@ function renderPosts() {
               </a>
               ${post.user_id === window.currentUserId ? '' : `
               <button class="follow-btn" data-user-id="${post.user_id}" data-following="${post.isFollowing ? 'true' : 'false'}" style="
-               border: 2px solid #a522b7;
-               ${post.isFollowing ? 'background-color: #a522b7; color: white;' : 'background-color: transparent; color: black;'}
+               border: 2px solid rgb(49, 60, 95);
+               ${post.isFollowing ? 'background-color: rgb(49, 60, 95); color: white;' : 'background-color: transparent; color: black;'}
                border-radius: 4px;
                cursor: pointer;
                margin-left: 5px;
@@ -145,7 +145,7 @@ function renderPosts() {
           ${commentsHtml}
         </div>
         <div class="post-actions" style="display: flex; justify-content: space-between; padding: 10px 0;">
-          <button class="action-btn upvote-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.userVote === 'upvote' ? '#a522b7' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+          <button class="action-btn upvote-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.userVote === 'upvote' ? 'rgb(49, 60, 95)' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
             <i class="bi ${post.userVote === 'upvote' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}" style="font-size: 1.2rem; margin-right: 5px;"></i>
             <span>${post.upvotes || 0}</span>
           </button>
@@ -160,7 +160,7 @@ function renderPosts() {
           <button class="action-btn comment-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
             <i class="bi bi-pencil-square" style="font-size: 1.2rem;"></i>
           </button>
-          <button class="action-btn bookmark-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.isBookmarked ? '#a522b7' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+          <button class="action-btn bookmark-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.isBookmarked ? 'rgb(49, 60, 95)' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
             <i class="bi ${post.isBookmarked ? 'bi-bookmark-fill' : 'bi-bookmark'}" style="font-size: 1.2rem;"></i>
           </button>
         </div>
@@ -179,7 +179,7 @@ actionButtonStyles.textContent = `
     transform: translateY(-2px);
   }
   .upvote-btn:hover {
-    color: #a522b7;
+    color: rgb(49, 60, 95);
   }
   .comment-count-btn:hover, .comment-btn:hover {
     color: #0d6efd;
@@ -188,7 +188,7 @@ actionButtonStyles.textContent = `
     color: #dc3545;
   }
   .bookmark-btn:hover {
-    color: #a522b7;
+    color: rgb(49, 60, 95);
   }
 `;
 document.head.appendChild(actionButtonStyles);
@@ -234,7 +234,7 @@ function attachPostEvents() {
           // Check the userVote status from the response
           if (data.userVote === 'upvote') {
             // User upvoted
-            this.style.color = '#a522b7';
+            this.style.color = 'rgb(49, 60, 95)';
             this.querySelector('i').classList.remove('bi-hand-thumbs-up');
             this.querySelector('i').classList.add('bi-hand-thumbs-up-fill');
             
@@ -334,7 +334,7 @@ function attachPostEvents() {
           // Update the bookmark button based on the response
           if (data.isBookmarked) {
             // Post is now bookmarked
-            this.style.color = '#a522b7';
+            this.style.color = 'rgb(49, 60, 95)';
             this.querySelector('i').classList.remove('bi-bookmark');
             this.querySelector('i').classList.add('bi-bookmark-fill');
           } else {
@@ -384,7 +384,7 @@ function attachPostEvents() {
           
           // Update this button
           this.textContent = newFollowingState ? 'Following' : 'Follow';
-          this.style.backgroundColor = newFollowingState ? '#a522b7' : 'transparent';
+          this.style.backgroundColor = newFollowingState ? 'rgb(49, 60, 95)' : 'transparent';
           this.style.color = newFollowingState ? 'white' : 'black';
           this.dataset.following = newFollowingState.toString();
           
@@ -392,7 +392,7 @@ function attachPostEvents() {
           document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`).forEach(button => {
             if (button !== this) {
               button.textContent = newFollowingState ? 'Following' : 'Follow';
-              button.style.backgroundColor = newFollowingState ? '#a522b7' : 'transparent';
+              button.style.backgroundColor = newFollowingState ? 'rgb(49, 60, 95)' : 'transparent';
               button.style.color = newFollowingState ? 'white' : 'black';
               button.dataset.following = newFollowingState.toString();
             }
@@ -460,7 +460,7 @@ function attachPostEvents() {
       commentForm.className = 'comment-form';
       commentForm.innerHTML = `
         <textarea placeholder="Write your comment here..." rows="3" style="width: 100%; padding: 8px; margin-top: 10px; border-radius: 4px; border: 1px solid #ccc;"></textarea>
-        <button class="submit-comment" style="background-color: #a522b7; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-top: 5px; cursor: pointer;">Submit Comment</button>
+        <button class="submit-comment" style="background-color: rgb(49, 60, 95); color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-top: 5px; cursor: pointer;">Submit Comment</button>
       `;
       
       // Insert form after post actions
@@ -635,7 +635,7 @@ async function submitComment(postId, commentText, postElement, commentForm) {
               ? `<img src="${data.comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
               : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`}
             <div>
-              <strong style="color: #a522b7;">${data.comment.user}</strong>
+              <strong style="color: rgb(49, 60, 95);">${data.comment.user}</strong>
               <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${data.comment.created_at}</small>
             </div>
           </div>

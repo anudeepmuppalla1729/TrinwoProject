@@ -8,8 +8,9 @@
         <button class="ask-btn aks">Ask Question</button>
     </div>
     <div class="search-box">
-        <input type="text" placeholder="Search here..." />
+        <input type="text" id="navbar-search" placeholder="Search users..." autocomplete="off" />
         <i class="fa-solid fa-magnifying-glass"></i>
+        <div id="search-results" class="search-results-dropdown" style="display: none;"></div>
     </div>
     <div class="nav-links">
         <a href="#" class="contact"><i class="fa-regular fa-address-book"></i></a>
@@ -22,4 +23,4 @@
             @endif
         </a>
     </div>
-</nav> 
+</nav>

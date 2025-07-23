@@ -77,7 +77,7 @@
     
     .user-avatar i {
         font-size: 20px;
-        color: #c92ae0;
+        color: rgb(49, 60, 95);
     }
     
     .user-details {
@@ -92,7 +92,7 @@
     }
     
     .user-name:hover {
-        color: #c92ae0;
+        color: rgb(49, 60, 95);
         text-decoration: underline;
     }
     
@@ -141,7 +141,7 @@
     }
     
     .action-btn:hover {
-        color: #c92ae0;
+        color: rgb(49, 60, 95);
         background-color: rgba(201, 42, 224, 0.05);
     }
     
@@ -164,11 +164,11 @@
     }
     
     .bookmark-btn.bookmarked {
-        color: #c92ae0;
+        color: rgb(49, 60, 95);
     }
     
     .bookmark-btn:hover {
-        color: #c92ae0;
+        color: rgb(49, 60, 95);
         background-color: rgba(201, 42, 224, 0.05);
     }
     
@@ -178,7 +178,7 @@
     }
     
     .bookmark-btn.bookmarked i {
-        color: #c92ae0;
+        color: rgb(49, 60, 95);
     }
     
     .question-tags {
@@ -233,9 +233,9 @@
     }
     
     .sort-option.active {
-        background-color: #c92ae0;
+        background-color: rgb(49, 60, 95);
         color: white;
-        border-color: #c92ae0;
+        border-color:rgb(49, 60, 95);
     }
     
     .sort-option:hover {
@@ -342,7 +342,7 @@
     }
     
     .submit-answer {
-        background: linear-gradient(135deg, #c92ae0, #a522b7);
+        background: rgb(49, 60, 95);
         border: none;
         color: white;
         padding: 0.4rem 0.8rem;
@@ -370,7 +370,7 @@
     }
     
     .back-btn:hover {
-        color: #c92ae0;
+        color: rgb(49, 60, 95);
         background-color: #f0f0f0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
@@ -551,8 +551,8 @@
 <!-- Report Modal -->
 <div id="reportModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
     <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:320px; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
-        <button type="button" class="close-modal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:#c92ae0; cursor:pointer;">&times;</button>
-        <h3 style="color:#c92ae0; margin-bottom:1rem;">Report <span id="reportTypeLabel"></span></h3>
+        <button type="button" class="close-modal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:rgb(49, 60, 95);cursor:pointer;">&times;</button>
+        <h3 style="color:rgb(49, 60, 95); margin-bottom:1rem;">Report <span id="reportTypeLabel"></span></h3>
         <form id="reportForm" method="POST">
             @csrf
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -572,7 +572,7 @@
                 <label for="details" style="font-weight:600; color:#333;">Details (optional)</label>
                 <textarea name="details" id="detailsInput" rows="3" style="width:100%; border-radius:6px; border:1px solid #ccc; padding:0.5rem;"></textarea>
             </div>
-            <button type="submit" class="submit-report-btn" style="background:linear-gradient(135deg,#c92ae0,#a522b7); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
+            <button type="submit" class="submit-report-btn" style="background:rgb(49, 60, 95); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
             <div id="reportError" style="color:#dc3545; margin-top:0.7rem; display:none;"></div>
         </form>
     </div>

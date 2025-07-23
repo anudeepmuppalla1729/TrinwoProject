@@ -5,6 +5,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
@@ -34,6 +35,7 @@ Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionControlle
 
 Route::get('/questions', [QuestionController::class, 'index'])->name('questions');
 Route::get('/question/{id?}', [QuestionController::class, 'show'])->name('question');
+Route::get('/api/questions/search', [QuestionController::class, 'search'])->name('api.questions.search');
 
 // Question routes
 Route::middleware(['auth'])->group(function () {
@@ -102,6 +104,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/user/{userId}/unfollow', [ProfileController::class, 'unfollowUser'])->name('user.unfollow');
     Route::get('/user/{userId}/follow-status', [ProfileController::class, 'getFollowStatus'])->name('user.follow-status');
     Route::post('/profile/followers/{followerId}/remove', [ProfileController::class, 'removeFollower'])->name('follower.remove');
+    
+    // User search API
+    Route::get('/api/users/search', [UserController::class, 'searchUsers'])->name('api.users.search');
 });
 
 // API route for dashboard posts (accessible without authentication)

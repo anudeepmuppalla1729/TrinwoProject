@@ -201,13 +201,14 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-primary {
-    background: var(--primary);
+    background: rgb(49, 60, 95);
     color: var(--white);
 }
 
 .btn-primary:hover {
     background: var(--primary-dark);
     box-shadow: 0 5px 15px rgba(201, 42, 224, 0.4);
+    color: black;
 }
 
 .btn-outline {
@@ -218,7 +219,6 @@ input:focus, select:focus, textarea:focus {
 
 .btn-outline:hover {
     border-color: var(--primary);
-    color: var(--primary);
 }
 
 .action-buttons {

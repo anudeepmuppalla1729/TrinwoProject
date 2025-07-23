@@ -406,7 +406,11 @@
                         <div class="user-info">
                             <a href="{{ route('user.profile', parameters: $question['user_id']) }}" style="text-decoration: none;">
                                 <div class="user-avatar">
-                                    <i class="bi bi-person-fill"></i>
+                                    @if($question['avatar'])
+                                        <img src="{{ $question['avatar'] }}" alt="{{ $question['user'] }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                    @else
+                                        <i class="bi bi-person-fill"></i>
+                                    @endif
                                 </div>
                             </a>
                             <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
@@ -452,13 +456,7 @@
                     
                 </div>
                 @endforeach
-            @else
-                <div class="alert alert-info" style="padding: 20px; border-radius: 12px; background-color: #f8f9fa; border: 1px solid #e9ecef; margin-top: 20px;">
-                    <p style="text-align: center; color: #6c757d; font-size: 1.1rem; margin-bottom: 0;">
-                        <i class="bi bi-info-circle" style="margin-right: 10px;"></i>
-                        No questions available. Be the first to ask a question!
-                    </p>
-                </div>
+         
             @endif
         </div>
 

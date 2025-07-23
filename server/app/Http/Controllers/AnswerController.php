@@ -6,6 +6,7 @@ use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AnswerController extends Controller
 {
@@ -63,9 +64,31 @@ class AnswerController extends Controller
      */
     public function destroy($id)
     {
-        // In a real application, you would delete the answer from the database
-        // For now, we'll redirect to the question page
-        return redirect()->back()->with('success', 'Answer deleted successfully!');
+        try {
+            // Find the answer
+            $answer = Answer::findOrFail($id);
+            
+            // Check if the authenticated user is the owner of the answer
+            if ($answer->user_id !== Auth::id()) {
+                return redirect()->back()->with('error', 'You do not have permission to delete this answer.');
+            }
+            
+            // Begin transaction to ensure all related data is deleted properly
+            \DB::beginTransaction();
+            
+            // The boot method in the Answer model will handle deleting related votes and reports
+            $answer->delete();
+            
+            // Commit the transaction
+            \DB::commit();
+            
+            return redirect()->back()->with('success', 'Answer deleted successfully!');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of error
+            \DB::rollBack();
+            
+            return redirect()->back()->with('error', 'An error occurred while deleting the answer: ' . $e->getMessage());
+        }
     }
 
     /**

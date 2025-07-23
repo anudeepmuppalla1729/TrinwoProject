@@ -177,7 +177,7 @@ class PostController extends Controller
 
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', config('filesystems.default'));
+            $imagePath = $request->file('image')->store('posts', 's3');
             
             PostImage::create([
                 'post_id' => $post->post_id,
