@@ -9,15 +9,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .signup-container {
-  margin-top: 100px;
-  margin-bottom: 60px;
+
   display: flex;
-  width: 90%;
+  width: 80vw;
   max-width: 1200px;
-  min-height: 85vh;
+  height: 87vh;
   background: #fff;
   border-radius: 20px;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
@@ -27,18 +27,23 @@ body {
 /* Left Panel - Image Section */
 .signup-left {
   flex: 1;
-  min-height: 100%;
-  background: 
-    url("../assets/signup_bg_upscaled.png");
+  width: 50%;
+  height: 100%;
+  background-image: url("../assets/signup_bg_upscaled.png");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0.03)
+    /* fallback color */
+  ;
+  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 2rem;
-  color: white;
+  justify-content: center;
   text-align: center;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  overflow: hidden;
 }
 
 .signup-left-content {
@@ -59,13 +64,14 @@ body {
 
 /* Right Panel - Form Section */
 .signup-right {
-  flex: 1;
   display: flex;
+  height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1.5rem;
+  padding-top: 0;
+  width: 42%;
   position: relative;
-  background-image: url('../assets/top-right.png'), url('../assets/bottom-right.png');
   background-position: top right, bottom right;
   background-repeat: no-repeat, no-repeat;
   background-size: 120px, 120px;
@@ -77,7 +83,7 @@ body {
 }
 
 .signup-header {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 2.5rem;
   text-align: center;

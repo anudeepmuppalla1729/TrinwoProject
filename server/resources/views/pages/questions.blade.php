@@ -302,7 +302,7 @@
     }
     
     .ask-question-btn {
-        background: linear-gradient(135deg,  rgb(42, 60, 98),  rgb(42, 60, 98));
+        background:  rgb(42, 60, 98);
         border: none;
         color: white;
         padding: 12px 24px;
@@ -399,62 +399,67 @@
         {{-- Questions data is now passed from the controller --}}
         
         <div class="questions-list">
-            @foreach($questions as $question)
-            <div class="question-card">
-                <div class="question-meta">
-                    <div class="user-info">
-                        <a href="{{ route('user.profile', parameters: $question['user_id']) }}" style="text-decoration: none;">
-                            <div class="user-avatar">
-                                @if(!empty($question['avatar']))
-                                    <img src="{{ Storage::disk('s3')->url($question['avatar']) }}" alt="User" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
-                                @else
-                                <i class="bi bi-person-fill"></i>
-                                @endif
-                            </div>
-                        </a>
-                        <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
-                            <span class="user-name">{{ $question['user'] }}</span>
-                        </a>
+            @if(count($questions) > 0)
+                @foreach($questions as $question)
+                <div class="question-card">
+                    <div class="question-meta">
+                        <div class="user-info">
+                            <a href="{{ route('user.profile', parameters: $question['user_id']) }}" style="text-decoration: none;">
+                                <div class="user-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                            </a>
+                            <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
+                                <span class="user-name">{{ $question['user'] }}</span>
+                            </a>
+                        </div>
+                        <span>{{ $question['created_at'] }}</span>
                     </div>
-                    <span>{{ $question['created_at'] }}</span>
-                </div>
-                <h2 class="question-title">
-                    <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
-                </h2>
-                <div class="question-excerpt">{{ $question['excerpt'] }}</div>
-                <div class="question-tags">
-                    @foreach($question['tags'] as $tag)
-                    <span class="tag">{{ $tag }}</span>
-                    @endforeach
-                </div>
+                    <h2 class="question-title">
+                        <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
+                    </h2>
+                    <div class="question-excerpt">{{ $question['excerpt'] }}</div>
+                    <div class="question-tags">
+                        @foreach($question['tags'] as $tag)
+                        <span class="tag">{{ $tag }}</span>
+                        @endforeach
+                    </div>
 
-                <div class="question-actions">
-                    @auth
-                    <form method="POST" action="{{ route('questions.bookmark', ['id' => $question['id']]) }}" class="d-inline bookmark-form">
-                        @csrf
-                        <button type="submit" class="action-btn bookmark-btn {{ $question['is_bookmarked'] ? 'bookmarked' : '' }}">
-                            <i class="bi {{ $question['is_bookmarked'] ? 'bi-bookmark-fill' : 'bi-bookmark' }}"></i>
-                            <span>{{ $question['is_bookmarked'] ? 'Bookmarked' : 'Bookmark' }}</span>
-                            
-                        </button>
-                    </form>
-                    @endauth
-                    <div class="stat" >
-                        <i class="bi bi-chat-left-text"></i>
-                        <span>{{ $question['answers'] }} answers</span>
-                            </div>
-                    @auth
-                    <form method="POST" action="{{ route('questions.report', ['id' => $question['id']]) }}" class="d-inline report-form">
-                        @csrf
-                        <button type="button" class="action-btn report-btn" data-type="question" data-id="{{ $question['id'] }}">
-                            <i class="fas fa-flag"></i> Report
-                        </button>
-                    </form>
-                    @endauth
+                    <div class="question-actions">
+                        @auth
+                        <form method="POST" action="{{ route('questions.bookmark', ['id' => $question['id']]) }}" class="d-inline bookmark-form">
+                            @csrf
+                            <button type="submit" class="action-btn bookmark-btn {{ $question['is_bookmarked'] ? 'bookmarked' : '' }}">
+                                <i class="bi {{ $question['is_bookmarked'] ? 'bi-bookmark-fill' : 'bi-bookmark' }}"></i>
+                                <span>{{ $question['is_bookmarked'] ? 'Bookmarked' : 'Bookmark' }}</span>
+                                
+                            </button>
+                        </form>
+                        @endauth
+                        <div class="stat" >
+                            <i class="bi bi-chat-left-text"></i>
+                            <span>{{ $question['answers'] }} answers</span>
+                                </div>
+                        @auth
+                        <form method="POST" action="{{ route('questions.report', ['id' => $question['id']]) }}" class="d-inline report-form">
+                            @csrf
+                            <button type="button" class="action-btn report-btn" data-type="question" data-id="{{ $question['id'] }}">
+                                <i class="fas fa-flag"></i> Report
+                            </button>
+                        </form>
+                        @endauth
+                    </div>
+                    
                 </div>
-                
-            </div>
-            @endforeach
+                @endforeach
+            @else
+                <div class="alert alert-info" style="padding: 20px; border-radius: 12px; background-color: #f8f9fa; border: 1px solid #e9ecef; margin-top: 20px;">
+                    <p style="text-align: center; color: #6c757d; font-size: 1.1rem; margin-bottom: 0;">
+                        <i class="bi bi-info-circle" style="margin-right: 10px;"></i>
+                        No questions available. Be the first to ask a question!
+                    </p>
+                </div>
+            @endif
         </div>
 
     </div>

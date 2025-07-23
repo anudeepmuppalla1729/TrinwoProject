@@ -30,6 +30,7 @@
             padding: 2rem;
             border-radius: 16px;
             width: 95%;
+            height: 95%;
             max-width: 1000px;
             position: relative;
             text-align: center;

@@ -112,11 +112,11 @@ body {
 /* Sidebar fixed on the left */
 .dashboard_items {
   position: fixed;
-  left: 100px;
-  top: 50px;
+  left: 110px;
+  top: 60px;
   /* below navbar */
   width: 230px;
-  height: calc(100vh - 70px);
+  height: 85vh;
   margin-top: 10px;
   /* full height minus navbar */
   background: rgb(236, 234, 234);
@@ -149,6 +149,7 @@ body {
   font-weight: bold;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   transition: background 0.3s;
 }
@@ -162,11 +163,15 @@ body {
   margin-bottom: 50px;
 }
 
+.settings-logout{
+  margin-top: 10px
+}
+
 .settings-logout a {
   padding: 0.4rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
   background: rgb(236, 234, 234);
-  margin-left: 50px;
+  margin-left: 45px;
   border-radius: 6px;
   text-decoration: none;
   color: black;
