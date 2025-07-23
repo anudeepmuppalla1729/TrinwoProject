@@ -418,7 +418,11 @@
             <div class="user-info">
                 <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
                     <div class="user-avatar">
-                        <i class="bi bi-person-fill"></i>
+                        @if(!empty($question['avatar']))
+                            <img src="{{ $question['avatar'] }}" alt="User" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                        @else
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($question['user']) }}&size=36" alt="User" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                        @endif
                     </div>
                 </a>
                 <div class="user-details">
@@ -484,7 +488,11 @@
                 <div class="answer-user-info">
                     <a href="{{ route('user.profile', $answer['user_id']) }}" style="text-decoration: none;">
                         <div class="answer-user-avatar">
-                            <i class="bi bi-person-fill"></i>
+                            @if(!empty($answer['avatar']))
+                                <img src="{{ $answer['avatar'] }}" alt="User" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+                            @else
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($answer['user']) }}&size=32" alt="User" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+                            @endif
                         </div>
                     </a>
                     <a href="{{ route('user.profile', $answer['user_id']) }}" style="text-decoration: none; font-weight: 600; color: #333;">

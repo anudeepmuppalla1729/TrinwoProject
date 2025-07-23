@@ -245,6 +245,7 @@ class PostController extends Controller
                     'id' => $post->post_id,
                     'user_id' => $post->user->user_id,
                     'profileName' => $post->user->name,
+                    'avatar' => $post->user->avatar_url, // Add avatar_url for profile pic
                     'studyingIn' => $post->user->studying_in ?? 'Member',
                     'expertIn' => $post->user->expert_in ?? 'Member',
                     'title' => $post->heading,
@@ -256,6 +257,7 @@ class PostController extends Controller
                             'id' => $comment->comment_id,
                             'text' => $comment->comment_text,
                             'user' => $comment->user->name,
+                            'avatar' => $comment->user->avatar_url ?? '',
                             'created_at' => $comment->created_at->format('M d, Y'),
                             'is_owner' => auth()->check() && $comment->user_id === auth()->id()
                         ];

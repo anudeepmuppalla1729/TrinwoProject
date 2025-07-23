@@ -9,7 +9,13 @@
             @csrf
             <div class="modal-options">
                 <div class="user-info">
-                    <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
+                    @if(Auth::user() && !empty(Auth::user()->avatar))
+                        <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
+                    @elseif(Auth::user())
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=64" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
+                    @else
+                        <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
+                    @endif
                     <span class="username">{{ Auth::user() ? Auth::user()->name : 'Username' }}</span>
                 </div>
                 <select class="privacy-select" name="privacy">
@@ -51,7 +57,13 @@
         <hr />
         <div class="modal-options">
             <div class="user-info">
-                <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
+                @if(Auth::user() && !empty(Auth::user()->avatar))
+                    <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
+                @elseif(Auth::user())
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=64" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
+                @else
+                    <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
+                @endif
                 <span class="username">{{ Auth::user() ? Auth::user()->name : 'Username' }}</span>
             </div>
             <select class="privacy-select">

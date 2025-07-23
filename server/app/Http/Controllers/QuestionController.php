@@ -179,6 +179,7 @@ class QuestionController extends Controller
             'description' => $questionModel->description,
             'user' => $questionModel->user->name,
             'user_id' => $questionModel->user->user_id,
+            'avatar' => $questionModel->user->avatar_url ?? '',
             'user_location' => $questionModel->user->studying_in ?? 'Unknown Location',
             'created_at' => $questionModel->created_at->diffForHumans(),
             'upvotes' => 0, // Questions don't have upvotes in this system
@@ -194,6 +195,7 @@ class QuestionController extends Controller
                 'content' => $answer->content,
                 'user' => $answer->user->name,
                 'user_id' => $answer->user->user_id,
+                'avatar' => $answer->user->avatar_url ?? '',
                 'created_at' => $answer->created_at->diffForHumans(),
                 'upvotes' => $answer->getUpvotesCount(),
                 'downvotes' => $answer->getDownvotesCount(),

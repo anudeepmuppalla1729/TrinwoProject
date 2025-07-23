@@ -56,21 +56,26 @@ function renderPosts() {
   posts.forEach((post, index) => {
     // Format comments if they exist
     const commentsHtml = post.comments && post.comments.length > 0 
-      ? post.comments.map(comment => `
-        <div class="comment-item" data-comment-id="${comment.id}" style="padding: 10px; margin-bottom: 10px; border: 1px solid #e0e0e0; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-          <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
-            <div style="display: flex; align-items: center;">
-              <i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
-              <div>
-                <strong style="color: #a522b7;">${comment.user}</strong>
-                <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${comment.created_at}</small>
+      ? post.comments.map(comment => {
+          const commentProfileImgHtml = comment.avatar && comment.avatar.length > 0
+            ? `<img src="${comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
+            : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`;
+          return `
+            <div class="comment-item" data-comment-id="${comment.id}" style="padding: 10px; margin-bottom: 10px; border: 1px solid #e0e0e0; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+              <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                  ${commentProfileImgHtml}
+                  <div>
+                    <strong style="color: #a522b7;">${comment.user}</strong>
+                    <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${comment.created_at}</small>
+                  </div>
+                </div>
+                ${comment.is_owner ? `<button class="delete-comment-btn" data-comment-id="${comment.id}" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 0.9rem;"><i class="bi bi-trash"></i></button>` : ''}
               </div>
+              <div class="comment-text" style="max-height: 100px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word;">${comment.text}</div>
             </div>
-            ${comment.is_owner ? `<button class="delete-comment-btn" data-comment-id="${comment.id}" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 0.9rem;"><i class="bi bi-trash"></i></button>` : ''}
-          </div>
-          <div class="comment-text" style="max-height: 100px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word;">${comment.text}</div>
-        </div>
-      `).join('') 
+          `;
+        }).join('') 
       : `<p style="text-align: center; color: #777; font-style: italic; padding: 10px;">No comments yet</p>`;
       
     // Add style to hide scrollbar for Webkit browsers (Chrome, Safari, newer Edge)
@@ -87,12 +92,17 @@ function renderPosts() {
       ? `<div class="post-image" style><img src="${post.imageUrl}" alt="${post.title}" style="max-width: 100%; margin-top: 10px; border-radius: 8px;"></div>` 
       : '';
     
+    // Profile image HTML
+    const profileImgHtml = post.avatar && post.avatar.length > 0
+      ? `<img src="${post.avatar}" alt="Profile" style="width:2rem;height:2rem;border-radius:50%;object-fit:cover;margin-right:7px;">`
+      : `<i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>`;
+    
     postsContainer.innerHTML += `
       <div class="post" data-index="${index}" data-id="post-${post.id}">
         <div class="post-header">
           <div class="profile">
             <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
-              <i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>
+              ${profileImgHtml}
             </a>
             <div>
               <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
@@ -621,7 +631,9 @@ async function submitComment(postId, commentText, postElement, commentForm) {
       newComment.innerHTML = `
         <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
           <div style="display: flex; align-items: center;">
-            <i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
+            ${data.comment.avatar && data.comment.avatar.length > 0
+              ? `<img src="${data.comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
+              : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`}
             <div>
               <strong style="color: #a522b7;">${data.comment.user}</strong>
               <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${data.comment.created_at}</small>
