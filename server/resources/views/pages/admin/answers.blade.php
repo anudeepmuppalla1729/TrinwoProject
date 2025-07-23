@@ -277,7 +277,7 @@ class AnswersManager {
                     </td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${answer.user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(answer.user.name || answer.user.username || 'User') + '&size=30&background=random'}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
+                            <img src="${answer.user.avatar && answer.user.avatar.length > 0 ? window.s3BaseUrl + answer.user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(answer.user.name || answer.user.username || 'User') + '&size=30&background=random'}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
                             <span>${answer.user.name || answer.user.username || 'Unknown User'}</span>
                         </div>
                     </td>
@@ -410,10 +410,10 @@ class AnswersManager {
             if (response.ok) {
                 this.refreshAnswers();
             } else {
-                alert('Failed to delete answer');
+                showToast('Failed to delete answer', 'error');
             }
         } catch (error) {
-            alert('Network error');
+            showToast('Network error', 'error');
         }
     }
 

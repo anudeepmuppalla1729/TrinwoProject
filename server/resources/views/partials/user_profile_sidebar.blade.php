@@ -1,8 +1,10 @@
 <div class="sidebar">
     <div class="profile-header">
-        <div class="profile-pic profile-picture" @if(!$profileUser->profile_pic) data-initials="{{ strtoupper(collect(explode(' ', $profileUser->name))->map(fn($w)=>$w[0])->join('')) }}" @endif>
-            @if($profileUser->profile_pic)
-                <img src="{{ Storage::url($profileUser->profile_pic) }}" alt="Profile Picture" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+        <div class="profile-pic profile-picture" @if(!$profileUser->avatar) data-initials="{{ strtoupper(collect(explode(' ', $profileUser->name))->map(fn($w)=>$w[0])->join('')) }}" @endif>
+            @if(!empty($profileUser->avatar))
+                <img src="{{ Storage::disk('s3')->url($profileUser->avatar) }}" alt="Profile Picture" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+            @else
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($profileUser->name) }}&size=100" alt="{{ $profileUser->name }}">
             @endif
         </div>
         <h2 class="profile-name">{{ $profileUser->name }}</h2>

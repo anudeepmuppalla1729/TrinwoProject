@@ -333,8 +333,8 @@ class QuestionsManager {
                     </td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${question.user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(question.user.name || question.user.username || 'User') + '&size=40&background=random'}" alt="User" style="border-radius: 50%; width: 40px; height: 40px;">
-                            <span>${question.user.username}</span>
+                            <img src="${question.user.avatar && question.user.avatar.length > 0 ? window.s3BaseUrl + question.user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(question.user.name || question.user.username || 'User') + '&size=40&background=random'}" alt="User" style="border-radius: 50%; width: 40px; height: 40px;">
+                            <span>${question.user.name || question.user.username || 'Unknown User'}</span>
                         </div>
                     </td>
                     <td>${this.formatDate(question.created_at)}</td>
@@ -564,13 +564,13 @@ class QuestionsManager {
                 </div>
                 
                 <div class="question-content">
-                    <p>${question.description}</p>
+                    <p>${question.content}</p>
                 </div>
                 
                 <div class="question-meta">
                     <div class="meta-item">
                         <i class="fas fa-user"></i>
-                        <span>By: ${question.user.first_name} ${question.user.last_name} (@${question.user.username})</span>
+                        <span>By: ${question.user.name || question.user.username || 'Unknown User'} (@${question.user.username})</span>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-calendar"></i>
@@ -595,7 +595,7 @@ class QuestionsManager {
                         ${question.answers.map(answer => `
                             <div class="answer-item">
                                 <div class="answer-header">
-                                    <span class="answer-author">${answer.user.first_name} ${answer.user.last_name} (@${answer.user.username})</span>
+                                    <span class="answer-author">${answer.user.name || answer.user.username || 'Unknown User'} (@${answer.user.username})</span>
                                     <span class="answer-date">${this.formatDate(answer.created_at)}</span>
                                     ${answer.is_accepted ? '<span class="badge badge-success">Accepted</span>' : ''}
                                 </div>

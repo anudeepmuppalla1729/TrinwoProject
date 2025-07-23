@@ -42,13 +42,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ✅ Terms and Conditions
     if (!termsChecked) {
-      alert('Please agree to the terms and conditions.');
+      showToast('Please agree to the terms and conditions.', 'error');
       isValid = false;
     }
 
     // ✅ Final Success
     if (isValid) {
-      alert('Signup successful!');
+      showToast('Signup successful!', 'success');
       form.reset();
     }
   });

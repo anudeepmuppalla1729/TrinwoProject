@@ -8,6 +8,7 @@ use App\Models\PostBookmark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -53,7 +54,7 @@ class PostController extends Controller
 
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('post_images', 'public');
+            $imagePath = $request->file('image')->store('posts', 's3');
             
             PostImage::create([
                 'post_id' => $post->post_id,
@@ -125,7 +126,7 @@ class PostController extends Controller
         
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('post_images', 'public');
+            $imagePath = $request->file('image')->store('posts', 's3');
             
             PostImage::create([
                 'post_id' => $post->post_id,
@@ -176,7 +177,7 @@ class PostController extends Controller
 
         // Handle image upload if provided
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('post_images', 'public');
+            $imagePath = $request->file('image')->store('posts', 's3');
             
             PostImage::create([
                 'post_id' => $post->post_id,
@@ -210,7 +211,14 @@ class PostController extends Controller
             ->map(function ($post) use ($userId) {
                 $imageUrl = null;
                 if ($post->images->count() > 0) {
-                    $imageUrl = Storage::url($post->images->first()->image_url);
+                    $imgPath = $post->images->first()->image_url;
+                    if (!empty($imgPath)) {
+                        if (Str::startsWith($imgPath, 'http')) {
+                            $imageUrl = $imgPath;
+                        } else {
+                            $imageUrl = Storage::disk('s3')->url($imgPath);
+                        }
+                    }
                 }
                 
                 // Get user's vote on this post if logged in

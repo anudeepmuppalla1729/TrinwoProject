@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       console.log('Forgot password clicked');
       // Implement password reset logic here
-      alert('Password reset functionality would be implemented here.');
+      showToast('Password reset functionality would be implemented here.', 'info');
     });
   }
 });

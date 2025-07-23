@@ -19,10 +19,10 @@
 <div id="dashboard" class="page-content active">
     <div class="user-profile-header">
         <div class="profile-image">
-            @if($profileUser->profile_pic)
-                <img src="{{ asset('storage/' . $profileUser->profile_pic) }}" alt="{{ $profileUser->name }}">
+            @if(!empty($profileUser->avatar))
+                <img src="{{ Storage::disk('s3')->url($profileUser->avatar) }}" alt="{{ $profileUser->name }}">
             @else
-                <div class="default-avatar">{{ substr($profileUser->name, 0, 1) }}</div>
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($profileUser->name) }}&size=100" alt="{{ $profileUser->name }}">
             @endif
         </div>
         <div class="profile-info">

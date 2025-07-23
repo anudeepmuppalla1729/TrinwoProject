@@ -266,16 +266,6 @@
         </div>
         <div class="modal-body">
             <form id="edit-user-form" class="admin-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="first_name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="last_name" class="form-control" required>
-                    </div>
-                </div>
                 <div class="form-group">
                     <label>Email</label>
                     <input type="email" name="email" class="form-control" required>
@@ -478,7 +468,7 @@ class UsersManager {
                 <tr>
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || user.username || 'User') + '&size=40&background=random'}" alt="User" style="border-radius: 50%; width: 40px; height: 40px;">
+                            <img src="${user.avatar && user.avatar.length > 0 ? window.s3BaseUrl + user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || user.username || 'User') + '&size=40&background=random'}" alt="User" style="border-radius: 50%; width: 40px; height: 40px;">
                             <div>
                                 <div>${user.name || 'N/A'}</div>
                                 <div style="font-size: 0.85rem; color: var(--gray);">@${user.username || 'N/A'}</div>
@@ -625,9 +615,9 @@ class UsersManager {
         return `
             <div class="user-details">
                 <div class="user-header">
-                    <img src="${user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || user.username || 'User') + '&size=100&background=random'}" alt="User" style="border-radius: 50%; width: 100px; height: 100px;">
+                    <img src="${user.avatar && user.avatar.length > 0 ? window.s3BaseUrl + user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || user.username || 'User') + '&size=100&background=random'}" alt="User" style="border-radius: 50%; width: 100px; height: 100px;">
                     <div class="user-info">
-                        <h3>${user.first_name || 'N/A'} ${user.last_name || 'N/A'}</h3>
+                        <h3>${user.name || 'N/A'}</h3>
                         <p><strong>Username:</strong> @${user.username || 'N/A'}</p>
                         <p><strong>Email:</strong> ${user.email}</p>
                         <p><strong>Role:</strong> <span class="badge badge-${this.getRoleBadgeClass(user.role)}">${user.role}</span></p>
@@ -714,8 +704,7 @@ class UsersManager {
 
     populateEditForm(user) {
         const form = document.getElementById('edit-user-form');
-        form.querySelector('[name="first_name"]').value = user.first_name || '';
-        form.querySelector('[name="last_name"]').value = user.last_name || '';
+        form.querySelector('[name="name"]').value = user.name || '';
         form.querySelector('[name="email"]').value = user.email || '';
         form.querySelector('[name="username"]').value = user.username || '';
         form.querySelector('[name="role"]').value = user.role || 'user';

@@ -227,11 +227,11 @@ class ProfileController extends Controller
             'expert_in' => 'nullable|string|max:150',
             'interests' => 'nullable|string',
             'bio' => 'nullable|string',
-            'profile_pic' => 'nullable|image|max:2048',
+            'avatar' => 'nullable|image|max:2048',
         ]);
-        if ($request->hasFile('profile_pic')) {
-            $path = $request->file('profile_pic')->store('profile_pics', 'public');
-            $validated['profile_pic'] = $path;
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('profile_pics', 's3');
+            $validated['avatar'] = $path;
         }
         // Only update interests if present in the request
         if (!$request->has('interests')) {
@@ -241,6 +241,7 @@ class ProfileController extends Controller
             $user->update($validated);
             return redirect()->back()->with('success', 'Profile updated successfully!');
         } catch (\Exception $e) {
+            \Log::error('Profile update error: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->with('error', 'An error occurred while updating your profile.');
         }
     }

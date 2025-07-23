@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const tagsHiddenField = document.getElementById('tags-hidden');
                 
                 if (question === '') {
-                    alert('Please enter your question');
+                    showToast('Please enter your question', 'error');
                     return;
                 }
                 
@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success) {
                         // Show success message
-                        alert('Question posted successfully!');
+                        showToast('Question posted successfully!', 'success');
                         
                         // Clear the form and close the modal
                         questionTextarea.value = '';
@@ -239,13 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
                         } else {
                             // Show general error message
-                            alert('Error posting question: ' + (data.message || 'Unknown error'));
+                            showToast('Error posting question: ' + (data.message || 'Unknown error'), 'error');
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error posting question:', error);
-                    alert('Error posting question. Please try again.');
+                    showToast('Error posting question. Please try again.', 'error');
                 })
                 .finally(() => {
                     // Reset button state
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const privacy = insightPrivacySelect.value;
                 
                 if (insight === '') {
-                    alert('Please enter your insight');
+                    showToast('Please enter your insight', 'error');
                     return;
                 }
                 
@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message);
+                        showToast(data.message, 'info');
                         
                         // Clear the form and close the modal
                         insightHeading.value = '';
@@ -352,12 +352,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         selectedImageContainer.style.display = 'none';
                         closeInsightModal();
                     } else {
-                        alert('Error: ' + (data.message || 'Failed to submit insight'));
+                        showToast('Error: ' + (data.message || 'Failed to submit insight'), 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while submitting your insight');
+                    showToast('An error occurred while submitting your insight', 'error');
                 });
             });
         }

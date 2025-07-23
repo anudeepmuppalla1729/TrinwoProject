@@ -658,17 +658,7 @@
                         }
                         
                         // Show success message
-                        const alertDiv = document.createElement('div');
-                        alertDiv.className = 'alert alert-success';
-                        alertDiv.textContent = data.message;
-                        
-                        const container = document.querySelector('.question-detail-container');
-                        container.insertBefore(alertDiv, container.firstChild);
-                        
-                        // Remove alert after 3 seconds
-                        setTimeout(() => {
-                            alertDiv.remove();
-                        }, 2000);
+                        showToast(data.message, 'success');
                     }
                 })
                 .catch(error => {

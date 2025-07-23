@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Add new columns for admin functionality
-            $table->string('first_name')->nullable()->after('name');
-            $table->string('last_name')->nullable()->after('first_name');
-            $table->string('username')->unique()->nullable()->after('last_name');
+            // Removed first_name and last_name columns permanently
+            $table->string('username')->unique()->nullable()->after('name');
             $table->enum('role', ['user', 'admin'])->default('user')->after('username');
             $table->enum('status', ['active', 'inactive', 'banned'])->default('active')->after('role');
             $table->string('avatar')->nullable()->after('status');

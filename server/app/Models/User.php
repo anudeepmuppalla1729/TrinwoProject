@@ -58,6 +58,23 @@ class User extends Authenticatable
         ];
     }
 
+    protected $appends = [
+        'avatar_url',
+    ];
+
+    /**
+     * Get the full S3 URL for the user's avatar.
+     *
+     * @return string|null
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return \Storage::disk('s3')->url($this->avatar);
+        }
+        return null;
+    }
+
 
     public function posts() {
         return $this->hasMany(Post::class, 'user_id');

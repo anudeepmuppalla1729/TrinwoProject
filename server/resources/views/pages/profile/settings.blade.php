@@ -26,17 +26,17 @@
                     </div>
                     <div class="profile-picture-section">
                         <div class="profile-picture">
-                            @if($user->profile_pic)
-                                <img id="profile-pic-preview" src="{{ Storage::url($user->profile_pic) }}" alt="Profile Picture" style="width:100px;height:100px;border-radius:50%;object-fit:cover;">
+                            @if(!empty($user->avatar))
+                                <img id="profile-pic-preview" src="{{ Storage::disk('s3')->url($user->avatar) }}" alt="Profile Picture" style="width:100px;height:100px;border-radius:50%;object-fit:cover;">
                             @else
                                 <img id="profile-pic-preview" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=100" alt="Profile Picture" style="width:100px;height:100px;border-radius:50%;object-fit:cover;">
                             @endif
                         </div>
                         <div class="upload-btn">
-                            <button type="button" class="btn btn-outline" onclick="document.getElementById('profile_pic').click()">
+                            <button type="button" class="btn btn-outline" onclick="document.getElementById('avatar').click()">
                                 <i class="fas fa-upload"></i> Upload New Photo
                             </button>
-                            <input type="file" name="profile_pic" id="profile_pic" accept="image/*" style="display:none;">
+                            <input type="file" name="avatar" id="avatar" accept="image/*" style="display:none;">
                         </div>
                     </div>
                     <div class="form-row">
@@ -250,21 +250,21 @@
         // Password match check
         if (passwordInput.value !== confirmInput.value) {
             e.preventDefault();
-            alert('Passwords do not match!');
+            showToast('Passwords do not match!', 'error');
             confirmInput.focus();
             return false;
         }
         // Password strength check
         if (getStrength(passwordInput.value) < 3) {
             e.preventDefault();
-            alert('Password is too weak! Use at least 8 characters, with uppercase, lowercase, number, and symbol.');
+            showToast('Password is too weak! Use at least 8 characters, with uppercase, lowercase, number, and symbol.', 'error');
             passwordInput.focus();
             return false;
         }
     });
 
     // Profile picture live preview
-    const profilePicInput = document.getElementById('profile_pic');
+    const profilePicInput = document.getElementById('avatar');
     const profilePicPreview = document.getElementById('profile-pic-preview');
     if (profilePicInput && profilePicPreview) {
         profilePicInput.addEventListener('change', function(e) {

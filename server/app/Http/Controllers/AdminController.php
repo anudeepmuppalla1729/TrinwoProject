@@ -648,7 +648,7 @@ class AdminController extends Controller
                 'name' => $user->name,
                 'username' => $user->username,
                 'email' => $user->email,
-                'avatar' => $user->avatar,
+                'avatar' => $user->avatar_url, // Use full S3 URL
                 'bio' => $user->bio,
                 'role' => $user->role ?? 'user',
                 'status' => $user->status ?? 'active',
@@ -713,7 +713,7 @@ class AdminController extends Controller
                     'name' => $user->name,
                     'username' => $user->username,
                     'email' => $user->email,
-                    'avatar' => $user->avatar,
+                    'avatar' => $user->avatar_url, // Use full S3 URL
                     'bio' => $user->bio,
                     'role' => $user->role ?? 'user',
                     'status' => $user->status ?? 'active',
@@ -931,16 +931,22 @@ class AdminController extends Controller
 
             // Transform the data
             $transformedQuestions = $questions->map(function ($question) {
+                $name = $question->user->name;
+                $username = $question->user->username;
+                if (!$name && $username) $name = $username;
+                if (!$name) $name = 'Unknown User';
+                if (!$username && $name) $username = $name;
+                $content = $question->description;
+                if (!$content) $content = 'N/A';
                 return [
                     'id' => $question->question_id,
                     'title' => $question->title,
-                    'description' => $question->description,
+                    'content' => $content,
                     'user' => [
                         'id' => $question->user->user_id,
-                        'username' => $question->user->username,
-                        'first_name' => $question->user->first_name ?? '',
-                        'last_name' => $question->user->last_name ?? '',
-                        'avatar' => $question->user->avatar
+                        'name' => $name,
+                        'username' => $username,
+                        'avatar' => $question->user->avatar_url, // full S3 URL
                     ],
                     'created_at' => $question->created_at,
                     'updated_at' => $question->updated_at,
@@ -970,13 +976,12 @@ class AdminController extends Controller
             $data = [
                 'id' => $question->question_id,
                 'title' => $question->title,
-                'description' => $question->description,
+                'content' => $question->description, // question body
                 'user' => [
                     'id' => $question->user->user_id,
+                    'name' => $question->user->name,
                     'username' => $question->user->username,
-                    'first_name' => $question->user->first_name,
-                    'last_name' => $question->user->last_name,
-                    'avatar' => $question->user->avatar,
+                    'avatar' => $question->user->avatar_url, // full S3 URL
                     'email' => $question->user->email
                 ],
                 'created_at' => $question->created_at,
@@ -994,10 +999,9 @@ class AdminController extends Controller
                         'content' => $answer->content,
                         'user' => [
                             'id' => $answer->user->user_id,
+                            'name' => $answer->user->name,
                             'username' => $answer->user->username,
-                            'first_name' => $answer->user->first_name,
-                            'last_name' => $answer->user->last_name,
-                            'avatar' => $answer->user->avatar
+                            'avatar' => $answer->user->avatar_url, // full S3 URL
                         ],
                         'created_at' => $answer->created_at,
                         'votes_count' => $answer->votes_count ?? 0,
@@ -1280,7 +1284,7 @@ class AdminController extends Controller
                     'id' => $post->user->user_id ?? $post->user->id,
                     'name' => $post->user->name,
                     'username' => $post->user->username,
-                    'avatar' => $post->user->avatar
+                    'avatar' => $post->user->avatar_url, // full S3 URL
                 ],
                 'images' => $post->images->map(function($img) { return $img->image_url; }),
                 'comments_count' => $post->comments->count(),

@@ -405,7 +405,11 @@
                     <div class="user-info">
                         <a href="{{ route('user.profile', parameters: $question['user_id']) }}" style="text-decoration: none;">
                             <div class="user-avatar">
+                                @if(!empty($question['avatar']))
+                                    <img src="{{ Storage::disk('s3')->url($question['avatar']) }}" alt="User" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+                                @else
                                 <i class="bi bi-person-fill"></i>
+                                @endif
                             </div>
                         </a>
                         <a href="{{ route('user.profile', $question['user_id']) }}" style="text-decoration: none;">
@@ -496,7 +500,7 @@
         document.querySelectorAll('.pagination .page-btn').forEach(button => {
             button.addEventListener('click', function() {
                 if (!this.classList.contains('disabled')) {
-                    alert('Pagination feature coming soon!');
+                    showToast('Pagination feature coming soon!', 'info');
                 }
             });
         });
@@ -538,23 +542,7 @@
                         }
                         
                         // Show success message
-                        const alertDiv = document.createElement('div');
-                        alertDiv.className = 'alert alert-success';
-                        alertDiv.textContent = data.message;
-                        alertDiv.style.padding = '10px 15px';
-                        alertDiv.style.marginBottom = '15px';
-                        alertDiv.style.borderRadius = '5px';
-                        alertDiv.style.backgroundColor = '#d4edda';
-                        alertDiv.style.color = '#155724';
-                        alertDiv.style.border = '1px solid #c3e6cb';
-                        
-                        const container = document.querySelector('.questions-container');
-                        container.insertBefore(alertDiv, container.firstChild);
-                        
-                        // Remove alert after 3 seconds
-                        setTimeout(() => {
-                            alertDiv.remove();
-                        }, 3000);
+                        showToast(data.message, 'success');
                     }
                 })
                 .catch(error => {

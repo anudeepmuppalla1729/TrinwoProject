@@ -442,6 +442,27 @@ class ReportsManager {
         modal.className = 'modal';
         modal.style.display = 'flex';
         
+        // Avatar logic
+        let authorName = report.content && (report.content.author || report.content.author_name || report.content.user_name || 'User');
+        let avatar = report.content && (report.content.avatar || '');
+        let avatarHtml = '';
+        if (avatar && avatar.length > 0) {
+            avatarHtml = `<img src="${window.s3BaseUrl + avatar}" alt="${authorName}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">`;
+        } else {
+            avatarHtml = `<img src="https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&size=32" alt="${authorName}">`;
+        }
+
+        // Content image logic (for posts, etc.)
+        let contentImage = report.content && (report.content.image_url || report.content.image || '');
+        let contentImageHtml = '';
+        if (contentImage && contentImage.length > 0) {
+            if (contentImage.startsWith('http')) {
+                contentImageHtml = `<img src="${contentImage}" alt="Content Image" style="max-width:100%;border-radius:8px;margin-top:8px;">`;
+            } else {
+                contentImageHtml = `<img src="${window.s3BaseUrl + contentImage}" alt="Content Image" style="max-width:100%;border-radius:8px;margin-top:8px;">`;
+            }
+        }
+
         const content = `
             <div class="modal-content" style="max-width: 600px;">
                 <div class="modal-header">
@@ -457,15 +478,15 @@ class ReportsManager {
                             <p><strong>Status:</strong> <span class="badge badge-${this.getStatusBadgeClass(report.status)}">${report.status}</span></p>
                             <p><strong>Date:</strong> ${this.formatDate(report.created_at)}</p>
                         </div>
-                        
                         <div class="detail-section">
                             <h4>Content Details</h4>
                             <p><strong>Title:</strong> ${report.content.title || report.content.question_title || 'N/A'}</p>
-                            <p><strong>Author:</strong> ${report.content.author}</p>
+                            <p><strong>Author:</strong> ${authorName} ${avatarHtml}</p>
                             <p><strong>Created:</strong> ${this.formatDate(report.content.created_at)}</p>
                             <div class="content-preview">
                                 <strong>Content:</strong>
                                 <div class="content-text">${report.content.content}</div>
+                                ${contentImageHtml}
                             </div>
                         </div>
                     </div>

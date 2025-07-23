@@ -77,6 +77,9 @@
     <!-- Notification Container -->
     <div id="notification-container" class="notification-container"></div>
 
+    <script>
+      window.s3BaseUrl = "{{ config('filesystems.disks.s3.url') ? rtrim(config('filesystems.disks.s3.url'), '/') . '/' : '' }}";
+    </script>
     <script src="{{ asset('js/admin.js') }}"></script>
     @stack('scripts')
 </body>

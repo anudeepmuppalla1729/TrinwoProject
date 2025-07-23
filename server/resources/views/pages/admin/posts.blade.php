@@ -328,7 +328,7 @@ class PostsManager {
                     <td>${this.truncateText(post.title, 80)}</td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${post.user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user.name || post.user.username || 'User') + '&size=30&background=random'}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
+                            <img src="${post.user.avatar && post.user.avatar.length > 0 ? window.s3BaseUrl + post.user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user.name || post.user.username || 'User') + '&size=30&background=random'}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
                             <span>${post.user.name || post.user.username || 'Unknown User'}</span>
                         </div>
                     </td>
@@ -394,7 +394,16 @@ class PostsManager {
     generatePostDetailsHTML(data) {
         let imagesHtml = '';
         if (data.images && data.images.length) {
-            imagesHtml = '<div class="post-images">' + data.images.map(url => `<img src="/storage/${url}" style="max-width: 120px; margin-right: 10px;">`).join('') + '</div>';
+            imagesHtml = '<div class="post-images">' + data.images.map(url => {
+                if (url && url.length > 0) {
+                    if (url.startsWith('http')) {
+                        return `<img src="${url}" style="max-width: 120px; margin-right: 10px;">`;
+                    } else {
+                        return `<img src="${window.s3BaseUrl + url}" style="max-width: 120px; margin-right: 10px;">`;
+                    }
+                }
+                return '';
+            }).join('') + '</div>';
         }
         let commentsHtml = '';
         if (data.comments && data.comments.length) {

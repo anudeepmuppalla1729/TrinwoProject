@@ -44,6 +44,7 @@ class QuestionController extends Controller
                     'excerpt' => substr($question->description, 0, 200) . (strlen($question->description) > 200 ? '...' : ''),
                     'user' => $question->user->name,
                     'user_id' => $question->user->user_id,
+                    'avatar' => $question->user->avatar,
                     'created_at' => $question->created_at->diffForHumans(),
                     'answers' => $question->answers->count(),
                     'upvotes' => 0, // Questions don't have upvotes in this system
@@ -324,7 +325,7 @@ class QuestionController extends Controller
             $userId = Auth::id();
             $questionId = $id;
             
-            // Check if the question exists
+            // Check if the question existsy
             $question = Question::findOrFail($questionId);
             
             // Check if the question is already bookmarked by the user

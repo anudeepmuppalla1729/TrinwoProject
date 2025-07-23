@@ -4,7 +4,15 @@
 <div class="home_content">
     <div class="question-box">
         <input type="text" class="insight-btn question-input" placeholder="Type Your Question or Insight here" readonly/>
+        @auth
+            @if(!empty(Auth::user()->avatar))
+                <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="user-icon" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+            @else
+                <i class="bi bi-person-circle user-icon"></i>
+            @endif
+        @else
         <i class="bi bi-person-circle user-icon"></i>
+        @endauth
 
     </div>
     <div class="posts-container" id="postsContainer">

@@ -26,8 +26,23 @@
     @forelse($posts as $post)
         <div class="post-card">
             <div class="post-header">
+                @if(!empty(Auth::user()->avatar))
+                    <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover; margin-bottom: 8px;">
+                @else
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=32" alt="{{ Auth::user()->name }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover; margin-bottom: 8px;">
+                @endif
                 @if($post->images && $post->images->count() > 0)
-                    <img src="{{ asset('storage/' . $post->images->first()->image_url) }}" alt="{{ $post->heading }}" class="post-image">
+                    @php
+                        $img = $post->images->first();
+                        $imgUrl = $img->image_url;
+                    @endphp
+                    @if(!empty($imgUrl))
+                        @if(Str::startsWith($imgUrl, 'http'))
+                            <img src="{{ $imgUrl }}" alt="{{ $post->heading }}" class="post-image">
+                        @else
+                            <img src="{{ Storage::disk('s3')->url($imgUrl) }}" alt="{{ $post->heading }}" class="post-image">
+                        @endif
+                    @endif
                     <div class="post-category">{{ ucfirst($post->category ?? 'General') }}</div>
                 @else
                     <div class="post-header-placeholder">

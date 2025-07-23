@@ -460,7 +460,7 @@ function attachPostEvents() {
       commentForm.querySelector('.submit-comment').addEventListener('click', function() {
         const commentText = commentForm.querySelector('textarea').value.trim();
         if (!commentText) {
-          alert('Please enter a comment');
+          showToast('Please enter a comment', 'error');
           return;
         }
         
@@ -643,11 +643,11 @@ async function submitComment(postId, commentText, postElement, commentForm) {
       // Remove the comment form
       commentForm.remove();
     } else {
-      alert(data.message || 'Failed to add comment');
+      showToast(data.message || 'Failed to add comment', 'error');
     }
   } catch (error) {
     console.error('Error submitting comment:', error);
-    alert('Failed to submit comment. Please try again.');
+    showToast('Failed to submit comment. Please try again.', 'error');
   }
 }
 
@@ -692,11 +692,11 @@ async function deleteComment(commentId, commentElement, postElement) {
         commentsContainer.innerHTML = `<p style="text-align: center; color: #777; font-style: italic; padding: 10px;">No comments yet</p>`;
       }
     } else {
-      alert(data.message || 'Failed to delete comment');
+      showToast(data.message || 'Failed to delete comment', 'error');
     }
   } catch (error) {
     console.error('Error deleting comment:', error);
-    alert('Failed to delete comment. Please try again.');
+    showToast('Failed to delete comment. Please try again.', 'error');
   }
 }
 
@@ -750,8 +750,8 @@ document.getElementById('qas-answer').addEventListener('click', () => {
   document.getElementById('answer-input').focus();
 });
 document.getElementById('qas-pass').addEventListener('click', () => {
-  alert('You chose to pass on this question.');
+  showToast('You chose to pass on this question.', 'info');
 });
 document.getElementById('qas-bookmark').addEventListener('click', () => {
-  alert('Question bookmarked! (Feature coming soon)');
+  showToast('Question bookmarked! (Feature coming soon)', 'info');
 });

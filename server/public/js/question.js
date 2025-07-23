@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const commentButtons = document.querySelectorAll('.comment-btn');
     commentButtons.forEach(button => {
         button.addEventListener('click', function() {
-            alert('Comment feature coming soon!');
+            showToast('Comment feature coming soon!', 'info');
         });
     });
     
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const shareButtons = document.querySelectorAll('.share-btn');
     shareButtons.forEach(button => {
         button.addEventListener('click', function() {
-            alert('Share feature coming soon!');
+            showToast('Share feature coming soon!', 'info');
         });
     });
     
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sortOptions.forEach(opt => opt.classList.remove('active'));
             // Add active class to clicked option
             this.classList.add('active');
-            alert('Sort feature coming soon!');
+            showToast('Sort feature coming soon!', 'info');
         });
     });
 });

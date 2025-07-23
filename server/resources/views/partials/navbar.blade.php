@@ -14,6 +14,12 @@
     <div class="nav-links">
         <a href="#" class="contact"><i class="fa-regular fa-address-book"></i></a>
         <a href="#"><i class="fa-regular fa-bell"></i></a>
-        <a href="/profile/dashboard"><i class="bi bi-person-circle"></i></a>
+        <a href="/profile/dashboard">
+            @if(!empty(Auth::user()->avatar))
+                <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+            @else
+                <i class="bi bi-person-circle"></i>
+            @endif
+        </a>
     </div>
 </nav> 

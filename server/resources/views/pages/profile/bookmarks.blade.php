@@ -42,9 +42,12 @@
                 </div>
                 <hr>
                 <h2>{{ $post->heading }}</h2>
-                @if($post->images->isNotEmpty())
+                @php
+                    $imgUrl = $post->images->first() ? $post->images->first()->image_url : '';
+                @endphp
+                @if(!empty($imgUrl))
                     <div class="post-image">
-                        <img src="{{ Storage::url($post->images->first()->image_url) }}" alt="{{ $post->heading }}" style="max-width: 100%; border-radius: 8px;">
+                        <img src="{{ Storage::disk('s3')->url($imgUrl) }}" alt="{{ $post->heading }}" style="max-width: 100%; border-radius: 8px;">
                     </div>
                 @endif
                 <p>{{ $post->details }}</p>
