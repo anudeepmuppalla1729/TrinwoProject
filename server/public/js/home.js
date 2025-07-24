@@ -67,8 +67,12 @@ function renderPosts() {
     const minToRead = post.content ? Math.ceil(post.content.replace(/<[^>]+>/g, '').split(/\s+/).length / 200) : 1;
     const showFollow = currentUserId && String(post.user_id) !== String(currentUserId);
     let followBtnHtml = '';
-    if (showFollow && !post.isFollowing) {
-      followBtnHtml = `<button class="follow-btn" data-user-id="${post.user_id}">Follow</button>`;
+    if (showFollow) {
+      if (post.isFollowing) {
+        followBtnHtml = `<button class="follow-btn following" data-user-id="${post.user_id}">Following</button>`;
+      } else {
+        followBtnHtml = `<button class="follow-btn" data-user-id="${post.user_id}">Follow</button>`;
+      }
     }
     // Avatar rendering logic
     let authorAvatarHtml = '';
@@ -317,11 +321,10 @@ function attachPostEvents() {
         }
         if (data.success) {
           if (!isFollowing) {
-            // Remove the follow button after following
-            this.remove();
+            this.textContent = 'Following';
+            this.classList.add('following');
             showToast(data.message || 'Now following', 'success');
           } else {
-            // Optionally, you can re-add the button for unfollow, or just reload posts
             this.textContent = 'Follow';
             this.classList.remove('following');
             showToast(data.message || 'Unfollowed', 'success');

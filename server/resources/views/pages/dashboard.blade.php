@@ -394,7 +394,9 @@
                     <span><i class="fas fa-clock"></i> {{ ceil(str_word_count(strip_tags($post->content))/200) }} min read</span>
                     <form method="POST" action="{{ route('posts.bookmark', $post->post_id) }}" style="display:inline;">
                         @csrf
-                        <button type="submit" class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                        <button type="submit" class="bookmark-btn{{ $post->isBookmarked || $post->is_bookmarked ? ' bookmarked' : '' }}">
+                            <i class="{{ $post->isBookmarked || $post->is_bookmarked ? 'fas fa-bookmark' : 'far fa-bookmark' }}"></i>
+                        </button>
                     </form>
                     <form method="POST" action="{{ route('posts.report', $post->post_id) }}" style="display:inline;">
                         @csrf

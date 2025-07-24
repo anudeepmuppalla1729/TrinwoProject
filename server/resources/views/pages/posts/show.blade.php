@@ -218,7 +218,7 @@ html, body {
 .follow-btn.following {
     background: #e0e0e0;
     color: #333;
-    cursor: not-allowed;
+    cursor: pointer;
 }
 .follow-btn.following:hover {
     background: #d0d0d0;
@@ -243,10 +243,14 @@ html, body {
             <img src="{{ Str::startsWith($post->cover_image, ['http://', 'https://']) ? $post->cover_image : Storage::disk('s3')->url($post->cover_image) }}" alt="Cover Image" class="custom-blog-cover">
         @endif
         <div class="author-row" style="margin-bottom: 1.2rem;">
-            <img src="{{ $post->user->avatar_url ?? asset('assets/default-avatar.png') }}" class="author-avatar" alt="{{ $post->user->name }}">
+            @if($post->user->avatar_url)
+                <img src="{{ $post->user->avatar_url }}" class="author-avatar" alt="{{ $post->user->name }}">
+            @else
+                <div class="author-avatar" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;color:#2a3c62;font-weight:700;font-size:1.1rem;">{{ $post->authorInitials }}</div>
+            @endif
             <a href="/user/{{ $post->user->user_id }}" class="author-name">{{ $post->user->name }}</a>
             @if(Auth::id() !== $post->user->user_id)
-                <button class="follow-btn" data-user-id="{{ $post->user->user_id }}">Follow</button>
+                <button class="follow-btn{{ $post->isFollowing ? ' following' : '' }}" data-user-id="{{ $post->user->user_id }}">{{ $post->isFollowing ? 'Following' : 'Follow' }}</button>
             @endif
         </div>
         <h1 class="custom-blog-title">{{ $post->title }}</h1>
@@ -270,7 +274,9 @@ html, body {
             <span><i class="fas fa-calendar-alt"></i> {{ $post->created_at->format('M d, Y') }}</span>
             <form id="bookmarkForm" method="POST" action="{{ route('posts.bookmark', $post->post_id) }}" style="display:inline;">
                 @csrf
-                <button type="submit" id="bookmarkBtn" title="Bookmark"><i class="far fa-bookmark"></i></button>
+                <button type="submit" id="bookmarkBtn" title="Bookmark" class="{{ $post->isBookmarked ? 'bookmarked' : '' }}">
+                    <i class="{{ $post->isBookmarked ? 'fas fa-bookmark' : 'far fa-bookmark' }}"></i>
+                </button>
             </form>
             <button type="button" id="reportBtn" title="Report" class="report-btn"><i class="fas fa-flag"></i></button>
         </div>
@@ -441,79 +447,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Follow AJAX
-    const followBtn = document.querySelector('.follow-btn');
-    if (followBtn) {
-        followBtn.addEventListener('click', function() {
-            const userId = this.dataset.userId;
-            const currentBtnText = this.textContent;
-            let newBtnText = 'Following';
-            let newBtnClass = 'following';
-            let newBtnColor = '#e0e0e0';
-            let newBtnCursor = 'not-allowed';
-
-            if (currentBtnText === 'Follow') {
-                newBtnText = 'Following';
-                newBtnClass = 'following';
-                newBtnColor = '#e0e0e0';
-                newBtnCursor = 'not-allowed';
-            } else {
-                newBtnText = 'Follow';
-                newBtnClass = '';
-                newBtnColor = '#2ecc71'; // Default follow button color
-                newBtnCursor = 'pointer';
-            }
-
-            this.textContent = newBtnText;
-            this.classList.remove('following');
-            if (newBtnClass) this.classList.add(newBtnClass);
-            this.style.background = newBtnColor;
-            this.style.cursor = newBtnCursor;
-
-            fetch(`/user/${userId}/follow`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({})
-            })
-            .then(async response => {
-                let data;
-                try {
-                    data = await response.clone().json();
-                } catch (err) {
-                    const text = await response.text();
-                    showToast('Follow failed: ' + (text || 'Unknown error'), 'error');
-                    this.textContent = currentBtnText;
-                    this.classList.remove('following');
-                    // do not add empty class
-                    this.style.background = '#2ecc71'; // Revert to default follow color
-                    this.style.cursor = 'pointer';
-                    return;
-                }
-                if (data.success) {
-                    showToast('You are now following this user!', 'success');
-                } else {
-                    showToast(data.message || 'Failed to follow user', 'error');
-                    this.textContent = currentBtnText;
-                    this.classList.remove('following');
-                    // do not add empty class
-                    this.style.background = '#2ecc71'; // Revert to default follow color
-                    this.style.cursor = 'pointer';
-                }
-            })
-            .catch(error => {
-                showToast('Follow failed: ' + error, 'error');
-                this.textContent = currentBtnText;
-                this.classList.remove('following');
-                // do not add empty class
-                this.style.background = '#2ecc71'; // Revert to default follow color
-                this.style.cursor = 'pointer';
-            });
-        });
-    }
-
     // Bookmark AJAX
     const bookmarkForm = document.getElementById('bookmarkForm');
     const bookmarkBtn = document.getElementById('bookmarkBtn');
@@ -612,6 +545,52 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 reportError.textContent = 'Report failed: ' + error;
                 reportError.style.display = 'block';
+            });
+        });
+    }
+
+    // Follow/Unfollow button logic
+    const followBtn = document.querySelector('.follow-btn[data-user-id]');
+    if (followBtn) {
+        followBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const userId = this.getAttribute('data-user-id');
+            const isFollowing = this.classList.contains('following');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const url = isFollowing ? `/user/${userId}/unfollow` : `/user/${userId}/follow`;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(async response => {
+                let data;
+                try {
+                    data = await response.clone().json();
+                } catch (err) {
+                    const text = await response.text();
+                    showToast('Follow failed: ' + (text || 'Unknown error'), 'error');
+                    return;
+                }
+                if (data.success) {
+                    if (!isFollowing) {
+                        this.textContent = 'Following';
+                        this.classList.add('following');
+                        showToast(data.message || 'Now following', 'success');
+                    } else {
+                        this.textContent = 'Follow';
+                        this.classList.remove('following');
+                        showToast(data.message || 'Unfollowed', 'success');
+                    }
+                } else {
+                    showToast(data.message || 'Follow failed', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Follow failed: ' + error, 'error');
             });
         });
     }
