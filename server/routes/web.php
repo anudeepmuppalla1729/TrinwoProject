@@ -31,6 +31,11 @@ Route::middleware(['guest'])->group(function () {
     })->name('interests');
 });
 
+// Test route for loading functionality
+Route::get('/test-loading', function () {
+    return view('pages.test-loading');
+})->name('test-loading');
+
 Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout')->middleware('auth');
 
 Route::get('/questions', [QuestionController::class, 'index'])->name('questions');
@@ -61,6 +66,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/answers/{id}/comment', [AnswerController::class, 'comment'])->name('answers.comment');
     Route::post('/answers/{id}/share', [AnswerController::class, 'share'])->name('answers.share');
     
+    Route::get('/debug-ssl', function () {
+        return env('MYSQL_ATTR_SSL_CA');
+    });
     
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
