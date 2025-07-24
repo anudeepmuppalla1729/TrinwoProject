@@ -517,14 +517,6 @@
                         <span>{{ $answer['downvotes'] }}</span>
                     </button>
                 </form>
-                <button class="action-btn comment-btn">
-                    <i class="bi bi-chat-dots"></i>
-                    <span>Comment</span>
-                </button>
-                <button class="action-btn share-btn">
-                    <i class="bi bi-share-fill"></i>
-                    <span>Share</span>
-                </button>
                 <form method="POST" action="{{ route('answers.report', ['id' => $answer['id']]) }}" class="d-inline report-form">
                     @csrf
                     <button type="button" class="action-btn report-btn" data-type="answer" data-id="{{ $answer['id'] }}">

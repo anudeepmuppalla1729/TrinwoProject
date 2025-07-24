@@ -345,32 +345,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Handle form submission
-        if (ipostButton) {
-            ipostButton.addEventListener('click', function() {
-                const heading = insightHeading.value.trim();
-                const insight = insightTextarea.value.trim();
+        const createPostForm = document.getElementById('createPostForm');
+        if (createPostForm) {
+            createPostForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const title = insightHeading.value.trim();
+                const content = insightTextarea.value.trim();
                 const privacy = insightPrivacySelect.value;
-                
-                if (insight === '') {
-                    showToast('Please enter your insight', 'error');
+
+                if (content === '' || title === '') {
+                    showToast('Please enter both title and content', 'error');
                     return;
                 }
-                
-                // Create form data for submission
-                const formData = new FormData();
-                formData.append('heading', heading);
-                formData.append('details', insight);
-                formData.append('visibility', privacy.toLowerCase());
-                
-                // Add image if one was selected
+
+                const formData = new FormData(createPostForm);
                 if (selectedImage) {
-                    formData.append('image', selectedImage);
+                    formData.set('cover_image', selectedImage);
                 }
-                
-                // Get the CSRF token from the meta tag
+
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                
-                // Submit the insight via AJAX
+
                 fetch('/posts/ajax', {
                     method: 'POST',
                     headers: {
@@ -381,21 +376,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showToast(data.message, 'info');
-                        
-                        // Clear the form and close the modal
+                        showToast(data.message, 'success');
                         insightHeading.value = '';
                         insightTextarea.value = '';
                         selectedImage = null;
                         selectedImageContainer.style.display = 'none';
                         closeInsightModal();
+                        setTimeout(() => { location.reload(); }, 1200);
                     } else {
-                        showToast('Error: ' + (data.message || 'Failed to submit insight'), 'error');
+                        showToast('Error: ' + (data.message || 'Failed to submit post'), 'error');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showToast('An error occurred while submitting your insight', 'error');
+                    showToast('An error occurred while submitting your post', 'error');
                 });
             });
         }

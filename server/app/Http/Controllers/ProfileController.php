@@ -96,12 +96,21 @@ class ProfileController extends Controller
             ->sortByDesc('created_at')
             ->take(3);
 
+        // Fetch unseen blog-style posts for the user
+        $blogPosts = \App\Models\Post::with(['user', 'userSeenPosts'])
+            ->where('visibility', 'public')
+            ->unseenBy($user->user_id)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
         return view('pages.profile.dashboard', [
             'questionsCount' => $questionsCount,
             'answersCount' => $answersCount,
             'postsCount' => $postsCount,
             'totalUpvotes' => $totalUpvotes,
             'recentActivity' => $recentActivity,
+            'blogPosts' => $blogPosts,
         ]);
     }
 

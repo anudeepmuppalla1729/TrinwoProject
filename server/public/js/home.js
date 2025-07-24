@@ -53,121 +53,50 @@ function renderPosts() {
     return;
   }
   
+  // Use the new blog-feed-section wrapper
+  let html = '<div class="blog-feed-section">';
+  const currentUserId = window.currentUserId;
   posts.forEach((post, index) => {
-    // Format comments if they exist
-    const commentsHtml = post.comments && post.comments.length > 0 
-      ? post.comments.map(comment => {
-          const commentProfileImgHtml = comment.avatar && comment.avatar.length > 0
-            ? `<img src="${comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
-            : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`;
-          return `
-            <div class="comment-item" data-comment-id="${comment.id}" style="padding: 10px; margin-bottom: 10px; border: 1px solid #e0e0e0; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
-                <div style="display: flex; align-items: center;">
-                  ${commentProfileImgHtml}
-                  <div>
-                    <strong style="color: rgb(49, 60, 95);">${comment.user}</strong>
-                    <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${comment.created_at}</small>
-                  </div>
-                </div>
-                ${comment.is_owner ? `<button class="delete-comment-btn" data-comment-id="${comment.id}" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 0.9rem;"><i class="bi bi-trash"></i></button>` : ''}
-              </div>
-              <div class="comment-text" style="max-height: 100px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word;">${comment.text}</div>
-            </div>
-          `;
-        }).join('') 
-      : `<p style="text-align: center; color: #777; font-style: italic; padding: 10px;">No comments yet</p>`;
-      
-    // Add style to hide scrollbar for Webkit browsers (Chrome, Safari, newer Edge)
-    const styleElement = document.createElement('style');
-    styleElement.textContent = `
-      .comment-text::-webkit-scrollbar {
-        display: none;
-      }
-    `;
-    document.head.appendChild(styleElement);
-    
-    // Image HTML if available
-    const imageHtml = post.imageUrl 
-      ? `<div class="post-image" style><img src="${post.imageUrl}" alt="${post.title}" style="max-width: 100%; margin-top: 10px; border-radius: 8px;"></div>` 
+    const isBookmarked = post.isBookmarked;
+    const bookmarkIcon = isBookmarked ? '<i class="fas fa-bookmark"></i>' : '<i class="far fa-bookmark"></i>';
+    const bookmarkBtnClass = isBookmarked ? 'bookmarked' : '';
+    const coverImageHtml = post.cover_image
+      ? `<div class="blog-post-cover-wrapper"><img src="${post.cover_image}" alt="Cover Image" class="blog-post-cover"></div>`
       : '';
-    
-    // Profile image HTML
-    const profileImgHtml = post.avatar && post.avatar.length > 0
-      ? `<img src="${post.avatar}" alt="Profile" style="width:2rem;height:2rem;border-radius:50%;object-fit:cover;margin-right:7px;">`
-      : `<i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 7px;"></i>`;
-    
-    postsContainer.innerHTML += `
-      <div class="post" data-index="${index}" data-id="post-${post.id}">
-        <div class="post-header">
-          <div class="profile">
-            <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
-              ${profileImgHtml}
-            </a>
+    const excerpt = post.content ? post.content.replace(/<[^>]+>/g, '').substring(0, 180) + (post.content.length > 180 ? '...' : '') : '';
+    const minToRead = post.content ? Math.ceil(post.content.replace(/<[^>]+>/g, '').split(/\s+/).length / 200) : 1;
+    const showFollow = currentUserId && String(post.user_id) !== String(currentUserId);
+    const followBtnHtml = showFollow ? `<button class="follow-btn" data-user-id="${post.user_id}">Follow</button>` : '';
+    const authorHtml = `
+      <div class="author-row">
+        <img src="${post.avatar || '/public/assets/default-avatar.png'}" class="author-avatar" alt="${post.profileName}">
+        <a href="/user/${post.user_id}" class="author-name">${post.profileName}</a>
+        ${followBtnHtml}
+      </div>
+    `;
+    html += `
+      <div class="blog-post-card" data-post-id="${post.post_id}">
+        ${coverImageHtml}
+        <div class="blog-post-content">
+          ${authorHtml}
+          <a href="/posts/${post.post_id}" class="blog-post-link" style="text-decoration:none;display:block;">
             <div>
-              <a href="/user/${post.user_id}" style="text-decoration: none; color: inherit;">
-                <strong>${post.profileName}</strong><br>
-                <small style="font-size: 1rem;">${post.studyingIn} - ${post.expertIn}</small>
-              </a>
-              ${post.user_id === window.currentUserId ? '' : `
-              <button class="follow-btn" data-user-id="${post.user_id}" data-following="${post.isFollowing ? 'true' : 'false'}" style="
-               border: 2px solid rgb(49, 60, 95);
-               ${post.isFollowing ? 'background-color: rgb(49, 60, 95); color: white;' : 'background-color: transparent; color: black;'}
-               border-radius: 4px;
-               cursor: pointer;
-               margin-left: 5px;
-               font-size: 0.9rem;">${post.isFollowing ? 'Following' : 'Follow'}</button>
-              `}
+              <div class="blog-post-title">${post.title || ''}</div>
+              <div class="blog-post-excerpt">${excerpt}</div>
             </div>
+          </a>
+          <div class="blog-post-meta">
+            <span><i class="fas fa-eye"></i> ${post.views || 0} views</span>
+            <span><i class="fas fa-clock"></i> ${minToRead} min</span>
+            <button class="bookmark-btn ${bookmarkBtnClass}" data-post-id="${post.post_id}" title="Bookmark" style="background:none;border:none;outline:none;cursor:pointer;">${bookmarkIcon}</button>
+            <button class="report-btn ml-2" data-post-id="${post.post_id}" title="Report this post" style="background:none;border:none;outline:none;cursor:pointer;"><i class="fas fa-flag"></i></button>
           </div>
-          <div>
-            <span class="options">⋮
-              <div class="options-menu">
-                <button>Comment</button><hr>
-                <button>Not interested</button><hr>
-                <button>Bookmark</button><hr>
-                <button>Copy Link</button><hr>
-                ${window.isAuthenticated ? `<button class="report-btn" data-post-id="${post.id}"><i class="fas fa-flag"></i> Report</button>` : ''}
-              </div>
-            </span>
-            <span class="close-post">×</span>
-          </div>
-        </div>
-        <hr>
-        <h2>${post.title}</h2>
-        
-        <p>${post.body}</p> 
-        ${imageHtml}
-        <div class="post-meta">
-          <small>Posted on ${post.created_at}
-        </div>
-        <div class="comments-container" style="display: none; margin-top: 15px;">
-          ${commentsHtml}
-        </div>
-        <div class="post-actions" style="display: flex; justify-content: space-between; padding: 10px 0;">
-          <button class="action-btn upvote-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.userVote === 'upvote' ? 'rgb(49, 60, 95)' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
-            <i class="bi ${post.userVote === 'upvote' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up'}" style="font-size: 1.2rem; margin-right: 5px;"></i>
-            <span>${post.upvotes || 0}</span>
-          </button>
-          <button class="action-btn comment-count-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
-            <i class="bi bi-chat-dots" style="font-size: 1.2rem; margin-right: 5px;"></i>
-            <span>${post.commentCount || 0}</span>
-          </button>
-          <button class="action-btn downvote-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.userVote === 'downvote' ? '#dc3545' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
-            <i class="bi ${post.userVote === 'downvote' ? 'bi-hand-thumbs-down-fill' : 'bi-hand-thumbs-down'}" style="font-size: 1.2rem; margin-right: 5px;"></i>
-            <span>${post.downvotes || 0}
-          </button>
-          <button class="action-btn comment-btn" style="display: flex; align-items: center; background: none; border: none; color: #555; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
-            <i class="bi bi-pencil-square" style="font-size: 1.2rem;"></i>
-          </button>
-          <button class="action-btn bookmark-btn" style="display: flex; align-items: center; background: none; border: none; color: ${post.isBookmarked ? 'rgb(49, 60, 95)' : '#555'}; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
-            <i class="bi ${post.isBookmarked ? 'bi-bookmark-fill' : 'bi-bookmark'}" style="font-size: 1.2rem;"></i>
-          </button>
         </div>
       </div>
     `;
   });
-
+  html += '</div>';
+  postsContainer.innerHTML = html;
   attachPostEvents();
 }
 
@@ -192,6 +121,11 @@ actionButtonStyles.textContent = `
   }
 `;
 document.head.appendChild(actionButtonStyles);
+
+// Add CSS for .bookmarked
+const blogCardBookmarkStyle = document.createElement('style');
+blogCardBookmarkStyle.textContent = `.bookmark-btn.bookmarked { color: rgb(42, 60, 98) !important; }`;
+document.head.appendChild(blogCardBookmarkStyle);
 
 // Fetch posts when page loads
 fetchPosts();
@@ -311,98 +245,79 @@ function attachPostEvents() {
     });
   });
   
-  // Bookmark button
+  // Bookmark button AJAX
   document.querySelectorAll('.bookmark-btn').forEach((btn) => {
-    btn.addEventListener('click', function() {
-      const postElement = this.closest('.post');
-      const postId = postElement.dataset.id.replace('post-', '');
-      
-      // Get CSRF token
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const postId = this.getAttribute('data-post-id');
+      const isBookmarked = this.classList.contains('bookmarked');
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      
-      // Send AJAX request to bookmark the post
       fetch(`/posts/${postId}/bookmark`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json'
         }
       })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          // Update the bookmark button based on the response
           if (data.isBookmarked) {
-            // Post is now bookmarked
-            this.style.color = 'rgb(49, 60, 95)';
-            this.querySelector('i').classList.remove('bi-bookmark');
-            this.querySelector('i').classList.add('bi-bookmark-fill');
+            this.classList.add('bookmarked');
+            this.innerHTML = '<i class="fas fa-bookmark"></i>';
+            this.style.color = 'rgb(42, 60, 98)';
           } else {
-            // Bookmark was removed
-            this.style.color = '#555';
-            this.querySelector('i').classList.remove('bi-bookmark-fill');
-            this.querySelector('i').classList.add('bi-bookmark');
+            this.classList.remove('bookmarked');
+            this.innerHTML = '<i class="far fa-bookmark"></i>';
+            this.style.color = '';
           }
-        } else {
-          console.error('Failed to bookmark post:', data.message);
         }
-      })
-      .catch(error => {
-        console.error('Error bookmarking post:', error);
       });
     });
   });
   
-  // Follow button
+  // Follow button AJAX
   document.querySelectorAll('.follow-btn').forEach((btn) => {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      
-      const userId = this.dataset.userId;
-      const isFollowing = this.dataset.following === 'true';
-      
-      // Get CSRF token
+      const userId = this.getAttribute('data-user-id');
+      const isFollowing = this.classList.contains('following');
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      
-      // Determine the endpoint based on current follow status
-      const endpoint = isFollowing ? `/user/${userId}/unfollow` : `/user/${userId}/follow`;
-      
-      // Send AJAX request to follow/unfollow the user
-      fetch(endpoint, {
+      const url = isFollowing ? `/user/${userId}/unfollow` : `/user/${userId}/follow`;
+      fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken
-        }
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({})
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(async response => {
+        let data;
+        try {
+          data = await response.clone().json();
+        } catch (err) {
+          const text = await response.text();
+          showToast('Follow failed: ' + (text || 'Unknown error'), 'error');
+          return;
+        }
         if (data.success) {
-          // Toggle the follow state based on the current state
-          const newFollowingState = !isFollowing;
-          
-          // Update this button
-          this.textContent = newFollowingState ? 'Following' : 'Follow';
-          this.style.backgroundColor = newFollowingState ? 'rgb(49, 60, 95)' : 'transparent';
-          this.style.color = newFollowingState ? 'white' : 'black';
-          this.dataset.following = newFollowingState.toString();
-          
-          // Update all follow buttons for this user
-          document.querySelectorAll(`.follow-btn[data-user-id="${userId}"]`).forEach(button => {
-            if (button !== this) {
-              button.textContent = newFollowingState ? 'Following' : 'Follow';
-              button.style.backgroundColor = newFollowingState ? 'rgb(49, 60, 95)' : 'transparent';
-              button.style.color = newFollowingState ? 'white' : 'black';
-              button.dataset.following = newFollowingState.toString();
-            }
-          });
+          if (data.isFollowing) {
+            this.classList.add('following');
+            this.textContent = 'Following';
+          } else {
+            this.classList.remove('following');
+            this.textContent = 'Follow';
+          }
+          showToast(data.message || (data.isFollowing ? 'Now following' : 'Unfollowed'), 'success');
         } else {
-          console.error('Failed to update follow status:', data.message);
+          showToast(data.message || 'Follow failed', 'error');
         }
       })
       .catch(error => {
-        console.error('Error updating follow status:', error);
+        showToast('Follow failed: ' + error, 'error');
       });
     });
   });

@@ -1166,7 +1166,7 @@ class AdminController extends Controller
                     'id' => $answer->user->user_id,
                     'username' => $answer->user->username,
                     'name' => $answer->user->name,
-                    'avatar' => $answer->user->avatar
+                    'avatar' => $answer->user->avatar_url // Use full S3/public URL
                 ],
                 'question' => [
                     'id' => $answer->question->question_id,
@@ -1255,8 +1255,8 @@ class AdminController extends Controller
         if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('heading', 'like', "%{$search}%")
-                  ->orWhere('details', 'like', "%{$search}%");
+                $q->orWhere('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
             });
         }
         if ($request->has('date_from') && $request->date_from) {

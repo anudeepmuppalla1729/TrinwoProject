@@ -51,44 +51,50 @@
 <div id="insightModal" class="modal-overlay">
     <div class="modal-box" style="height: auto; min-height: 60vh; padding-bottom: 80px;">
         <div class="modal-header">
-            <span class="modal-title">Post Insight</span>
+            <span class="modal-title">Create Blog Post</span>
             <button class="close-btn">&times;</button>
         </div>
         <hr />
-        <div class="modal-options">
-            <div class="user-info">
-                @if(Auth::user() && !empty(Auth::user()->avatar))
-                    <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
-                @elseif(Auth::user())
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=64" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
-                @else
-                    <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
-                @endif
-                <span class="username">{{ Auth::user() ? Auth::user()->name : 'Username' }}</span>
+        <form id="createPostForm" method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-options">
+                <div class="user-info">
+                    @if(Auth::user() && !empty(Auth::user()->avatar))
+                        <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
+                    @elseif(Auth::user())
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=64" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
+                    @else
+                        <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
+                    @endif
+                    <span class="username">{{ Auth::user() ? Auth::user()->name : 'Username' }}</span>
+                </div>
+                <select class="privacy-select" name="visibility">
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                </select>
             </div>
-            <select class="privacy-select">
-                <option value="public">Public</option>
-                <option value="private">Private</option>
-            </select>
-        </div>
-        <textarea class="insight-heading" placeholder="Heading for your Insight..."></textarea>
-        <textarea class="i-question-textarea" placeholder="Share your thoughts and insights..."></textarea>
-        
-        <div class="selected-image-container" style="display: none; margin: 10px 0;">
-            <img id="selected-image-preview" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; object-fit: contain;">
-            <button class="remove-image-btn" style="margin-left: 10px; background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-                <i class="fa-solid fa-times"></i> Remove
-            </button>
-        </div>
-        
-        <input type="file" id="insight-image-input" style="display: none;" accept="image/png,image/jpeg,image/jpg">
-        
-        <div class="modal-actions">
-            <button class="cancel-btn">Cancel</button>
-            <button class="image-btn">
-                <i class="fa-solid fa-image"></i> Add Image
-            </button>
-            <button class="post-btn">Post</button>
-        </div>
+            <input type="text" name="title" class="insight-heading" placeholder="Blog post title..." required>
+            @error('title')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+            <textarea name="content" class="i-question-textarea" placeholder="Write your blog content here..." rows="8" required></textarea>
+            @error('content')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+            <div class="selected-image-container" style="display: none; margin: 10px 0;">
+                <img id="selected-image-preview" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; object-fit: contain;">
+                <button class="remove-image-btn" style="margin-left: 10px; background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                    <i class="fa-solid fa-times"></i> Remove
+                </button>
+            </div>
+            <input type="file" id="insight-image-input" name="cover_image" style="display: none;" accept="image/png,image/jpeg,image/jpg">
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn">Cancel</button>
+                <button type="button" class="image-btn">
+                    <i class="fa-solid fa-image"></i> Add Image
+                </button>
+                <button type="submit" class="post-btn">Post</button>
+            </div>
+        </form>
     </div>
 </div>

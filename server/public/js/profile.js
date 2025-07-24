@@ -136,6 +136,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // AJAX blog post creation
+    const createPostForm = document.getElementById('createPostForm');
+    if (createPostForm) {
+        createPostForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(createPostForm);
+            fetch(createPostForm.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message || 'Blog post created!', 'success');
+                    // Close modal
+                    document.getElementById('insightModal').style.display = 'none';
+                    // Optionally reset form
+                    createPostForm.reset();
+                    // Reload posts section (dashboard)
+                    location.reload();
+                } else {
+                    showNotification(data.message || 'An error occurred while posting.', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('An error occurred while posting.', 'error');
+            });
+        });
+    }
+    
     // Function to show notification
     function showNotification(message, type = 'success') {
         // Check if notification container exists, if not create it

@@ -7,9 +7,6 @@
 <div class="header">
 <h1 class="page-title"><i class="fas fa-users"></i> User Management</h1>
     <div class="header-actions">
-        <button class="btn btn-outline" onclick="exportReports()">
-            <i class="fas fa-download"></i> Export
-        </button>
         <button class="btn btn-primary" onclick="refreshUsers()">
             <i class="fas fa-sync-alt"></i> Refresh
         </button>
@@ -493,9 +490,6 @@ class UsersManager {
                         <div class="action-buttons">
                             <button class="action-btn btn-view" data-id="${user.id}" title="View Details">
                                 <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn btn-edit" data-id="${user.id}" title="Edit User">
-                                <i class="fas fa-edit"></i>
                             </button>
                             ${user.status === 'banned' ? 
                                 `<button class="action-btn btn-unban" data-id="${user.id}" title="Unban User">

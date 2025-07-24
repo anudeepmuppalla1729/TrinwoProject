@@ -53,11 +53,7 @@
             </a>
             
             <div class="menu-label">Settings</div>
-            
-            <a href="{{ route('admin.settings') }}" class="menu-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
+
             
             <a href="{{ route('admin.logout') }}" class="menu-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="fas fa-sign-out-alt"></i>
