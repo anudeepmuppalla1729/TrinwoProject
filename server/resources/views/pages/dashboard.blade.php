@@ -31,7 +31,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    background: #fff;
+    background: #eceaea;
     border-radius: 18px;
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
@@ -42,8 +42,6 @@
     position: relative;
     box-sizing: border-box;
     padding-bottom: 0;
-    transform: translateY(0);
-    background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
 }
 
 

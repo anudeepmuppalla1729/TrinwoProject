@@ -12,7 +12,7 @@ html, body {
     max-width: 900px;
     padding: 2.5rem 1.5rem 3rem 1.5rem;
     margin: 0 auto;
-    background: #fff;
+    background: #eceaea;
     border-radius: 18px;
     box-shadow: 0 8px 32px 0 rgba(42,60,98,0.13);
     position: relative;
@@ -37,7 +37,7 @@ html, body {
     color: var(--primary-dark);
     font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 0.7rem;
+    margin-bottom: 1.5rem;
     line-height: 1.1;
     letter-spacing: -1px;
     text-shadow: 0 2px 8px rgba(42,60,98,0.04);
@@ -49,7 +49,7 @@ html, body {
     margin-bottom: 2.2rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 2.2rem;
+    gap: 4rem;
     align-items: center;
     max-width: 100%;
 }
@@ -82,6 +82,9 @@ html, body {
     margin-bottom: 2.8rem;
     letter-spacing: 0.01em;
     word-break: break-word;
+    border-radius: 0.8rem;
+    padding: 1.2rem 1.5rem;
+    background-color:rgb(222, 225, 232);
     max-width: 100%;
     overflow-x: auto;
 }
@@ -269,8 +272,7 @@ html, body {
                     <span id="downvoteCount">{{ $post->downvotes ?? 0 }}</span>
                 </button>
             </form>
-            <span><i class="fas fa-eye"></i> {{ $post->viewCount() }} views</span>
-            <span><i class="fas fa-clock"></i> {{ ceil(str_word_count(strip_tags($post->content))/200) }} min read</span>
+
             <span><i class="fas fa-calendar-alt"></i> {{ $post->created_at->format('M d, Y') }}</span>
             <form id="bookmarkForm" method="POST" action="{{ route('posts.bookmark', $post->post_id) }}" style="display:inline;">
                 @csrf

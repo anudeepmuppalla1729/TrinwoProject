@@ -141,7 +141,7 @@
     
     .question-description {
 
-        background-color: rgb(230, 220, 230);
+        background-color: rgb(222, 225, 232);
     }
     
     .question-actions {
