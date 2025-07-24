@@ -66,10 +66,22 @@ function renderPosts() {
     const excerpt = post.content ? post.content.replace(/<[^>]+>/g, '').substring(0, 180) + (post.content.length > 180 ? '...' : '') : '';
     const minToRead = post.content ? Math.ceil(post.content.replace(/<[^>]+>/g, '').split(/\s+/).length / 200) : 1;
     const showFollow = currentUserId && String(post.user_id) !== String(currentUserId);
-    const followBtnHtml = showFollow ? `<button class="follow-btn" data-user-id="${post.user_id}">Follow</button>` : '';
+    let followBtnHtml = '';
+    if (showFollow && !post.isFollowing) {
+      followBtnHtml = `<button class="follow-btn" data-user-id="${post.user_id}">Follow</button>`;
+    }
+    // Avatar rendering logic
+    let authorAvatarHtml = '';
+    if (post.avatar) {
+      authorAvatarHtml = `<img src="${post.avatar}" class="author-avatar" alt="${post.profileName}">`;
+    } else {
+      // Compute initials from profileName
+      const initials = post.profileName.split(' ').map(w => w[0]?.toUpperCase() || '').join('');
+      authorAvatarHtml = `<div class="author-avatar" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;color:#2a3c62;font-weight:700;font-size:1.1rem;">${initials}</div>`;
+    }
     const authorHtml = `
       <div class="author-row">
-        <img src="${post.avatar || '/public/assets/default-avatar.png'}" class="author-avatar" alt="${post.profileName}">
+        ${authorAvatarHtml}
         <a href="/user/${post.user_id}" class="author-name">${post.profileName}</a>
         ${followBtnHtml}
       </div>
@@ -304,14 +316,16 @@ function attachPostEvents() {
           return;
         }
         if (data.success) {
-          if (data.isFollowing) {
-            this.classList.add('following');
-            this.textContent = 'Following';
+          if (!isFollowing) {
+            // Remove the follow button after following
+            this.remove();
+            showToast(data.message || 'Now following', 'success');
           } else {
-            this.classList.remove('following');
+            // Optionally, you can re-add the button for unfollow, or just reload posts
             this.textContent = 'Follow';
+            this.classList.remove('following');
+            showToast(data.message || 'Unfollowed', 'success');
           }
-          showToast(data.message || (data.isFollowing ? 'Now following' : 'Unfollowed'), 'success');
         } else {
           showToast(data.message || 'Follow failed', 'error');
         }
@@ -624,6 +638,47 @@ async function deleteComment(commentId, commentElement, postElement) {
   } catch (error) {
     console.error('Error deleting comment:', error);
     showToast('Failed to delete comment. Please try again.', 'error');
+  }
+}
+
+// Toast notification function (copied from global.js/signup.js)
+if (typeof showToast !== 'function') {
+  function showToast(message, type = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.style.position = 'fixed';
+      container.style.top = '24px';
+      container.style.right = '24px';
+      container.style.zIndex = '99999';
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.gap = '12px';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.style.minWidth = '220px';
+    toast.style.maxWidth = '350px';
+    toast.style.padding = '14px 22px';
+    toast.style.borderRadius = '6px';
+    toast.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    toast.style.fontSize = '1rem';
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.gap = '12px';
+    toast.style.animation = 'fadeIn 0.3s';
+    toast.style.background = type === 'success' ? '#e6f9f0' : type === 'error' ? '#fff0f0' : '#f0f4ff';
+    toast.style.color = type === 'success' ? '#1b7f5a' : type === 'error' ? '#b91c1c' : '#1a237e';
+    toast.style.borderLeft = '5px solid ' + (type === 'success' ? '#1b7f5a' : type === 'error' ? '#b91c1c' : '#1a237e');
+    toast.innerHTML = (type === 'success' ? '<i class="fas fa-check-circle"></i>' : type === 'error' ? '<i class="fas fa-exclamation-circle"></i>' : '<i class="fas fa-info-circle"></i>') + message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-20px)';
+      setTimeout(() => container.removeChild(toast), 300);
+    }, 2500);
   }
 }
 

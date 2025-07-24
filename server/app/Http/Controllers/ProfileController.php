@@ -102,7 +102,12 @@ class ProfileController extends Controller
             ->unseenBy($user->user_id)
             ->orderBy('created_at', 'desc')
             ->take(10)
-            ->get();
+            ->get()
+            ->map(function($post) use ($user) {
+                $isFollowing = $user->following()->where('user_id', $post->user->user_id)->exists();
+                $post->isFollowing = $isFollowing;
+                return $post;
+            });
 
         return view('pages.profile.dashboard', [
             'questionsCount' => $questionsCount,

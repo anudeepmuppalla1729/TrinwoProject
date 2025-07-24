@@ -207,14 +207,20 @@ class PostController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get()
-            ->map(function ($post) {
+            ->map(function ($post) use ($userId) {
                 $coverImage = null;
                 if ($post->cover_image) {
-                    if (Str::startsWith($post->cover_image, ['http://', 'https://'])) {
+                    if (\Str::startsWith($post->cover_image, ['http://', 'https://'])) {
                         $coverImage = $post->cover_image;
                     } else {
-                        $coverImage = Storage::disk('s3')->url($post->cover_image);
+                        $coverImage = \Storage::disk('s3')->url($post->cover_image);
                     }
+                }
+                $isFollowing = false;
+                if ($userId && $post->user) {
+                    $isFollowing = \App\Models\Follower::where('follower_user_id', $userId)
+                        ->where('user_id', $post->user->user_id)
+                        ->exists();
                 }
                 return [
                     'post_id' => $post->post_id,
@@ -226,6 +232,7 @@ class PostController extends Controller
                     'cover_image' => $coverImage,
                     'created_at' => $post->created_at->format('M d, Y'),
                     'views' => $post->userSeenPosts->count(),
+                    'isFollowing' => $isFollowing,
                     // Add more fields as needed for bookmarks, etc.
                 ];
             });

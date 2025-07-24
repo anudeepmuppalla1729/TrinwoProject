@@ -353,16 +353,16 @@
 @section('title', 'Home | TRINWOPJ')
 @section('content')
 <div class="home_content">
-    @auth
     <div class="question-box">
         <input type="text" class="insight-btn question-input" placeholder="Type Your Question or Insight here" readonly/>
+        @auth
         @if(!empty(Auth::user()->avatar))
             <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="user-icon" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
         @else
             <i class="bi bi-person-circle user-icon"></i>
         @endif
+        @endauth
     </div>
-    @endauth
     <div class="blog-feed-section" id="postsContainer">
         @foreach($blogPosts ?? [] as $post)
             <div class="blog-post-card">
@@ -373,9 +373,25 @@
                 @endif
                 <div class="blog-post-content">
                     <div class="author-row">
-                        <img src="{{ $post->user->avatar_url ?? asset('assets/default-avatar.png') }}" class="author-avatar" alt="{{ $post->user->name }}">
-                        <a href="/user/{{ $post->user->user_id }}" class="author-name">{{ $post->user->name }}</a>
-                        <button class="follow-btn" data-user-id="{{ $post->user->user_id }}">Follow</button>
+                        @php
+                            $avatarUrl = $post->user->avatar_url;
+                            $authorName = $post->user->name;
+                            $initials = collect(explode(' ', $authorName))->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
+                            $isCurrentUser = Auth::check() && Auth::id() == $post->user->user_id;
+                        @endphp
+                        @if($avatarUrl)
+                            <img src="{{ $avatarUrl }}" class="author-avatar" alt="{{ $authorName }}">
+                        @else
+                            <div class="author-avatar" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;color:#2a3c62;font-weight:700;font-size:1.1rem;">{{ $initials }}</div>
+                        @endif
+                        <a href="/user/{{ $post->user->user_id }}" class="author-name">{{ $authorName }}</a>
+                        @auth
+                            @if(!$isCurrentUser)
+                                <button class="follow-btn{{ $post->isFollowing ? ' following' : '' }}" data-user-id="{{ $post->user->user_id }}">
+                                    {{ $post->isFollowing ? 'Following' : 'Follow' }}
+                                </button>
+                            @endif
+                        @endauth
                     </div>
                     <a href="/posts/{{ $post->post_id }}" class="blog-post-link" style="text-decoration:none;display:block;">
                         <div>
