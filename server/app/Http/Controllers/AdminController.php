@@ -1005,7 +1005,7 @@ class AdminController extends Controller
                         ],
                         'created_at' => $answer->created_at,
                         'votes_count' => $answer->votes_count ?? 0,
-                        'is_accepted' => $answer->is_accepted ?? false
+                        'is_accepted' => $answer->isAccepted()
                     ];
                 })
             ];
@@ -1113,9 +1113,13 @@ class AdminController extends Controller
         // Filtering
         if ($request->has('status') && $request->status) {
             if ($request->status === 'accepted') {
-                $query->where('is_accepted', true);
+                $query->whereHas('question', function($q) {
+                    $q->whereColumn('answers.answer_id', 'questions.accepted_answer_id');
+                });
             } elseif ($request->status === 'pending') {
-                $query->whereNull('is_accepted')->orWhere('is_accepted', false);
+                $query->whereDoesntHave('question', function($q) {
+                    $q->whereColumn('answers.answer_id', 'questions.accepted_answer_id');
+                });
             }
         }
         if ($request->has('rating') && $request->rating) {
@@ -1215,7 +1219,7 @@ class AdminController extends Controller
             'created_at' => $answer->created_at,
             'votes_count' => $answer->votes_count,
             'rating' => $answer->rating ?? 0,
-            'is_accepted' => $answer->is_accepted ?? false
+            'is_accepted' => $answer->isAccepted()
         ]);
     }
 
@@ -1414,4 +1418,4 @@ class AdminController extends Controller
         $admin->delete();
         return response()->json(['message' => 'Admin deleted successfully']);
     }
-} 
+}

@@ -15,6 +15,33 @@
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     
+    .closed-badge {
+        display: inline-block;
+        background-color: #dc3545;
+        color: white;
+        font-size: 14px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    
+    .closed-question-notice {
+        margin-top: 20px;
+        padding: 15px;
+    }
+    
+    .alert-warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffecb5;
+        color: #856404;
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
     .d-inline {
         display: inline;
     }
@@ -172,6 +199,16 @@
         background-color: rgba(201, 42, 224, 0.05);
     }
     
+    .close-btn:hover {
+        color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.05);
+    }
+    
+    .reopen-btn:hover {
+        color: #28a745;
+        background-color: rgba(40, 167, 69, 0.05);
+    }
+    
     .share-btn:hover {
         color: #3498db;
         background-color: rgba(52, 152, 219, 0.05);
@@ -319,6 +356,17 @@
         border-top: 1px solid #eee;
     }
     
+    .accept-btn {
+        color: #2ecc71;
+        border: 1px solid #2ecc71;
+        background-color: rgba(46, 204, 113, 0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .accept-btn:hover {
+        background-color: rgba(46, 204, 113, 0.2);
+    }
+    
     .answer-form {
         background-color: #fff;
         border-radius: 12px;
@@ -432,7 +480,7 @@
             </div>
             <span>{{ $question['created_at'] }}</span>
         </div>
-        <h2 class="question-title" >{{ $question['title'] }}</h2>
+        <h2 class="question-title" >{{ $question['title'] }} @if($question['is_closed']) <span class="closed-badge"><i class="bi bi-lock-fill"></i> Closed</span> @endif</h2>
     </div>
     <div class="question-content">
 
@@ -462,6 +510,26 @@
                     <span>Report</span>
                 </button>
             </form>
+            
+            @if(Auth::check() && Auth::id() == $question['user_id'])
+                @if($question['is_closed'])
+                    <form method="POST" action="{{ route('questions.reopen', ['id' => $question['id']]) }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="action-btn reopen-btn">
+                            <i class="bi bi-unlock"></i>
+                            <span>Reopen Question</span>
+                        </button>
+                    </form>
+                @else
+                    <form method="POST" action="{{ route('questions.close', ['id' => $question['id']]) }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="action-btn close-btn">
+                            <i class="bi bi-lock"></i>
+                            <span>Close Question</span>
+                        </button>
+                    </form>
+                @endif
+            @endif
             @endauth
         </div>
     </div>
@@ -532,11 +600,23 @@
                         <span>Report</span>
                     </button>
                 </form>
+                @auth
+                    @if(auth()->id() == $question['user_id'] && !$answer['is_accepted'])
+                        <form action="{{ route('answers.accept', $answer['id']) }}" method="POST" class="d-inline accept-answer-form">
+                            @csrf
+                            <button type="button" class="action-btn accept-btn" data-answer-id="{{ $answer['id'] }}">
+                                <i class="bi bi-check-circle"></i>
+                                <span>Accept</span>
+                            </button>
+                        </form>
+                    @endif
+                @endauth
             </div>
         </div>
         @endforeach
     </div>
     
+    @if(!$question['is_closed'])
     <div class="answer-form">
         <h3>Your Answer</h3>
         <form id="post-answer-form" action="{{ route('answers.store', $question['id']) }}" method="POST">
@@ -545,6 +625,14 @@
             <button type="submit" class="submit-answer">Post Your Answer</button>
         </form>
     </div>
+    @else
+    <div class="closed-question-notice">
+        <div class="alert alert-warning">
+            <i class="bi bi-lock-fill"></i>
+            <span>This question has been closed and is no longer accepting answers.</span>
+        </div>
+    </div>
+    @endif
 </div>
 </div>
 @auth

@@ -25,8 +25,9 @@ class QuestionController extends Controller
         // Get the current user ID if authenticated
         $userId = Auth::id();
         
-        // Fetch questions from the database
+        // Fetch questions from the database, excluding closed questions
         $questions = Question::with(['user', 'tags'])
+            ->where('is_closed', false)
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function($question) use ($userId) {
@@ -185,7 +186,8 @@ class QuestionController extends Controller
             'upvotes' => 0, // Questions don't have upvotes in this system
             'downvotes' => 0, // Questions don't have downvotes in this system
             'tags' => $questionModel->tags->pluck('name')->toArray(),
-            'is_bookmarked' => $isBookmarked
+            'is_bookmarked' => $isBookmarked,
+            'is_closed' => $questionModel->is_closed
         ];
         
         // Format the answers data
@@ -199,7 +201,7 @@ class QuestionController extends Controller
                 'created_at' => $answer->created_at->diffForHumans(),
                 'upvotes' => $answer->getUpvotesCount(),
                 'downvotes' => $answer->getDownvotesCount(),
-                'is_accepted' => $answer->is_accepted ?? false
+                'is_accepted' => $answer->isAccepted()
             ];
         });
         
@@ -286,6 +288,60 @@ class QuestionController extends Controller
             \DB::rollBack();
             
             return redirect()->back()->with('error', 'An error occurred while deleting the question: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Close a question to prevent new answers.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function closeQuestion($id)
+    {
+        try {
+            // Find the question
+            $question = Question::findOrFail($id);
+            
+            // Check if the authenticated user is the owner of the question
+            if ($question->user_id !== Auth::id()) {
+                return redirect()->back()->with('error', 'You do not have permission to close this question.');
+            }
+            
+            // Close the question
+            $question->is_closed = true;
+            $question->save();
+            
+            return redirect()->route('question', ['id' => $id])->with('success', 'Question closed successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while closing the question: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Reopen a closed question to allow new answers.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function reopenQuestion($id)
+    {
+        try {
+            // Find the question
+            $question = Question::findOrFail($id);
+            
+            // Check if the authenticated user is the owner of the question
+            if ($question->user_id !== Auth::id()) {
+                return redirect()->back()->with('error', 'You do not have permission to reopen this question.');
+            }
+            
+            // Reopen the question
+            $question->is_closed = false;
+            $question->save();
+            
+            return redirect()->route('question', ['id' => $id])->with('success', 'Question reopened successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while reopening the question: ' . $e->getMessage());
         }
     }
 

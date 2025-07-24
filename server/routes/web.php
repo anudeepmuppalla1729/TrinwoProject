@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/questions/{id}/downvote', [QuestionController::class, 'downvote'])->name('questions.downvote');
     Route::post('/questions/{id}/bookmark', [QuestionController::class, 'bookmark'])->name('questions.bookmark');
     Route::post('/questions/{id}/share', [QuestionController::class, 'share'])->name('questions.share');
+    Route::post('/questions/{id}/close', [QuestionController::class, 'closeQuestion'])->name('questions.close');
+    Route::post('/questions/{id}/reopen', [QuestionController::class, 'reopenQuestion'])->name('questions.reopen');
     
     // Answer routes
     Route::post('/questions/{questionId}/answers', [AnswerController::class, 'store'])->name('answers.store');
