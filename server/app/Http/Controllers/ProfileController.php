@@ -106,6 +106,7 @@ class ProfileController extends Controller
             ->map(function($post) use ($user) {
                 $isFollowing = $user->following()->where('user_id', $post->user->user_id)->exists();
                 $post->isFollowing = $isFollowing;
+                $post->isBookmarked = $post->hasUserBookmarked($user->user_id);
                 return $post;
             });
 
@@ -207,7 +208,15 @@ class ProfileController extends Controller
             $query->where('user_id', $userId);
         })->with(['user', 'images', 'comments'])
           ->orderBy('created_at', 'desc')
-          ->get();
+          ->get()
+          ->map(function($post) {
+              // Normalize fields for view compatibility
+              $post->heading = $post->heading ?? $post->title;
+              $post->details = $post->details ?? $post->content;
+              $post->avatar = $post->user->avatar_url ?? null;
+              $post->authorInitials = collect(explode(' ', $post->user->name))->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
+              return $post;
+          });
         // Get user's bookmarked questions
         $bookmarkedQuestions = \App\Models\Question::whereHas('bookmarks', function($query) use ($userId) {
             $query->where('user_id', $userId);

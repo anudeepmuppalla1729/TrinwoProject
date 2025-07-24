@@ -88,6 +88,11 @@ class PostController extends Controller
             ]);
         }
 
+        // Add isBookmarked and authorInitials for the view
+        $post->isBookmarked = $post->hasUserBookmarked($user->user_id);
+        $post->authorInitials = collect(explode(' ', $post->user->name))->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
+        $post->isFollowing = $user->following()->where('user_id', $post->user->user_id)->exists();
+
         // Pass all necessary data to the view
         return view('pages.posts.show', compact('post'));
     }
@@ -222,6 +227,7 @@ class PostController extends Controller
                         ->where('user_id', $post->user->user_id)
                         ->exists();
                 }
+                $isBookmarked = $userId ? $post->hasUserBookmarked($userId) : false;
                 return [
                     'post_id' => $post->post_id,
                     'user_id' => $post->user->user_id,
@@ -233,7 +239,7 @@ class PostController extends Controller
                     'created_at' => $post->created_at->format('M d, Y'),
                     'views' => $post->userSeenPosts->count(),
                     'isFollowing' => $isFollowing,
-                    // Add more fields as needed for bookmarks, etc.
+                    'isBookmarked' => $isBookmarked,
                 ];
             });
         return response()->json($posts);
