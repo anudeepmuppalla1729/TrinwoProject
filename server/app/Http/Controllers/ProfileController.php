@@ -338,7 +338,12 @@ class ProfileController extends Controller
     public function viewUserPosts($userId)
     {
         $user = User::findOrFail($userId);
-        $posts = $user->posts()->where('visibility', 'public')->with('comments')->latest()->get();
+        $posts = $user->posts()->where('visibility', 'public')->with('comments')->latest()->get()
+            ->map(function($post) {
+                $post->heading = $post->heading ?? $post->title;
+                $post->details = $post->details ?? $post->content;
+                return $post;
+            });
         
         return view('pages.profile.view_posts', [
             'profileUser' => $user,

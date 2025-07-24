@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Mail;
 Route::middleware(['guest'])->group(function () {
     Route::get('/', function () {
         return view('landingPage');
-    })->name('login');
+    });
 
     Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
@@ -145,6 +145,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/questions/{id}/report', [QuestionController::class, 'report'])->name('questions.report');
     Route::post('/answers/{id}/report', [AnswerController::class, 'report'])->name('answers.report');
 });
+
+Route::post('/forgot-password/send-otp', [App\Http\Controllers\ForgotPasswordController::class, 'sendOtp']);
+Route::post('/forgot-password/verify-otp', [App\Http\Controllers\ForgotPasswordController::class, 'verifyOtp']);
+Route::post('/forgot-password/reset', [App\Http\Controllers\ForgotPasswordController::class, 'resetPassword']);
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
