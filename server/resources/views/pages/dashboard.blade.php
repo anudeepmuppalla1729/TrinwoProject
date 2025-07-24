@@ -353,18 +353,16 @@
 @section('title', 'Home | TRINWOPJ')
 @section('content')
 <div class="home_content">
+    @auth
     <div class="question-box">
         <input type="text" class="insight-btn question-input" placeholder="Type Your Question or Insight here" readonly/>
-        @auth
-            @if(!empty(Auth::user()->avatar))
-                <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="user-icon" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
-            @else
-                <i class="bi bi-person-circle user-icon"></i>
-            @endif
+        @if(!empty(Auth::user()->avatar))
+            <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="user-icon" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
         @else
-        <i class="bi bi-person-circle user-icon"></i>
-        @endauth
+            <i class="bi bi-person-circle user-icon"></i>
+        @endif
     </div>
+    @endauth
     <div class="blog-feed-section" id="postsContainer">
         @foreach($blogPosts ?? [] as $post)
             <div class="blog-post-card">

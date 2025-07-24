@@ -5,18 +5,17 @@
             <button class="close-btn">&times;</button>
         </div>
         <hr />
+        @auth
         <form id="askQuestionForm" method="POST" action="{{ route('questions.store') }}">
             @csrf
             <div class="modal-options">
                 <div class="user-info">
-                    @if(Auth::user() && !empty(Auth::user()->avatar))
+                    @if(!empty(Auth::user()->avatar))
                         <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
-                    @elseif(Auth::user())
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=64" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
                     @else
-                        <i class="bi bi-person-circle" style="font-size:1.8rem;"></i>
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&size=64" alt="Profile" style="width:1.8rem;height:1.8rem;border-radius:50%;object-fit:cover;">
                     @endif
-                    <span class="username">{{ Auth::user() ? Auth::user()->name : 'Username' }}</span>
+                    <span class="username">{{ Auth::user()->name }}</span>
                 </div>
                 <select class="privacy-select" name="privacy">
                     <option>Public</option>
@@ -42,9 +41,20 @@
             @enderror
             <div class="modal-actions">
                 <button type="button" class="cancel-btn">Cancel</button>
-                <button type="button" class="ask-btn ">Ask</button>
+                <button type="button" class="ask-btn">Ask</button>
             </div>
         </form>
+        @else
+        <div class="login-required-message">
+            <i class="bi bi-exclamation-circle" style="font-size: 3rem; color: rgb(42, 60, 98); margin-bottom: 1rem;"></i>
+            <h3>Login Required</h3>
+            <p>Please login to ask a question.</p>
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn">Cancel</button>
+                <a href="{{ route('login') }}" class="login-btn">Login</a>
+            </div>
+        </div>
+        @endauth
     </div>
 </div>
 
@@ -55,6 +65,7 @@
             <button class="close-btn">&times;</button>
         </div>
         <hr />
+        @auth
         <form id="createPostForm" method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="modal-options">
@@ -96,5 +107,16 @@
                 <button type="submit" class="post-btn">Post</button>
             </div>
         </form>
+        @else
+        <div class="login-required-message">
+            <i class="bi bi-exclamation-circle" style="font-size: 3rem; color: rgb(42, 60, 98); margin-bottom: 1rem;"></i>
+            <h3>Login Required</h3>
+            <p>Please login to post an insight.</p>
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn">Cancel</button>
+                <a href="{{ route('login') }}" class="login-btn">Login</a>
+            </div>
+        </div>
+        @endauth
     </div>
 </div>
