@@ -14,7 +14,7 @@ html, body {
     margin: 0 auto;
     background: #eceaea;
     border-radius: 18px;
-    box-shadow: 0 8px 32px 0 rgba(42,60,98,0.13);
+    box-shadow: 0 4px 20px 0 rgba(42,60,98,0.13);
     position: relative;
     z-index: 1;
     box-sizing: border-box;
@@ -71,10 +71,7 @@ html, body {
     padding: 0.2rem 0.7rem;
     border-radius: 8px;
 }
-.custom-blog-meta button:hover {
-    color: #1e293b;
-    background: #f0f4fa;
-}
+
 .custom-blog-content {
     font-size: 1.22rem;
     color: #23272f;
@@ -168,11 +165,7 @@ html, body {
     border-radius: 6px;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
-.action-btn:hover {
-    background: #f0f4fa;
-    color: var(--primary-dark);
-    box-shadow: 0 2px 8px rgba(42,60,98,0.07);
-}
+
 .upvote-btn.voted, .upvote-btn.voted i {
     color: #2ecc71 !important;
     font-weight: bold;
@@ -208,10 +201,11 @@ html, body {
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 0.5rem 1rem;
+    padding: 0.3rem 1rem;
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
+    margin-left: 35vw;
     transition: background 0.2s;
     box-shadow: 0 2px 8px rgba(42,60,98,0.07);
 }
@@ -230,6 +224,9 @@ html, body {
     .custom-blog-container { max-width: 100vw; padding: 1.2rem 0.2rem 2rem 0.2rem; }
     .custom-blog-title { font-size: 2rem; }
     .custom-blog-meta, .custom-comments-section, .custom-blog-content { max-width: 100vw; }
+    .date{
+        display: none;
+    }
 }
 @media (max-width: 600px) {
     .custom-blog-title { font-size: 1.3rem; }
@@ -256,7 +253,10 @@ html, body {
                 <button class="follow-btn{{ $post->isFollowing ? ' following' : '' }}" data-user-id="{{ $post->user->user_id }}">{{ $post->isFollowing ? 'Following' : 'Follow' }}</button>
             @endif
         </div>
-        <h1 class="custom-blog-title">{{ $post->title }}</h1>
+        <div style="margin-bottom: 20px; margin-left: 10px;">
+        <h1 class="custom-blog-title" style="margin-bottom: 5px;">{{ $post->title }} </h1>
+        <span  style="font-size:0.9rem; margin-bottom: 10px;"><i class="fas fa-calendar-alt" ></i> {{ $post->created_at->format('M d, Y') }}</span>
+        </div>
         <div class="custom-blog-meta">
             <form id="upvoteForm" method="POST" action="{{ route('posts.upvote', $post->post_id) }}" style="display:inline;">
                 @csrf
@@ -273,7 +273,7 @@ html, body {
                 </button>
             </form>
 
-            <span><i class="fas fa-calendar-alt"></i> {{ $post->created_at->format('M d, Y') }}</span>
+            
             <form id="bookmarkForm" method="POST" action="{{ route('posts.bookmark', $post->post_id) }}" style="display:inline;">
                 @csrf
                 <button type="submit" id="bookmarkBtn" title="Bookmark" class="{{ $post->isBookmarked ? 'bookmarked' : '' }}">
@@ -305,8 +305,8 @@ html, body {
 <!-- Report Modal -->
 <div id="reportModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:12px; padding:2rem; min-width:320px; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative; margin:auto;">
-        <button type="button" id="closeReportModal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:#e74c3c; cursor:pointer;">&times;</button>
-        <h3 style="color:#e74c3c; margin-bottom:1rem;">Report Post</h3>
+        <button type="button" id="closeReportModal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:rgb(45, 60, 95); cursor:pointer;">&times;</button>
+        <h3 style="color:rgb(45, 60, 95); margin-bottom:1rem;">Report Post</h3>
         <form id="reportForm" method="POST" action="{{ route('posts.report', $post->post_id) }}">
             @csrf
             <div style="margin-bottom:1rem;">
@@ -324,7 +324,7 @@ html, body {
                 <label for="reportDetails" style="font-weight:600; color:#333;">Details (optional)</label>
                 <textarea id="reportDetails" name="details" rows="3" style="width:100%; border-radius:6px; border:1px solid #ccc; padding:0.5rem;"></textarea>
             </div>
-            <button type="submit" class="submit-report-btn" style="background:#e74c3c; color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
+            <button type="submit" class="submit-report-btn" style="background:rgb(45, 60, 95); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
             <div id="reportError" style="color:#dc3545; margin-top:0.7rem; display:none;"></div>
         </form>
     </div>
