@@ -44,12 +44,22 @@ body {
 
 .ask-btn {
   background: rgb(42, 60, 98);
-  border: 2px solidrgb(42, 60, 98);
+  border: 2px solid rgb(42, 60, 98);
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.ask-btn:hover {
+  background: rgb(62, 80, 118);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
 }
 
 /* Search box */
@@ -95,6 +105,21 @@ body {
   color: black;
   font-size: 18px;
   font-weight: none;
+}
+
+.signup-btn {
+  background: rgb(42, 60, 98);
+  color: white !important;
+  padding: 0.2rem 0.8rem;
+  border-radius: 4px;
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.signup-btn:hover {
+  background: rgb(62, 80, 118);
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-links i {
@@ -909,6 +934,50 @@ body {
     background: linear-gradient(90deg, #ffeaea 0%, #ffd6d6 100%);
     color: #c0392b;
     border: 1px solid #ffb3b3;
+}
+
+/* Login Required Message Styles */
+.login-required-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    height: 100%;
+}
+
+.login-required-message h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: rgb(42, 60, 98);
+}
+
+.login-required-message p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #555;
+}
+
+.login-btn {
+    background: rgb(42, 60, 98);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn:hover {
+    background: rgb(62, 80, 118);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    color: white;
 }
 
 .custom-flash-message i {

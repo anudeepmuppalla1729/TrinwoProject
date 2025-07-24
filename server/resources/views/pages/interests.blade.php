@@ -53,33 +53,33 @@
         .top-left {
             top: 0;
             left: 0;
-            background: linear-gradient(135deg, transparent 0%, transparent 50%, #c92ae0 50%, #c92ae0 100%);
+            background: linear-gradient(135deg, transparent 0%, transparent 50%, rgb(42, 60, 98) 50%, rgb(42, 60, 98) 100%);
             border-radius: 0 0 100% 0;
         }
 
         .top-right {
             top: 0;
             right: 0;
-            background: linear-gradient(225deg, transparent 0%, transparent 50%, #c92ae0 50%, #c92ae0 100%);
+            background: linear-gradient(225deg, transparent 0%, transparent 50%, rgb(42, 60, 98) 50%, rgb(42, 60, 98) 100%);
             border-radius: 0 0 0 100%;
         }
 
         .bottom-left {
             bottom: 0;
             left: 0;
-            background: linear-gradient(45deg, transparent 0%, transparent 50%, #c92ae0 50%, #c92ae0 100%);
+            background: linear-gradient(45deg, transparent 0%, transparent 50%, rgb(42, 60, 98) 50%, rgb(42, 60, 98) 100%);
             border-radius: 0 100% 0 0;
         }
 
         .bottom-right {
             bottom: 0;
             right: 0;
-            background: linear-gradient(315deg, transparent 0%, transparent 50%, #c92ae0 50%, #c92ae0 100%);
+            background: linear-gradient(315deg, transparent 0%, transparent 50%, rgb(42, 60, 98) 50%, rgb(42, 60, 98) 100%);
             border-radius: 100% 0 0 0;
         }
 
         h1 {
-            background: #c92ae0;
+            background: rgb(42, 60, 98);
             color: white;
             padding: 0.8rem 2rem;
             border-radius: 50px;
@@ -127,11 +127,11 @@
         .interest-box:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            border-color: #c92ae0;
+            border-color: rgb(42, 60, 98);
         }
 
         .interest-box.selected {
-            border-color: #c92ae0;
+            border-color: rgb(42, 60, 98);
             box-shadow: 0 0 0 3px rgba(201, 42, 224, 0.5);
             transform: scale(1.03);
         }
@@ -145,7 +145,7 @@
             right: 10px;
             width: 28px;
             height: 28px;
-            background: #c92ae0;
+            background: rgb(42, 60, 98);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -181,7 +181,7 @@
         }
 
         .interest-box:hover .interest-title {
-            background: #c92ae0;
+            background: rgb(42, 60, 98);
         }
 
         .buttons {
@@ -220,13 +220,12 @@
         }
 
         .continue-btn {
-            background: linear-gradient(to right, #c92ae0, #a020f0);
+            background:  rgb(42, 60, 98);
             color: white;
         }
 
         .continue-btn:hover {
-            background: linear-gradient(to right, #b324c9, #8c1bd1);
-            transform: translateY(-2px);
+            background: rgb(67, 80, 130);
             box-shadow: 0 6px 15px rgba(201, 42, 224, 0.4);
         }
 
@@ -240,7 +239,7 @@
         .selected-count {
             margin-top: 1.5rem;
             font-weight: 500;
-            color: #c92ae0;
+            color: rgb(42, 60, 98);
             font-size: 1.1rem;
             position: relative;
             z-index: 2;
