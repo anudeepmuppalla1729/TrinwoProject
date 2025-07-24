@@ -63,7 +63,7 @@
                         <i class="bi bi-chat-dots" style="font-size: 1.2rem; margin-right: 5px;"></i>
                         <span>{{ $post->comments->count() }}</span>
                     </button>
-                    <button class="action-btn bookmark-btn active" style="display: flex; align-items: center; background: none; border: none; color: #a522b7; font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
+                    <button class="action-btn bookmark-btn active" style="display: flex; align-items: center; background: none; border: none; color: rgb(45, 60, 95); font-size: 0.9rem; padding: 8px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s;">
                         <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>
                     </button>
                 </div>
@@ -108,47 +108,71 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Handle remove bookmark buttons
+        // Function to handle bookmark removal
+        function removeBookmark(postId, postElement) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            // Send request to remove bookmark
+            fetch(`/posts/${postId}/bookmark`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && !data.isBookmarked) {
+                    // Remove the post from the page
+                    postElement.remove();
+                    
+                    // Check if there are no more posts
+                    if (document.querySelectorAll('.post').length === 0) {
+                        // Replace with no bookmarks message
+                        const container = document.querySelector('.posts-container');
+                        container.innerHTML = `
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">No bookmarks yet</h3>
+                                </div>
+                                <div class="card-content">
+                                    You haven't bookmarked any posts or questions yet.
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error removing bookmark:', error);
+            });
+        }
+        
+        // Handle remove bookmark buttons in dropdown menu
         document.querySelectorAll('.remove-bookmark').forEach(button => {
             button.addEventListener('click', function() {
                 const postId = this.getAttribute('data-post-id');
                 const postElement = this.closest('.post');
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                removeBookmark(postId, postElement);
+            });
+        });
+        
+        // Handle bookmark buttons in post actions
+        document.querySelectorAll('.bookmark-btn.active').forEach(button => {
+            button.addEventListener('click', function() {
+                const postElement = this.closest('.post');
+                const dataId = postElement.getAttribute('data-id');
+                let postId;
                 
-                // Send request to remove bookmark
-                fetch(`/posts/${postId}/bookmark`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && !data.isBookmarked) {
-                        // Remove the post from the page
-                        postElement.remove();
-                        
-                        // Check if there are no more posts
-                        if (document.querySelectorAll('.post').length === 0) {
-                            // Replace with no bookmarks message
-                            const container = document.querySelector('.posts-container');
-                            container.innerHTML = `
-                                <div class="content-card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">No bookmarks yet</h3>
-                                    </div>
-                                    <div class="card-content">
-                                        You haven't bookmarked any posts or questions yet.
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error removing bookmark:', error);
-                });
+                if (dataId.startsWith('post-')) {
+                    postId = dataId.replace('post-', '');
+                } else if (dataId.startsWith('question-')) {
+                    postId = dataId.replace('question-', '');
+                }
+                
+                if (postId) {
+                    removeBookmark(postId, postElement);
+                }
             });
         });
         

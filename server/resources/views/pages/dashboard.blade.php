@@ -130,10 +130,7 @@
     color: var(--primary-dark);
     border: 1px solid var(--primary-light);
 }
-.follow-btn:hover {
-    background: var(--accent);
-    color: #fff;
-}
+
 
 .blog-post-title {
     color: var(--primary-dark);
@@ -216,22 +213,13 @@
     gap: 5px;
 }
 
-.blog-post-meta button:hover {
-    color: var(--white);
-    background: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 3px 10px rgba(42, 60, 98, 0.2);
-}
+
 
 .bookmark-btn.bookmarked {
     color: var(--accent) !important;
     background: rgba(243, 156, 18, 0.1);
 }
 
-.bookmark-btn.bookmarked:hover {
-    background: var(--accent) !important;
-    color: white !important;
-}
 
 .blog-post-meta span {
     display: flex;
@@ -409,8 +397,8 @@
 <!-- Report Modal for Posts -->
 <div id="reportModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
     <div class="modal-content" style="background:#fff; border-radius:12px; padding:2rem; min-width:320px; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
-        <button type="button" class="close-modal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:#c92ae0; cursor:pointer;">&times;</button>
-        <h3 style="color:#c92ae0; margin-bottom:1rem;">Report Post</h3>
+        <button type="button" class="close-modal" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; color:rgb(45, 60, 95); cursor:pointer;">&times;</button>
+        <h3 style="color:rgb(45, 60, 95); margin-bottom:1rem;">Report Post</h3>
         <form id="reportForm" method="POST">
             @csrf
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -430,7 +418,7 @@
                 <label for="details" style="font-weight:600; color:#333;">Details (optional)</label>
                 <textarea name="details" id="detailsInput" rows="3" style="width:100%; border-radius:6px; border:1px solid #ccc; padding:0.5rem;"></textarea>
             </div>
-            <button type="submit" class="submit-report-btn" style="background:linear-gradient(135deg,#c92ae0,#a522b7); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
+            <button type="submit" class="submit-report-btn" style="background:rgb(45, 60, 95); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.5rem; font-weight:600; font-size:1rem; cursor:pointer; transition:background 0.2s;">Submit Report</button>
             <div id="reportError" style="color:#dc3545; margin-top:0.7rem; display:none;"></div>
         </form>
     </div>
