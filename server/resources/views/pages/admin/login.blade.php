@@ -46,7 +46,7 @@
         }
         
         .login-header {
-            background: linear-gradient(to right, #2c3e50, #4a6491);
+            background: linear-gradient(to right,rgb(152, 169, 186),rgb(145, 155, 171));
             color: white;
             padding: 30px 20px;
             text-align: center;
@@ -82,9 +82,10 @@
         
         .header-title {
             font-size: 1.2rem;
-            font-weight: 400;
+            font-weight: 700;
             margin-top: 10px;
             opacity: 0.9;
+            color:rgb(9, 60, 93);
         }
         
         .login-body {
@@ -291,14 +292,14 @@
                 margin-top: 10px;
             }
         }
+        
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-header">
             <div class="logo">
-                <i class="fas fa-brain"></i>
-                <div class="logo-text">Knowledge<span>Base</span></div>
+            <span class="logo"><img src="{{ asset('/assets/logo.png') }}" width="200px" height="38px" alt="logo"></span>
             </div>
             <h2 class="header-title">Admin Portal Login</h2>
         </div>

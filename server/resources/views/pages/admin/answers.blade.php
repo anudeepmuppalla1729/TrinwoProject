@@ -6,14 +6,7 @@
 
 <div class="header">
 <h1 class="page-title"><i class="fas fa-comments"></i> Answers Management</h1>
-    <div class="header-actions">
-        <button class="btn btn-outline" onclick="exportReports()">
-            <i class="fas fa-download"></i> Export
-        </button>
-        <button class="btn btn-primary" onclick="refreshReports()">
-            <i class="fas fa-sync-alt"></i> Refresh
-        </button>
-    </div>
+    
 </div>
 <div class="stats-container">
     <div class="stat-card">
@@ -259,7 +252,6 @@ class AnswersManager {
                         <th>Author</th>
                         <th>Date</th>
                         <th>Votes</th>
-                        <th>Rating</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -277,25 +269,22 @@ class AnswersManager {
                     </td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <img src="${answer.user.avatar && answer.user.avatar.length > 0 ? window.s3BaseUrl + answer.user.avatar : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(answer.user.name || answer.user.username || 'User') + '&size=30&background=random'}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
+                            <img src="${
+    answer.user.avatar && answer.user.avatar.length > 0
+        ? (answer.user.avatar.startsWith('http') || answer.user.avatar.startsWith('/'))
+            ? answer.user.avatar
+            : window.s3BaseUrl + answer.user.avatar
+        : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(answer.user.name || answer.user.username || 'User') + '&size=30&background=random'
+}" alt="User" style="border-radius: 50%; width: 30px; height: 30px;">
                             <span>${answer.user.name || answer.user.username || 'Unknown User'}</span>
                         </div>
                     </td>
                     <td>${this.formatDate(answer.created_at)}</td>
                     <td>${answer.votes_count || 0}</td>
                     <td>
-                        <div style="display: flex; align-items: center; gap: 5px;">
-                            <span style="color: #f8961e;">★</span>
-                            <span>${answer.rating || 0}</span>
-                        </div>
-                    </td>
-                    <td>
                         <div class="action-buttons">
                             <button class="action-btn btn-view" data-id="${answer.id}" data-type="answer">
                                 <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn btn-edit" data-id="${answer.id}" data-type="answer">
-                                <i class="fas fa-edit"></i>
                             </button>
                             <button class="action-btn btn-delete" data-id="${answer.id}" data-type="answer">
                                 <i class="fas fa-trash"></i>

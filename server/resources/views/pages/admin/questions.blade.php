@@ -6,12 +6,7 @@
 <div class="header">
 <h1 class="page-title"><i class="fas fa-question-circle"></i> Questions Management</h1>
     <div class="header-actions">
-        <button class="btn btn-outline" onclick="exportReports()">
-            <i class="fas fa-download"></i> Export
-        </button>
-        <button class="btn btn-primary" onclick="refreshQuestions()">
-            <i class="fas fa-sync-alt"></i> Refresh
-        </button>
+        
     </div>
 </div>
 <div class="stats-container stats-4-per-row">
@@ -345,9 +340,6 @@ class QuestionsManager {
                         <div class="action-buttons">
                             <button class="action-btn btn-view" data-id="${question.id}" data-type="question">
                                 <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn btn-edit" data-id="${question.id}" data-type="question">
-                                <i class="fas fa-edit"></i>
                             </button>
                             <button class="action-btn btn-delete" data-id="${question.id}" data-type="question">
                                 <i class="fas fa-trash"></i>

@@ -64,21 +64,6 @@
     </form>
   </div>
 
-  <script>
-    const formSteps = document.querySelectorAll('.form-step');
-    const nextBtn = document.querySelector('.next-btn');
-    const backBtn = document.querySelector('.back-btn');
-    const form = document.getElementById('multi-step-form');
-
-    nextBtn.addEventListener('click', () => {
-      formSteps[0].classList.remove('active');
-      formSteps[1].classList.add('active');
-    });
-
-    backBtn.addEventListener('click', () => {
-      formSteps[1].classList.remove('active');
-      formSteps[0].classList.add('active');
-    });
-  </script>
+  <script src="{{ asset('js/user_information.js') }}"></script>
 </body>
 </html>

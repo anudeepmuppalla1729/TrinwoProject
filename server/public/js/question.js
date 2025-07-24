@@ -2,6 +2,68 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Voting is now handled by form submissions
     const answerSection = document.querySelector('.answers-section');
+    
+    // Handle accept answer buttons
+    const acceptButtons = document.querySelectorAll('.accept-btn');
+    acceptButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const answerId = this.getAttribute('data-answer-id');
+            const form = this.closest('form');
+            const url = form.getAttribute('action');
+            
+            // Send AJAX request to accept the answer
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showToast(data.message, 'success');
+                    
+                    // Update UI to show accepted answer
+                    const answerCards = document.querySelectorAll('.answer-card');
+                    answerCards.forEach(card => {
+                        // Remove accepted-answer class from all cards
+                        card.classList.remove('accepted-answer');
+                        
+                        // Remove any existing accepted badges
+                        const existingBadges = card.querySelectorAll('.accepted-badge');
+                        existingBadges.forEach(badge => badge.remove());
+                    });
+                    
+                    // Add accepted-answer class to the accepted answer card
+                    const acceptedCard = button.closest('.answer-card');
+                    acceptedCard.classList.add('accepted-answer');
+                    
+                    // Add accepted badge to the accepted answer
+                    const acceptedBadge = document.createElement('div');
+                    acceptedBadge.className = 'accepted-badge';
+                    acceptedBadge.innerHTML = '<i class="bi bi-check-circle-fill"></i><span>Accepted Answer</span>';
+                    acceptedCard.insertBefore(acceptedBadge, acceptedCard.firstChild);
+                    
+                    // Hide all accept buttons
+                    document.querySelectorAll('.accept-btn').forEach(btn => {
+                        btn.closest('form').style.display = 'none';
+                    });
+                } else {
+                    // Show error message
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred while accepting the answer', 'error');
+            });
+        });
+    });
 
     if (typeof showToast !== 'function') {
         function showToast(message, type = 'info') {

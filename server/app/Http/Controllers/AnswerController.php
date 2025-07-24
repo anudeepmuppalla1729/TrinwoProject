@@ -27,6 +27,11 @@ class AnswerController extends Controller
         // Check if the question exists
         $question = Question::findOrFail($questionId);
         
+        // Check if the question is closed
+        if ($question->is_closed) {
+            return redirect()->route('question', ['id' => $questionId])->with('error', 'This question is closed and no longer accepts answers.');
+        }
+        
         // Create the answer
         $answer = new Answer();
         $answer->question_id = $questionId;
@@ -181,9 +186,30 @@ class AnswerController extends Controller
      */
     public function accept($id)
     {
-        // In a real application, you would mark the answer as accepted in the database
-        // For now, we'll redirect to the question page
-        return redirect()->back()->with('success', 'Answer accepted!');
+        $answer = \App\Models\Answer::findOrFail($id);
+        $question = $answer->question;
+        
+        // Check if the current user is the question author
+        if (auth()->id() !== $question->user_id) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Only the question author can accept answers'], 403);
+            }
+            return redirect()->back()->with('error', 'Only the question author can accept answers');
+        }
+        
+        // Update the question's accepted_answer_id
+        $question->accepted_answer_id = $answer->answer_id;
+        $question->save();
+        
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true, 
+                'message' => 'Answer accepted successfully!',
+                'answer_id' => $answer->answer_id
+            ]);
+        }
+        
+        return redirect()->back()->with('success', 'Answer accepted successfully!');
     }
 
     /**

@@ -25,11 +25,11 @@
     @forelse($posts as $post)
         <div class="content-card">
             <div class="card-header">
-                <h3 class="card-title">{{ $post->heading }}</h3>
+                <h3 class="card-title">{{ $post->title }}</h3>
                 <div class="card-date">{{ $post->created_at->format('M d, Y') }}</div>
             </div>
             <div class="card-content">
-                {{ Str::limit(strip_tags($post->details), 200) }}
+                {{ Str::limit(strip_tags($post->content), 200) }}
             </div>
             <div class="card-stats">
                 <span><i class="fas fa-heart"></i> {{ $post->upvotes ?? 0 }} upvotes</span>

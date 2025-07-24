@@ -10,6 +10,9 @@ class Post extends Model
     protected $primaryKey = 'post_id';
 
     protected $fillable = [
+        'title',
+        'content',
+        'cover_image',
         'user_id', 'heading', 'details', 'visibility', 'upvotes', 'downvotes'
     ];
 
@@ -64,6 +67,23 @@ class Post extends Model
     public function bookmarks()
     {
         return $this->hasMany(PostBookmark::class, 'post_id');
+    }
+    
+    public function userSeenPosts()
+    {
+        return $this->hasMany(UserSeenPost::class, 'post_id', 'post_id');
+    }
+
+    public function viewCount()
+    {
+        return $this->userSeenPosts()->count();
+    }
+
+    public function scopeUnseenBy($query, $userId)
+    {
+        return $query->whereDoesntHave('userSeenPosts', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        });
     }
     
     /**

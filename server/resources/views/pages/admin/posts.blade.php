@@ -7,9 +7,6 @@
 <div class="header">
 <h1 class="page-title"><i class="fas fa-newspaper"></i> Posts Management</h1>
     <div class="header-actions">
-        <button class="btn btn-outline" onclick="exportReports()">
-            <i class="fas fa-download"></i> Export
-        </button>
         <button class="btn btn-primary" onclick="refreshReports()">
             <i class="fas fa-sync-alt"></i> Refresh
         </button>
@@ -57,10 +54,14 @@
 <div class="card">
     <div class="card-header">
         <h2 class="card-title"><i class="fas fa-file-alt"></i> Forum Posts</h2>
-        <div>
+        <div style="display: flex; align-items: center; gap: 12px;">
             <button class="btn btn-outline" onclick="showPostFilters()">
                 <i class="fas fa-filter"></i> Filter
             </button>
+            <form id="post-search-form" style="display: flex; align-items: center; gap: 4px; margin-left: 8px;">
+                <input type="text" id="post-search-input" name="search" class="form-control" placeholder="Search posts..." style="width: 180px; height: 50px;">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+            </form>
         </div>
     </div>
     <div class="card-body">
@@ -162,26 +163,7 @@
         <div class="modal-body">
             <form id="post-filter-form" class="admin-form">
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select name="status" class="form-control">
-                            <option value="">All Status</option>
-                            <option value="published">Published</option>
-                            <option value="draft">Draft</option>
-                            <option value="archived">Archived</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select name="category" class="form-control">
-                            <option value="">All Categories</option>
-                            <option value="technology">Technology</option>
-                            <option value="programming">Programming</option>
-                            <option value="design">Design</option>
-                            <option value="business">Business</option>
-                            <option value="general">General</option>
-                        </select>
-                    </div>
+                    <!-- Status filter removed -->
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -192,10 +174,6 @@
                         <label>Date To</label>
                         <input type="date" name="date_to" class="form-control">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Search</label>
-                    <input type="text" name="search" class="form-control" placeholder="Search by title or content">
                 </div>
                 <div class="form-group">
                     <label>Sort By</label>
@@ -244,6 +222,16 @@ class PostsManager {
                 this.switchTab(e.target);
             });
         });
+        // Add search form event
+        const searchForm = document.getElementById('post-search-form');
+        if (searchForm) {
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const searchValue = document.getElementById('post-search-input').value.trim();
+                this.currentFilters = { ...this.currentFilters, search: searchValue };
+                this.loadPosts(this.currentFilters);
+            });
+        }
     }
     switchTab(clickedTab) {
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -392,6 +380,12 @@ class PostsManager {
         }
     }
     generatePostDetailsHTML(data) {
+        let coverImageHtml = '';
+        if (data.cover_image) {
+            coverImageHtml = `<div class="post-cover-image" style="margin-bottom: 1rem;">
+                <img src="${data.cover_image}" style="max-width: 100%; max-height: 260px; border-radius: 8px;">
+            </div>`;
+        }
         let imagesHtml = '';
         if (data.images && data.images.length) {
             imagesHtml = '<div class="post-images">' + data.images.map(url => {
@@ -413,6 +407,7 @@ class PostsManager {
             <div class="post-details-modal-content">
                 <h4>${data.title}</h4>
                 <div style="margin-bottom: 1rem; color: #666;">By: ${data.user.name || data.user.username || 'Unknown User'}</div>
+                ${coverImageHtml}
                 <div style="margin-bottom: 1rem;">${data.content}</div>
                 ${imagesHtml}
                 ${commentsHtml}

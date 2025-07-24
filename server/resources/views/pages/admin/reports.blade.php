@@ -5,14 +5,6 @@
 @section('content')
 <div class="header">
     <h1><i class="fas fa-flag"></i> Reported Content Management</h1>
-    <div class="header-actions">
-        <button class="btn btn-outline" onclick="exportReports()">
-            <i class="fas fa-download"></i> Export
-        </button>
-        <button class="btn btn-primary" onclick="refreshReports()">
-            <i class="fas fa-sync-alt"></i> Refresh
-        </button>
-    </div>
 </div>
 
 <div class="stats-container">
@@ -54,9 +46,9 @@
             <button class="btn btn-outline" onclick="showFilters()">
                 <i class="fas fa-filter"></i> Filter
             </button>
-            <button class="btn btn-primary" onclick="exportReports()">
-                <i class="fas fa-download"></i> Export
-            </button>
+            <button class="btn btn-primary" onclick="refreshReports()">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
         </div>
     </div>
     
@@ -463,6 +455,16 @@ class ReportsManager {
             }
         }
 
+        // Determine full view link/button
+        let viewFullBtn = '';
+        if (report.type === 'post' && report.content && report.content.id) {
+            viewFullBtn = `<a href="/posts/${report.content.id}" class="btn btn-info" target="_blank" style="margin-right:8px;">View Full Post</a>`;
+        } else if (report.type === 'question' && report.content && report.content.id) {
+            viewFullBtn = `<a href="/questions/${report.content.id}" class="btn btn-info" target="_blank" style="margin-right:8px;">View Full Question</a>`;
+        } else if (report.type === 'answer' && report.content && report.content.id && report.content.question_id) {
+            viewFullBtn = `<a href="/questions/${report.content.question_id}#answer-${report.content.id}" class="btn btn-info" target="_blank" style="margin-right:8px;">View Full Question</a>`;
+        }
+
         const content = `
             <div class="modal-content" style="max-width: 600px;">
                 <div class="modal-header">
@@ -493,6 +495,7 @@ class ReportsManager {
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline" onclick="this.closest('.modal').remove()">Close</button>
+                    ${viewFullBtn}
                     ${report.status !== 'resolved' ? `<button class="btn btn-primary" onclick="reportsManager.resolveReportFromModal('${report.type}', ${report.id})">Resolve Report</button>` : ''}
                     <button class="btn btn-danger" onclick="reportsManager.deleteContentFromModal('${report.type}', ${report.id})">Delete Content</button>
                 </div>

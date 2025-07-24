@@ -1,0 +1,283 @@
+/* Button hover effects for navbar and sidebar */
+
+/* Navbar buttons */
+.ask-btn:hover {
+    background-color: #3a5086; /* Slightly lighter shade of the original color */
+    color: #ffffff;
+}
+
+/* Sidebar menu buttons */
+.dashboard_items .menu a:hover {
+    background-color: #3a5086; /* Slightly lighter shade of the original color */
+    color: #ffffff;
+}
+
+/* Sidebar settings and logout buttons */
+.settings-logout a:hover {
+    background-color: #e0e0e0; /* Light gray background on hover */
+    color: #333333;
+}
+
+/* Navbar links */
+.nav-links a:hover {
+    color: #3a5086; /* Change color on hover */
+}
+
+/* Hamburger button */
+.hamburger:hover {
+    background-color: #f0f0f0;
+}
+
+/* Search box magnifying glass icon */
+.search-box i:hover {
+    color: #3a5086;
+    cursor: pointer;
+}
+
+/* Search button in profile dashboard */
+.search-bar button:hover {
+    background-color: #3a5086;
+    color: #ffffff;
+}
+
+/* Sidebar-ask-btn button */
+.sidebar-ask-btn:hover {
+    background-color: #3a5086;
+    color: #ffffff;
+}
+
+/* Menu toggle button */
+.menu-toggle:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+/* Profile navigation links */
+.profile-navigation a:hover {
+    color: #3a5086;
+    border-bottom-color: #3a5086;
+}
+
+/* Upload photo button */
+.btn.btn-outline:hover {
+    border-color: #3a5086;
+    color: #3a5086;
+}
+
+/* Update buttons */
+.btn.btn-primary:hover {
+    background-color: #3a5086;
+    box-shadow: 0 5px 15px rgba(58, 80, 134, 0.4);
+}
+
+/* Flash message dismiss button */
+.flash-dismiss:hover {
+    color: #3a5086;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+}
+
+/* Question and Post Action Buttons */
+.action-btn:hover {
+    background-color: #f0f0f0;
+    color: #3a5086;
+    transform: translateY(-2px);
+}
+
+/* Specific action buttons */
+.upvote-btn:hover {
+    color: #3a5086;
+}
+
+.downvote-btn:hover {
+    color: #dc3545;
+}
+
+.comment-btn:hover, .comment-count-btn:hover {
+    color: #0d6efd;
+}
+
+.bookmark-btn:hover {
+    color: #3a5086;
+}
+
+.share-btn:hover {
+    color: #3498db;
+}
+
+.report-btn:hover {
+    color: #dc3545;
+}
+
+/* Sort options in questions */
+.sort-option:hover {
+    background-color: #f0f0f0;
+    color: #3a5086;
+}
+
+/* Tags in questions */
+.tag:hover {
+    background-color: #d0e3f1;
+    color: #3a5086;
+    transform: scale(1.05);
+}
+
+/* Page buttons */
+.page-btn:hover, .pagination .btn:hover {
+    background: linear-gradient(135deg, #3a5086, #3a5086);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(58, 80, 134, 0.4);
+}
+
+/* Pagination container */
+.pagination-container .btn:hover {
+    background-color: #3a5086;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Ask question button */
+.ask-question-btn:hover {
+    background: linear-gradient(135deg, #3a5086, #3a5086);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(58, 80, 134, 0.4);
+}
+
+/* Admin panel buttons */
+.btn.btn-danger:hover {
+    background-color: #e74c3c;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn.btn-warning:hover {
+    background-color: #f39c12;
+    box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn.btn-success:hover {
+    background-color: #2ecc71;
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn.btn-info:hover {
+    background-color: #3498db;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Admin action buttons */
+.action-btn.btn-view:hover {
+    background-color: #4361ee;
+    transform: scale(1.1);
+}
+
+.action-btn.btn-edit:hover {
+    background-color: #2ecc71;
+    transform: scale(1.1);
+}
+
+.action-btn.btn-delete:hover {
+    background-color: #e74c3c;
+    transform: scale(1.1);
+}
+
+.action-btn.btn-ban:hover {
+    background-color: #f39c12;
+    transform: scale(1.1);
+}
+
+.action-btn.btn-unban:hover {
+    background-color: #2ecc71;
+    transform: scale(1.1);
+}
+
+/* Admin login button */
+.login-btn:hover {
+    background-color: #3a5086;
+    box-shadow: 0 6px 15px rgba(58, 80, 134, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Form submit buttons */
+.submit-report-btn:hover {
+    background: linear-gradient(135deg, #d93af0, #b52dc7);
+    box-shadow: 0 4px 10px rgba(201, 42, 224, 0.4);
+    transform: translateY(-2px);
+}
+
+.submit-comment:hover {
+    background-color: #3a5086;
+    box-shadow: 0 4px 10px rgba(58, 80, 134, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-signup:hover {
+    background-color: #3a5086;
+    box-shadow: 0 4px 10px rgba(58, 80, 134, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Social login buttons */
+.btn-social:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Delete confirmation buttons */
+.confirm-delete-btn:hover {
+    background-color: #e74c3c;
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    transform: translateY(-1px);
+}
+
+.cancel-delete-btn:hover {
+    background-color: #f8f9fa;
+    color: #333333;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.close-delete-modal:hover, .modal-close:hover {
+    color: #e74c3c;
+    transform: scale(1.1);
+}
+
+/* Filter buttons */
+button.btn-outline:not(.btn):hover {
+    background-color: #f0f0f0;
+    color: #3a5086;
+    border-color: #3a5086;
+}
+
+/* Form controls in filters */
+.form-control:hover {
+    border-color: #3a5086;
+}
+
+/* Clear search button */
+#clear-search-btn:hover {
+    color: #e74c3c;
+    transform: scale(1.1);
+}
+
+/* Reset and Apply Filter buttons */
+button[onclick*="reset"]:hover, button[onclick*="Reset"]:hover {
+    background-color: #f0f0f0;
+    color: #3a5086;
+    border-color: #3a5086;
+}
+
+/* Close modal buttons */
+button[onclick*="close"]:hover, button[onclick*="Close"]:hover {
+    color: #e74c3c;
+    transform: scale(1.05);
+}
+
+/* Form submit buttons in modals */
+.modal-footer .btn-primary:hover, .modal-footer .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

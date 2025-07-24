@@ -79,10 +79,7 @@
   transition: transform 0.3s ease;
 }
 
-.post:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 25px rgba(201, 42, 224, 0.15);
-}
+
 
 /* Action buttons */
 .action-btn {

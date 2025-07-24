@@ -10,27 +10,10 @@
         <i class="fas fa-comments"></i>
         <span>{{ $profileUser->name }}'s Answers</span>
     </h1>
-    <div class="search-bar">
-        <input type="text" placeholder="Search answers...">
-        <button><i class="fas fa-search"></i></button>  
-    </div>
+
 </div>
 
-<div class="user-profile-header">
-    <div class="profile-image">
-        @if(!empty($profileUser->avatar))
-            <img src="{{ Storage::disk('s3')->url($profileUser->avatar) }}" alt="{{ $profileUser->name }}">
-        @else
-            <img src="https://ui-avatars.com/api/?name={{ urlencode($profileUser->name) }}&size=100" alt="{{ $profileUser->name }}">
-        @endif
-    </div>
-    <div class="profile-info">
-        <h2>{{ $profileUser->name }}</h2>
-        @if($profileUser->bio)
-            <p class="bio">{{ $profileUser->bio }}</p>
-        @endif
-    </div>
-</div>
+
 
 <div class="profile-navigation">
     <a href="{{ route('user.profile', $profileUser->user_id) }}">Overview</a>

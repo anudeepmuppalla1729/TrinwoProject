@@ -78,9 +78,7 @@ body {
     transition: transform 0.3s ease;
 }
 
-.settings-card:hover {
-    transform: translateY(-5px);
-}
+
 
 .card-header {
     display: flex !important;
@@ -207,7 +205,7 @@ input:focus, select:focus, textarea:focus {
 
 .btn-primary:hover {
     background: var(--primary-dark);
-    box-shadow: 0 5px 15px rgba(201, 42, 224, 0.4);
+
     color: black;
 }
 

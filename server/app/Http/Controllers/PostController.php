@@ -39,32 +39,28 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'heading' => 'required|string|max:255',
-            'details' => 'required|string',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
             'visibility' => 'required|in:public,private',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $post = Post::create([
+        $data = [
             'user_id' => Auth::id(),
-            'heading' => $request->heading,
-            'details' => $request->details,
+            'title' => $request->title,
+            'content' => $request->content,
             'visibility' => $request->visibility,
-        ]);
+        ];
 
-        // Handle image upload if provided
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 's3');
-            
-            PostImage::create([
-                'post_id' => $post->post_id,
-                'image_url' => $imagePath,
-            ]);
+        if ($request->hasFile('cover_image')) {
+            $data['cover_image'] = $request->file('cover_image')->store('posts', 's3');
         }
+
+        $post = Post::create($data);
 
         return response()->json([
             'success' => true,
-            'message' => 'Insight posted successfully!',
+            'message' => 'Blog post created successfully!',
             'post_id' => $post->post_id
         ]);
     }
@@ -74,13 +70,30 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::with(['user', 'images', 'comments.user'])->findOrFail($id);
-        
+        $post = Post::with(['user', 'images', 'comments.user', 'userSeenPosts'])
+            ->findOrFail($id);
+        $user = Auth::user();
+
         // Check if post is private and not owned by current user
-        if ($post->visibility === 'private' && $post->user_id !== Auth::id()) {
+        if ($post->visibility === 'private' && $post->user_id !== $user->user_id) {
             abort(403, 'You do not have permission to view this post.');
         }
-        
+
+        // Mark as seen if not already
+        if (!$post->userSeenPosts->where('user_id', $user->user_id)->count()) {
+            \App\Models\UserSeenPost::create([
+                'user_id' => $user->user_id,
+                'post_id' => $post->post_id,
+                'created_at' => now(),
+            ]);
+        }
+
+        // Add isBookmarked and authorInitials for the view
+        $post->isBookmarked = $post->hasUserBookmarked($user->user_id);
+        $post->authorInitials = collect(explode(' ', $post->user->name))->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
+        $post->isFollowing = $user->following()->where('user_id', $post->user->user_id)->exists();
+
+        // Pass all necessary data to the view
         return view('pages.posts.show', compact('post'));
     }
 
@@ -162,32 +175,28 @@ class PostController extends Controller
     public function storeAjax(Request $request)
     {
         $request->validate([
-            'heading' => 'required|string|max:255',
-            'details' => 'required|string',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
             'visibility' => 'required|in:public,private',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $post = Post::create([
+        $data = [
             'user_id' => Auth::id(),
-            'heading' => $request->heading,
-            'details' => $request->details,
+            'title' => $request->title,
+            'content' => $request->content,
             'visibility' => $request->visibility,
-        ]);
+        ];
 
-        // Handle image upload if provided
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 's3');
-            
-            PostImage::create([
-                'post_id' => $post->post_id,
-                'image_url' => $imagePath,
-            ]);
+        if ($request->hasFile('cover_image')) {
+            $data['cover_image'] = $request->file('cover_image')->store('posts', 's3');
         }
+
+        $post = Post::create($data);
 
         return response()->json([
             'success' => true,
-            'message' => 'Insight posted successfully!',
+            'message' => 'Blog post created successfully!',
             'post_id' => $post->post_id
         ]);
     }
@@ -198,80 +207,41 @@ class PostController extends Controller
     public function getDashboardPosts()
     {
         $userId = Auth::id();
-        
-        $posts = Post::with(['user', 'images', 'comments', 'votes', 'bookmarks' => function($query) use ($userId) {
-                if ($userId) {
-                    $query->where('user_id', $userId);
-                }
-            }])
+        $posts = Post::with(['user', 'userSeenPosts'])
             ->where('visibility', 'public')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get()
             ->map(function ($post) use ($userId) {
-                $imageUrl = null;
-                if ($post->images->count() > 0) {
-                    $imgPath = $post->images->first()->image_url;
-                    if (!empty($imgPath)) {
-                        if (Str::startsWith($imgPath, 'http')) {
-                            $imageUrl = $imgPath;
-                        } else {
-                            $imageUrl = Storage::disk('s3')->url($imgPath);
-                        }
+                $coverImage = null;
+                if ($post->cover_image) {
+                    if (\Str::startsWith($post->cover_image, ['http://', 'https://'])) {
+                        $coverImage = $post->cover_image;
+                    } else {
+                        $coverImage = \Storage::disk('s3')->url($post->cover_image);
                     }
                 }
-                
-                // Get user's vote on this post if logged in
-                $userVote = null;
-                if ($userId) {
-                    $vote = $post->getUserVote($userId);
-                    $userVote = $vote ? $vote->vote_type : null;
-                }
-                
-                // Get user's bookmark status for this post if logged in
-                $userBookmark = false;
-                if ($userId) {
-                    $userBookmark = $post->getUserBookmark($userId) ? true : false;
-                }
-                
-                // Check if the current user is following the post author
                 $isFollowing = false;
-                if ($userId && $post->user->user_id !== $userId) {
-                    $currentUser = Auth::user();
-                    $isFollowing = $currentUser->following()->where('user_id', $post->user->user_id)->exists();
+                if ($userId && $post->user) {
+                    $isFollowing = \App\Models\Follower::where('follower_user_id', $userId)
+                        ->where('user_id', $post->user->user_id)
+                        ->exists();
                 }
-                
+                $isBookmarked = $userId ? $post->hasUserBookmarked($userId) : false;
                 return [
-                    'id' => $post->post_id,
+                    'post_id' => $post->post_id,
                     'user_id' => $post->user->user_id,
                     'profileName' => $post->user->name,
-                    'avatar' => $post->user->avatar_url, // Add avatar_url for profile pic
-                    'studyingIn' => $post->user->studying_in ?? 'Member',
-                    'expertIn' => $post->user->expert_in ?? 'Member',
-                    'title' => $post->heading,
-                    'body' => $post->details,
-                    'imageUrl' => $imageUrl,
+                    'avatar' => $post->user->avatar_url,
+                    'title' => $post->title,
+                    'content' => $post->content,
+                    'cover_image' => $coverImage,
                     'created_at' => $post->created_at->format('M d, Y'),
-                    'comments' => $post->comments->map(function ($comment) {
-                        return [
-                            'id' => $comment->comment_id,
-                            'text' => $comment->comment_text,
-                            'user' => $comment->user->name,
-                            'avatar' => $comment->user->avatar_url ?? '',
-                            'created_at' => $comment->created_at->format('M d, Y'),
-                            'is_owner' => auth()->check() && $comment->user_id === auth()->id()
-                        ];
-                    }),
-                    'upvotes' => $post->upvotes ?? 0,
-                    'downvotes' => $post->downvotes ?? 0,
-                    'commentCount' => $post->comments->count(),
-                    'userVote' => $userVote, // Add user's vote status
-                    'isBookmarked' => $userBookmark, // Add user's bookmark status
-                    'user_bookmark' => $userBookmark ? true : null, // For compatibility with frontend code
-                    'isFollowing' => $isFollowing // Add whether the current user is following the post author
+                    'views' => $post->userSeenPosts->count(),
+                    'isFollowing' => $isFollowing,
+                    'isBookmarked' => $isBookmarked,
                 ];
             });
-
         return response()->json($posts);
     }
     

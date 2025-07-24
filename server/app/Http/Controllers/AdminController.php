@@ -1005,7 +1005,7 @@ class AdminController extends Controller
                         ],
                         'created_at' => $answer->created_at,
                         'votes_count' => $answer->votes_count ?? 0,
-                        'is_accepted' => $answer->is_accepted ?? false
+                        'is_accepted' => $answer->isAccepted()
                     ];
                 })
             ];
@@ -1113,9 +1113,13 @@ class AdminController extends Controller
         // Filtering
         if ($request->has('status') && $request->status) {
             if ($request->status === 'accepted') {
-                $query->where('is_accepted', true);
+                $query->whereHas('question', function($q) {
+                    $q->whereColumn('answers.answer_id', 'questions.accepted_answer_id');
+                });
             } elseif ($request->status === 'pending') {
-                $query->whereNull('is_accepted')->orWhere('is_accepted', false);
+                $query->whereDoesntHave('question', function($q) {
+                    $q->whereColumn('answers.answer_id', 'questions.accepted_answer_id');
+                });
             }
         }
         if ($request->has('rating') && $request->rating) {
@@ -1166,7 +1170,7 @@ class AdminController extends Controller
                     'id' => $answer->user->user_id,
                     'username' => $answer->user->username,
                     'name' => $answer->user->name,
-                    'avatar' => $answer->user->avatar
+                    'avatar' => $answer->user->avatar_url // Use full S3/public URL
                 ],
                 'question' => [
                     'id' => $answer->question->question_id,
@@ -1215,7 +1219,7 @@ class AdminController extends Controller
             'created_at' => $answer->created_at,
             'votes_count' => $answer->votes_count,
             'rating' => $answer->rating ?? 0,
-            'is_accepted' => $answer->is_accepted ?? false
+            'is_accepted' => $answer->isAccepted()
         ]);
     }
 
@@ -1255,8 +1259,8 @@ class AdminController extends Controller
         if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('heading', 'like', "%{$search}%")
-                  ->orWhere('details', 'like', "%{$search}%");
+                $q->orWhere('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
             });
         }
         if ($request->has('date_from') && $request->date_from) {
@@ -1414,4 +1418,4 @@ class AdminController extends Controller
         $admin->delete();
         return response()->json(['message' => 'Admin deleted successfully']);
     }
-} 
+}
