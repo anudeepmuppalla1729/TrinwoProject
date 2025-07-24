@@ -31,6 +31,41 @@
         background-color: #dc3545;
         color: white;
     }
+    
+    .close-btn {
+        color: #dc3545;
+        border-color: #dc3545;
+        transition: all 0.3s ease;
+        margin-left: 8px;
+    }
+    
+    .close-btn:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .reopen-btn {
+        color: #28a745;
+        border-color: #28a745;
+        transition: all 0.3s ease;
+        margin-left: 8px;
+    }
+    
+    .reopen-btn:hover {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .closed-badge {
+        display: inline-block;
+        background-color: #dc3545;
+        color: white;
+        font-size: 12px;
+        padding: 3px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
 </style>
 @endpush
 @section('title', 'Questions - User Profile')
@@ -51,7 +86,12 @@ use Illuminate\Support\Str;
     @foreach($questions as $question)
     <div class="content-card">
         <div class="card-header">
-            <h3 class="card-title"><a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a></h3>
+            <h3 class="card-title">
+                <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
+                @if($question['is_closed'])
+                <span class="closed-badge"><i class="fas fa-lock"></i> Closed</span>
+                @endif
+            </h3>
             <div class="card-date">{{ $question['created_at'] }}</div>
         </div>
         <div class="card-content">
@@ -67,6 +107,18 @@ use Illuminate\Support\Str;
                 @method('DELETE')
                 <button type="button" class="btn btn-outline delete-btn" data-question-id="{{ $question['id'] }}"><i class="fas fa-trash"></i> Delete</button>
             </form>
+            
+            @if($question['is_closed'])
+                <form method="POST" action="{{ route('questions.reopen', ['id' => $question['id']]) }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-outline reopen-btn"><i class="bi bi-unlock"></i> Reopen</button>
+                </form>
+            @else
+                <form method="POST" action="{{ route('questions.close', ['id' => $question['id']]) }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-outline close-btn"><i class="bi bi-lock"></i> Close</button>
+                </form>
+            @endif
         </div>
     </div>
     @endforeach

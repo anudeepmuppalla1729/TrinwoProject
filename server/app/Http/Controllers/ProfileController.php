@@ -152,7 +152,8 @@ class ProfileController extends Controller
                     'answers' => $question->answers->count(),
                     'upvotes' => 0, // Questions don't have upvotes in this system
                     'downvotes' => 0, // Questions don't have downvotes in this system
-                    'tags' => $question->tags->pluck('name')->toArray()
+                    'tags' => $question->tags->pluck('name')->toArray(),
+                    'is_closed' => $question->is_closed
                 ];
             });
         
