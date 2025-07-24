@@ -345,7 +345,10 @@
         @if(!empty(Auth::user()->avatar))
             <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="user-icon" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
         @else
-            <i class="bi bi-person-circle user-icon"></i>
+            @php
+                $initials = collect(explode(' ', Auth::user()->name))->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
+            @endphp
+            <div class="user-icon" style="width:32px;height:32px;border-radius:50%;background:#e0e0e0;color:#2a3c62;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;">{{ $initials }}</div>
         @endif
         @endauth
     </div>
