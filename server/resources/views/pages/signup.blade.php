@@ -82,6 +82,6 @@
   </div>
 
   <!-- JS -->
-  <!-- <script src="js/signup.js"></script> -->
+  <script src="{{ asset('js/signup.js') }}"></script>
 </body>
 </html>

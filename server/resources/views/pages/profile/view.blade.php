@@ -10,10 +10,7 @@
         <i class="fas fa-user"></i>
         <span>{{ $profileUser->name }}'s Profile</span>
     </h1>
-    <div class="search-bar">
-        <input type="text" placeholder="Search content...">
-        <button><i class="fas fa-search"></i></button>  
-    </div>
+
 </div>
 <!-- Profile Page -->
 <div id="dashboard" class="page-content active">

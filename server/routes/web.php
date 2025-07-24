@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Mail;
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/', function () {
-        return view('pages.login');
+        return view('landingPage');
     })->name('login');
 
     Route::get('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
@@ -90,7 +90,7 @@ Route::get('/user-information', function () {
 
 Route::get('/dashboard', function () {
     return view('pages.dashboard');
-})->name('dashboard')->middleware('auth');
+})->name('dashboard');
 
 // User profile viewing routes
 Route::get('/user/{userId}', [ProfileController::class, 'viewProfile'])->name('user.profile');

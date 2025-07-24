@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2500);
     }
     // Modal handling for Ask Question
-    const askButton = document.querySelector('.ask-btn'); // top navbar ask button
+    const askButton = document.querySelector('.aks'); // top navbar ask button
     const sidebarAskButton = document.querySelector('.sidebar-ask-btn'); // sidebar ask button
     const askQuestionButtons = document.querySelectorAll('.ask-question-btn'); // buttons on questions page
     const askModal = document.getElementById('askModal');
@@ -95,6 +95,14 @@ document.addEventListener('DOMContentLoaded', function() {
         askModal.addEventListener('click', (e) => {
             if (e.target === askModal) closeAskModal();
         });
+        
+        // Handle login button click in the login required message
+        const loginBtn = askModal.querySelector('.login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                closeAskModal();
+            });
+        }
         
         // Tags functionality for Ask Question modal
         const tagsInput = askModal.querySelector('.tags-input');
@@ -338,6 +346,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (icloseButton) {
             icloseButton.addEventListener('click', closeInsightModal);
+        }
+        
+        // Handle login button click in the login required message
+        const loginBtn = insightModal.querySelector('.login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                closeInsightModal();
+            });
         }
         
         if (icancelButton) {
