@@ -20,7 +20,7 @@
 ---
 
 ## Overview
-DevCol is an open-source Q&A forum designed for developers to ask questions, share knowledge, and collaborate on solutions. With robust features like voting, tagging, bookmarks, and user profiles, DevCol aims to foster a vibrant community where developers can learn and contribute.
+Incube is an open-source Q&A forum designed for developers to ask questions, share knowledge, and collaborate on solutions. With robust features like voting, tagging, bookmarks, and user profiles, Incube aims to foster a vibrant community where developers can learn and contribute.
 
 ---
 
@@ -37,7 +37,15 @@ DevCol is an open-source Q&A forum designed for developers to ask questions, sha
 ---
 
 ## Demo
-*Include screenshots or GIFs here when you have them!*
+![Landing Page](/public/assets/landingpage.png)
+
+![Feed](/public/assets/feed.png)
+
+![Questions](/public/assets/questions.png)
+
+![My Profile](/public/assets/myprofile.png)
+
+
 
 ---
 
@@ -62,7 +70,7 @@ DevCol is an open-source Q&A forum designed for developers to ask questions, sha
 ### Installation
 ```bash
 # 1. Clone the repo
-git clone https://github.com/your-username/DevCol.git
+git clone https://github.com/anudeepmuppalla1729/TrinwoProject.git
 
 # 2. Install PHP dependencies
 composer install
@@ -70,7 +78,7 @@ composer install
 # 3. Install JavaScript dependencies
 npm install
 
-# 4. For Local Database (MySQl) -- change details in env file
+# 4. For Local Database (MySQl) -- change details in env file if provided (MySql Cloud DB Currently Unavailable)
 php artisan migrate:fresh --seed
 
 # 5. If no env file avialable
@@ -80,5 +88,12 @@ copy .env.example .env
 
 ```bash
 php artisan serve
+
+### Admin Panel Access
+Route : /admin/login
+
+#### Admin Details : 
+User Name : admin
+Password : StrongPassword123!
 
 
