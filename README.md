@@ -1,4 +1,4 @@
-# DevCol – Q&A Forum Platform
+# INCUBE – Q&A Forum Platform
 
 ## Table of Contents
 1. [Overview](#overview)  
@@ -63,10 +63,22 @@ DevCol is an open-source Q&A forum designed for developers to ask questions, sha
 ```bash
 # 1. Clone the repo
 git clone https://github.com/your-username/DevCol.git
-cd DevCol
 
 # 2. Install PHP dependencies
 composer install
 
 # 3. Install JavaScript dependencies
 npm install
+
+# 4. For Local Database (MySQl) -- change details in env file
+php artisan migrate:fresh --seed
+
+# 5. If no env file avialable
+copy .env.example .env
+
+### Output
+
+```bash
+php artisan serve
+
+
