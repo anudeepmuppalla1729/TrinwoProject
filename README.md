@@ -8,14 +8,10 @@
 5. [Getting Started](#getting-started)  
    - [Prerequisites](#prerequisites)  
    - [Installation](#installation)  
-   - [Environment Variables](#environment-variables)  
    - [Database Setup & Migrations](#database-setup--migrations)  
-   - [Running the Application](#running-the-application)  
-6. [Usage](#usage)  
-7. [Contributing](#contributing)  
-8. [Roadmap](#roadmap)  
-9. [License](#license)  
-10. [Contact](#contact)  
+   - [Run The Application](#run-the-application)  
+
+
 
 ---
 
@@ -78,7 +74,8 @@ composer install
 # 3. Install JavaScript dependencies
 npm install
 ```
-### Create The Database In MySql Workbench First
+### Database Setup & Migrations
+#### Create The Database In MySql Workbench First
 
 ```bash
 
@@ -88,7 +85,7 @@ php artisan migrate:fresh --seed
 # 5. If no env file avialable
 copy .env.example .env
 ```
-### Output
+### Run The Application
 
 ```bash
 php artisan serve
@@ -100,6 +97,7 @@ Route : /admin/login
 #### Admin Details : 
 
 User Name : admin
+
 Password : StrongPassword123!
 
 
