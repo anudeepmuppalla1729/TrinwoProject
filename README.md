@@ -51,11 +51,11 @@ Incube is an open-source Q&A forum designed for developers to ask questions, sha
 
 ## Tech Stack
 - **Backend**: Laravel, PHP  
-- **Frontend**: Blade (or Vue/React—update as needed)  
-- **Database**: MySQL / PostgreSQL  
-- **Authentication**: Laravel Breeze / Sanctum  
-- **Styling**: Tailwind CSS (or Bootstrap)  
-- **Deployment**: Docker, Render / Heroku / DigitalOcean  
+- **Frontend**: Blade
+- **Database**: MySQL   
+- **Authentication**: Self Implemented   
+- **Styling**: Mainly CSS and Bootstrap  
+- **Deployment**: Not Done Yet 
 
 ---
 
