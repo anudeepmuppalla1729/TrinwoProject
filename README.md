@@ -83,16 +83,18 @@ php artisan migrate:fresh --seed
 
 # 5. If no env file avialable
 copy .env.example .env
-
+```
 ### Output
 
 ```bash
 php artisan serve
+```
 
 ### Admin Panel Access
 Route : /admin/login
 
 #### Admin Details : 
+
 User Name : admin
 Password : StrongPassword123!
 
