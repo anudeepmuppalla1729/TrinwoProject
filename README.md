@@ -77,6 +77,10 @@ composer install
 
 # 3. Install JavaScript dependencies
 npm install
+```
+### Create The Database In MySql Workbench First
+
+```bash
 
 # 4. For Local Database (MySQl) -- change details in env file if provided (MySql Cloud DB Currently Unavailable)
 php artisan migrate:fresh --seed
