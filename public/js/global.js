@@ -74,6 +74,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 showTinyMcePopups();
                 askModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                if (typeof tinymce !== 'undefined' && typeof tinymce.init === 'function') {
+                    setTimeout(() => {
+                        tinymce.init({ selector: '.question-description' });
+                    }, 100);
+                }
             });
         }
 
@@ -85,12 +90,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     hideTinyMcePopups();
                     showTinyMcePopups();
                     askModal.style.display = 'flex';
+                    if (typeof tinymce !== 'undefined' && typeof tinymce.init === 'function') {
+                        setTimeout(() => {
+                            tinymce.init({ selector: '.question-description' });
+                        }, 100);
+                    }
                 });
             });
         }
 
         // Function to close modal with transition
         const closeAskModal = () => {
+            closeTinyMceOverflowMenus();
             hideTinyMcePopups();
             if (typeof destroyEditor === 'function') {
                 destroyEditor('.question-description');
@@ -393,6 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Function to close insight modal with transition
         const closeInsightModal = () => {
+            closeTinyMceOverflowMenus();
             hideTinyMcePopups();
             if (typeof destroyEditor === 'function') {
                 destroyEditor('.i-question-textarea');
@@ -577,5 +589,12 @@ function showTinyMcePopups() {
     // Restore display property for all TinyMCE popups/toolbars
     document.querySelectorAll('.tox-silver-sink, .tox-tinymce-aux, .tox-menu, .tox-toolbar__overflow').forEach(el => {
         el.style.display = '';
+    });
+}
+
+function closeTinyMceOverflowMenus() {
+    // Hide all TinyMCE overflow menus and popups
+    document.querySelectorAll('.tox-silver-sink, .tox-tinymce-aux, .tox-menu, .tox-toolbar__overflow').forEach(el => {
+        el.style.display = 'none';
     });
 }
