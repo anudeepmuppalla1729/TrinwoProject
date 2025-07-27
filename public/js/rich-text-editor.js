@@ -1,28 +1,28 @@
 // Rich Text Editor Configuration
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Check if TinyMCE is available
     if (typeof tinymce === 'undefined') {
         console.error('TinyMCE is not loaded. Please check if the script is included correctly.');
         return;
     }
-    
+
     // Register custom plugins
     console.log('Registering custom TinyMCE plugins...');
-    
-    tinymce.PluginManager.add('localimage', function(editor) {
-        var openDialog = function() {
+
+    tinymce.PluginManager.add('localimage', function (editor) {
+        var openDialog = function () {
             var input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.style.display = 'none';
             document.body.appendChild(input);
             input.click();
-            
-            input.onchange = function(e) {
+
+            input.onchange = function (e) {
                 var file = e.target.files[0];
                 if (file) {
                     var reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         var dataUrl = e.target.result;
                         editor.insertContent('<img src="' + dataUrl + '" alt="Uploaded Image" style="max-width:100%;height:auto;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin:10px 0;" />');
                     };
@@ -31,24 +31,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.removeChild(input);
             };
         };
-        
+
         editor.ui.registry.addButton('localimage', {
             icon: 'upload',
             tooltip: 'Upload Local Image',
             onAction: openDialog
         });
-        
+
         console.log('Local image plugin registered successfully');
-        
+
         editor.ui.registry.addMenuItem('localimage', {
             icon: 'image',
             text: 'Upload Local Image',
             onAction: openDialog
         });
     });
-    
-    tinymce.PluginManager.add('codehighlight', function(editor) {
-        var openDialog = function() {
+
+    tinymce.PluginManager.add('codehighlight', function (editor) {
+        var openDialog = function () {
             return editor.windowManager.open({
                 title: 'Insert Code',
                 body: {
@@ -78,32 +78,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         text: 'Cancel'
                     }
                 ],
-                onSubmit: function(api) {
+                onSubmit: function (api) {
                     var data = api.getData();
                     if (data.code && data.language) {
-                        var html = '<pre class="code-block"><code class="language-' + data.language + '">' + editor.dom.encode(data.code) + '</code><button class="copy-code-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></pre>';
+                        var html = '<div class="code-block-wrapper"><pre class="code-block"><code class="language-' + data.language + '">' + editor.dom.encode(data.code) + '</code></pre></div><p><br></p>';
                         editor.insertContent(html);
                         api.close();
                     }
                 }
             });
         };
-        
+
         editor.ui.registry.addButton('codehighlight', {
             icon: 'sourcecode',
             tooltip: 'Insert Code Block',
             onAction: openDialog
         });
-        
+
         console.log('Code highlight plugin registered successfully');
-        
+
         editor.ui.registry.addMenuItem('codehighlight', {
             icon: 'code',
             text: 'Insert Code Block',
             onAction: openDialog
         });
-        
-        editor.on('init', function() {
+
+        editor.on('init', function () {
             editor.dom.addStyle('pre.code-block{position:relative;background:#f4f4f4;border:1px solid #ddd;border-radius:5px;padding:15px;margin:10px 0;overflow-x:auto}pre.code-block code{font-family:\'Courier New\',monospace;font-size:13px;line-height:1.4}pre.code-block .copy-code-btn{position:absolute;top:5px;right:5px;background:#007bff;color:white;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;font-size:12px;opacity:0.8;transition:opacity 0.2s}pre.code-block .copy-code-btn:hover{opacity:1}pre.code-block .copy-code-btn i{margin-right:5px}');
         });
     });
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Initializing TinyMCE for question description...');
         tinymce.init({
             selector: '.question-description',
-            height: 300,
+            height: 200,
             plugins: [
                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                 'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
@@ -145,24 +145,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace; }
                 pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
             `,
-            setup: function(editor) {
-                editor.on('change', function() {
+            setup: function (editor) {
+                editor.on('change', function () {
                     // Update the textarea value for form submission
                     editor.save();
                 });
-                
+
                 // Add custom paste handling
-                editor.on('PastePreProcess', function(e) {
+                editor.on('PastePreProcess', function (e) {
                     // Clean up pasted content
                     e.content = e.content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
                 });
             },
-            init_instance_callback: function(editor) {
+            init_instance_callback: function (editor) {
                 console.log('TinyMCE question description editor initialized successfully');
-                
+
                 // Handle content changes to highlight code
-                editor.on('change keyup', function() {
-                    setTimeout(function() {
+                editor.on('change keyup', function () {
+                    setTimeout(function () {
                         if (typeof highlightCodeAfterLoad === 'function') {
                             highlightCodeAfterLoad();
                         }
@@ -210,24 +210,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace; }
                 pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
             `,
-            setup: function(editor) {
-                editor.on('change', function() {
+            setup: function (editor) {
+                editor.on('change', function () {
                     // Update the textarea value for form submission
                     editor.save();
                 });
-                
+
                 // Add custom paste handling
-                editor.on('PastePreProcess', function(e) {
+                editor.on('PastePreProcess', function (e) {
                     // Clean up pasted content
                     e.content = e.content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
                 });
             },
-            init_instance_callback: function(editor) {
+            init_instance_callback: function (editor) {
                 console.log('TinyMCE blog post editor initialized successfully');
-                
+
                 // Handle content changes to highlight code
-                editor.on('change keyup', function() {
-                    setTimeout(function() {
+                editor.on('change keyup', function () {
+                    setTimeout(function () {
                         if (typeof highlightCodeAfterLoad === 'function') {
                             highlightCodeAfterLoad();
                         }
@@ -275,24 +275,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace; }
                 pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
             `,
-            setup: function(editor) {
-                editor.on('change', function() {
+            setup: function (editor) {
+                editor.on('change', function () {
                     // Update the textarea value for form submission
                     editor.save();
                 });
-                
+
                 // Add custom paste handling
-                editor.on('PastePreProcess', function(e) {
+                editor.on('PastePreProcess', function (e) {
                     // Clean up pasted content
                     e.content = e.content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
                 });
             },
-            init_instance_callback: function(editor) {
+            init_instance_callback: function (editor) {
                 console.log('TinyMCE admin editor initialized successfully');
-                
+
                 // Handle content changes to highlight code
-                editor.on('change keyup', function() {
-                    setTimeout(function() {
+                editor.on('change keyup', function () {
+                    setTimeout(function () {
                         if (typeof highlightCodeAfterLoad === 'function') {
                             highlightCodeAfterLoad();
                         }

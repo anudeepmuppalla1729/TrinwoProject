@@ -326,7 +326,7 @@
 @section('content')
 <div class="home_content">
     <div class="question-box">
-        <input type="text" class="insight-btn question-input" placeholder="Type Your Question or Insight here" readonly/>
+        <input type="text" class="insight-btn question-input" placeholder="Create A Blog For Your Insight here" readonly/>
         @auth
         @if(!empty(Auth::user()->avatar))
             <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="user-icon" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">

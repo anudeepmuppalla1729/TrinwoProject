@@ -297,7 +297,7 @@ html, body {
             <form id="commentForm" method="POST" action="{{ route('comments.store', $post->post_id) }}" class="custom-comment-form mt-6">
                 @csrf
                 <textarea id="commentContent" name="content" rows="3" placeholder="Add a comment..."></textarea>
-                <button type="submit">Post Comment</button>
+                <button type="submit" style="margin-top: 10px;">Post Comment</button>
             </form>
         </div>
     </div>

@@ -139,7 +139,7 @@
         margin-top: 0;
     }
     
-    .question-description {
+    .question-description1 {
 
         background-color: rgb(222, 225, 232);
     }
@@ -394,14 +394,15 @@
         border: none;
         color: white;
         padding: 0.4rem 0.8rem;
-        border-radius: 4px;
+        border-radius: 7px;
         font-weight: bold;
         cursor: pointer;
+        margin-top: 10px;
+
     }
     
     .submit-answer:hover {
-        background: linear-gradient(135deg, #a522b7, #8e1e9e);
-        box-shadow: 0 2px 8px rgba(201, 42, 224, 0.3);
+        background: rgb(62, 80, 130);
     }
     
     .back-btn {
@@ -484,7 +485,7 @@
     </div>
     <div class="question-content">
 
-        <div class="question-description">{!! $question['description'] !!}</div>
+        <div class="question-description1">{!! $question['description'] !!}</div>
         <div class="question-tags">
             @foreach($question['tags'] as $tag)
             <span class="tag">{{ $tag }}</span>
@@ -610,7 +611,7 @@
     
     @if(!$question['is_closed'])
     <div class="answer-form">
-        <h3>Your Answer</h3>
+        <h3 style="color: rgb(49, 60, 95); margin-bottom: 15px;">Your Answer</h3>
         <form id="post-answer-form" action="{{ route('answers.store', $question['id']) }}" method="POST">
             @csrf
             <textarea name="content" placeholder="Write your answer here..." required></textarea>

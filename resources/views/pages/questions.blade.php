@@ -44,7 +44,6 @@
         right: 0;
         width: 100px;
         height: 100px;
-        background: linear-gradient(135deg, transparent 70%, rgba(201, 42, 224, 0.1) 100%);
         border-radius: 0 0 0 100px;
         z-index: 0;
     }
@@ -53,7 +52,6 @@
         font-size: 18px;
         font-weight: 600;
         color: #333;
-        margin-bottom: 10px;
         position: relative;
         z-index: 1;
         line-height: 1.3;
@@ -422,7 +420,6 @@
                     <h2 class="question-title">
                         <a href="{{ route('question', ['id' => $question['id']]) }}">{{ $question['title'] }}</a>
                     </h2>
-                    <div class="question-excerpt">{{ $question['excerpt'] }}</div>
                     <div class="question-tags">
                         @foreach($question['tags'] as $tag)
                         <span class="tag">{{ $tag }}</span>
