@@ -240,9 +240,12 @@
   .modal-box {
     width: 90vw;
     max-width: 350px;
+    max-height: 85vh;
     padding: 0.5rem;
     font-size: 0.98rem;
     box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .modal-title {

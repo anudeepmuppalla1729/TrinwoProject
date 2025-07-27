@@ -390,11 +390,13 @@ body {
   padding: 1.5rem;
   width: 600px;
   max-width: 90vw;
+  max-height: 90vh;
   border-radius: 12px;
   position: relative;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .modal-header {
@@ -423,6 +425,25 @@ body {
 
 .close-btn:hover {
   color: rgb(42, 60, 98);
+}
+
+/* Modal scrollbar styling */
+.modal-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.modal-box::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.modal-box::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 .modal-options {

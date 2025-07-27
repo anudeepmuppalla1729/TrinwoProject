@@ -54,13 +54,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show modal on top navbar and sidebar ask buttons
         if (askButton) {
-            askButton.addEventListener('click', () => (askModal.style.display = 'flex'));
+            askButton.addEventListener('click', () => {
+                askModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent body scroll
+            });
         }
         
         if (sidebarAskButton) {
             sidebarAskButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 askModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent body scroll
             });
         }
         
@@ -80,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 askModal.style.display = 'none';
                 askModal.style.opacity = ''; // Reset opacity for next open
+                document.body.style.overflow = ''; // Restore body scroll
             }, 300); // Match transition duration in CSS
         };
         
@@ -95,6 +100,13 @@ document.addEventListener('DOMContentLoaded', function() {
         askModal.addEventListener('click', (e) => {
             if (e.target === askModal) closeAskModal();
         });
+        
+        // Handle modal scrolling - prevent body scroll when modal is open
+        const modalBox = askModal.querySelector('.modal-box');
+        if (modalBox) {
+            // The modal box now has overflow-y: auto in CSS for scrolling
+            // Body scroll prevention is handled in the click event listeners above
+        }
         
         // Handle login button click in the login required message
         const loginBtn = askModal.querySelector('.login-btn');
@@ -223,7 +235,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (postButton) {
             postButton.addEventListener('click', function() {
                 const question = questionTextarea.value.trim();
-                const description = questionDescription.value.trim();
+                // Get description from TinyMCE editor if available, otherwise from textarea
+                let description = '';
+                if (tinymce.get('.question-description')) {
+                    description = tinymce.get('.question-description').getContent();
+                } else {
+                    description = questionDescription.value.trim();
+                }
                 const privacy = privacySelect.value;
                 const tagsHiddenField = document.getElementById('tags-hidden');
                 
@@ -244,6 +262,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Create form data from the form
                 const formData = new FormData(form);
+                // Update the description in form data with TinyMCE content
+                formData.set('description', description);
                 
                 // Clear any existing error messages
                 document.querySelectorAll('.error-message').forEach(el => el.remove());
@@ -265,7 +285,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Clear the form and close the modal
                         questionTextarea.value = '';
-                        questionDescription.value = '';
+                        // Clear TinyMCE editor if available
+                        if (tinymce.get('.question-description')) {
+                            tinymce.get('.question-description').setContent('');
+                        } else {
+                            questionDescription.value = '';
+                        }
                         tags = [];
                         renderTags();
                         closeAskModal();
@@ -326,12 +351,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (insightButton) {
             insightButton.addEventListener('click', () => {
                 insightModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent body scroll
             });
         }
         
         if (questionInput) {
             questionInput.addEventListener('click', () => {
                 insightModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent body scroll
             });
         }
         
@@ -341,6 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 insightModal.style.display = 'none';
                 insightModal.style.opacity = ''; // Reset opacity for next open
+                document.body.style.overflow = ''; // Restore body scroll
             }, 300); // Match transition duration in CSS
         };
         
@@ -360,6 +388,13 @@ document.addEventListener('DOMContentLoaded', function() {
             icancelButton.addEventListener('click', closeInsightModal);
         }
         
+        // Handle modal scrolling for insight modal - prevent body scroll when modal is open
+        const insightModalBox = insightModal.querySelector('.modal-box');
+        if (insightModalBox) {
+            // The modal box now has overflow-y: auto in CSS for scrolling
+            // Body scroll prevention is handled in the click event listeners above
+        }
+        
         // Handle form submission
         const createPostForm = document.getElementById('createPostForm');
         if (createPostForm) {
@@ -367,7 +402,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.preventDefault(); // Prevent default form submission
 
                 const title = insightHeading.value.trim();
-                const content = insightTextarea.value.trim();
+                // Get content from TinyMCE editor if available, otherwise from textarea
+                let content = '';
+                if (tinymce.get('.i-question-textarea')) {
+                    content = tinymce.get('.i-question-textarea').getContent();
+                } else {
+                    content = insightTextarea.value.trim();
+                }
                 const privacy = insightPrivacySelect.value;
 
                 if (content === '' || title === '') {
@@ -376,6 +417,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 const formData = new FormData(createPostForm);
+                // Update the content in form data with TinyMCE content
+                formData.set('content', content);
                 if (selectedImage) {
                     formData.set('cover_image', selectedImage);
                 }
@@ -394,7 +437,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.success) {
                         showToast(data.message, 'success');
                         insightHeading.value = '';
-                        insightTextarea.value = '';
+                        // Clear TinyMCE editor if available
+                        if (tinymce.get('.i-question-textarea')) {
+                            tinymce.get('.i-question-textarea').setContent('');
+                        } else {
+                            insightTextarea.value = '';
+                        }
                         selectedImage = null;
                         selectedImageContainer.style.display = 'none';
                         closeInsightModal();

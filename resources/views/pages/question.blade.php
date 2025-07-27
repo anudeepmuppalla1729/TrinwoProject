@@ -484,7 +484,7 @@
     </div>
     <div class="question-content">
 
-        <div class="question-description">{{ $question['description'] }}</div>
+        <div class="question-description">{!! $question['description'] !!}</div>
         <div class="question-tags">
             @foreach($question['tags'] as $tag)
             <span class="tag">{{ $tag }}</span>
@@ -569,7 +569,7 @@
                 </div>
                 <span>{{ $answer['created_at'] }}</span>
             </div>
-            <div class="answer-content">{{ $answer['content'] }}</div>
+            <div class="answer-content">{!! $answer['content'] !!}</div>
             <div class="answer-actions">
                 <form action="{{ route('answers.upvote', $answer['id']) }}" method="POST" class="d-inline">
                     @csrf
