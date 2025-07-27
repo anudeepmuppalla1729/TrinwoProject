@@ -1016,3 +1016,18 @@ body {
     transform: translateY(0);
   }
 }
+
+.spinner {
+  width: 1em;
+  height: 1em;
+  border: 0.2em solid #eee;
+  border-top: 0.2em solid #2a3c62;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

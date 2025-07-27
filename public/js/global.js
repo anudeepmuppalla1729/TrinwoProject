@@ -55,15 +55,22 @@ document.addEventListener('DOMContentLoaded', function () {
         // Show modal on top navbar and sidebar ask buttons
         if (askButton) {
             askButton.addEventListener('click', () => {
+                hideTinyMcePopups();
                 showTinyMcePopups();
                 askModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                if (typeof tinymce !== 'undefined' && typeof tinymce.init === 'function') {
+                    setTimeout(() => {
+                        tinymce.init({ selector: '.question-description' });
+                    }, 100);
+                }
             });
         }
 
         if (sidebarAskButton) {
             sidebarAskButton.addEventListener('click', (e) => {
                 e.preventDefault();
+                hideTinyMcePopups();
                 showTinyMcePopups();
                 askModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
@@ -75,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             askQuestionButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
+                    hideTinyMcePopups();
                     showTinyMcePopups();
                     askModal.style.display = 'flex';
                 });
@@ -84,6 +92,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Function to close modal with transition
         const closeAskModal = () => {
             hideTinyMcePopups();
+            if (typeof destroyEditor === 'function') {
+                destroyEditor('.question-description');
+            }
             askModal.style.opacity = '0';
             setTimeout(() => {
                 askModal.style.display = 'none';
@@ -354,23 +365,38 @@ document.addEventListener('DOMContentLoaded', function () {
         // Handle both the dedicated insight button and the question input field
         if (insightButton) {
             insightButton.addEventListener('click', () => {
+                hideTinyMcePopups();
                 showTinyMcePopups();
                 insightModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                if (typeof tinymce !== 'undefined' && typeof tinymce.init === 'function') {
+                    setTimeout(() => {
+                        tinymce.init({ selector: '.i-question-textarea' });
+                    }, 100);
+                }
             });
         }
 
         if (questionInput) {
             questionInput.addEventListener('click', () => {
+                hideTinyMcePopups();
                 showTinyMcePopups();
                 insightModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                if (typeof tinymce !== 'undefined' && typeof tinymce.init === 'function') {
+                    setTimeout(() => {
+                        tinymce.init({ selector: '.i-question-textarea' });
+                    }, 100);
+                }
             });
         }
 
         // Function to close insight modal with transition
         const closeInsightModal = () => {
             hideTinyMcePopups();
+            if (typeof destroyEditor === 'function') {
+                destroyEditor('.i-question-textarea');
+            }
             insightModal.style.opacity = '0';
             setTimeout(() => {
                 insightModal.style.display = 'none';
