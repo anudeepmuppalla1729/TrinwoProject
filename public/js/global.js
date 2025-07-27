@@ -57,6 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
             askButton.addEventListener('click', () => {
                 askModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                // Initialize TinyMCE for question description
+                setTimeout(() => {
+                    if (typeof initializeTinyMCEForElement === 'function') {
+                        initializeTinyMCEForElement('.question-description');
+                    }
+                }, 100);
             });
         }
         
@@ -65,6 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 askModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                // Initialize TinyMCE for question description
+                setTimeout(() => {
+                    if (typeof initializeTinyMCEForElement === 'function') {
+                        initializeTinyMCEForElement('.question-description');
+                    }
+                }, 100);
             });
         }
         
@@ -352,6 +364,12 @@ document.addEventListener('DOMContentLoaded', function() {
             insightButton.addEventListener('click', () => {
                 insightModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                // Initialize TinyMCE for blog post content
+                setTimeout(() => {
+                    if (typeof initializeTinyMCEForElement === 'function') {
+                        initializeTinyMCEForElement('.i-question-textarea');
+                    }
+                }, 100);
             });
         }
         
@@ -359,6 +377,12 @@ document.addEventListener('DOMContentLoaded', function() {
             questionInput.addEventListener('click', () => {
                 insightModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; // Prevent body scroll
+                // Initialize TinyMCE for blog post content
+                setTimeout(() => {
+                    if (typeof initializeTinyMCEForElement === 'function') {
+                        initializeTinyMCEForElement('.i-question-textarea');
+                    }
+                }, 100);
             });
         }
         

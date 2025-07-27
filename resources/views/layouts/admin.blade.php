@@ -78,10 +78,10 @@
     <script>
       window.s3BaseUrl = "{{ config('filesystems.disks.s3.url') ? rtrim(config('filesystems.disks.s3.url'), '/') . '/' : '' }}";
     </script>
+    <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
     <script src="{{ asset('js/rich-text-editor.js') }}"></script>
     <script src="{{ asset('js/code-highlighting.js') }}"></script>
-    <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
     <script src="{{ asset('prismjs/prism.js') }}"></script>
     <script src="{{ asset('prismjs/components/prism-python.js') }}"></script>
     <script src="{{ asset('prismjs/components/prism-javascript.js') }}"></script>

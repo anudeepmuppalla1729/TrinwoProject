@@ -91,6 +91,26 @@
     }
 }
 
+/* Custom button styling for local image upload */
+.tox-tbtn[aria-label="Upload Local Image"] {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+.tox-tbtn[aria-label="Upload Local Image"]:hover {
+    background-color: #218838 !important;
+}
+
+/* Custom button styling for code highlighting */
+.tox-tbtn[aria-label="Insert Code Block"] {
+    background-color: #17a2b8 !important;
+    color: white !important;
+}
+
+.tox-tbtn[aria-label="Insert Code Block"]:hover {
+    background-color: #138496 !important;
+}
+
 /* Modal-specific TinyMCE styling */
 .modal-box .tox-tinymce {
     max-height: 300px !important;

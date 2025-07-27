@@ -1,10 +1,15 @@
 // Rich Text Editor Configuration
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - Starting TinyMCE initialization...');
+    
     // Check if TinyMCE is available
     if (typeof tinymce === 'undefined') {
         console.error('TinyMCE is not loaded. Please check if the script is included correctly.');
+        console.error('TinyMCE script should be loaded before rich-text-editor.js');
         return;
     }
+    
+    console.log('TinyMCE is available, version:', tinymce.majorVersion + '.' + tinymce.minorVersion);
     
     // Register custom plugins
     console.log('Registering custom TinyMCE plugins...');
@@ -90,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         editor.ui.registry.addButton('codehighlight', {
-            icon: 'sourcecode',
+            text: 'Code',
             tooltip: 'Insert Code Block',
             onAction: openDialog
         });
@@ -107,8 +112,23 @@ document.addEventListener('DOMContentLoaded', function() {
             editor.dom.addStyle('pre.code-block{position:relative;background:#f4f4f4;border:1px solid #ddd;border-radius:5px;padding:15px;margin:10px 0;overflow-x:auto}pre.code-block code{font-family:\'Courier New\',monospace;font-size:13px;line-height:1.4}pre.code-block .copy-code-btn{position:absolute;top:5px;right:5px;background:#007bff;color:white;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;font-size:12px;opacity:0.8;transition:opacity 0.2s}pre.code-block .copy-code-btn:hover{opacity:1}pre.code-block .copy-code-btn i{margin-right:5px}');
         });
     });
+    
+    // Debug plugin registration
+    console.log('TinyMCE version:', tinymce.majorVersion + '.' + tinymce.minorVersion);
+    console.log('Available plugins after registration:', Object.keys(tinymce.PluginManager.plugins));
+    console.log('Checking if codehighlight plugin is registered:', 'codehighlight' in tinymce.PluginManager.plugins);
+    
+    // Wait a bit for plugins to be fully registered
+    setTimeout(function() {
+        console.log('Final plugin check:', Object.keys(tinymce.PluginManager.plugins));
+    }, 100);
+    
     // Initialize TinyMCE for question description
-    if (document.querySelector('.question-description')) {
+    console.log('Looking for .question-description element...');
+    const questionDescElement = document.querySelector('.question-description');
+    console.log('Question description element found:', questionDescElement);
+    
+    if (questionDescElement) {
         console.log('Initializing TinyMCE for question description...');
         tinymce.init({
             selector: '.question-description',
@@ -173,7 +193,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initialize TinyMCE for blog post content
-    if (document.querySelector('.i-question-textarea')) {
+    console.log('Looking for .i-question-textarea element...');
+    const blogTextareaElement = document.querySelector('.i-question-textarea');
+    console.log('Blog textarea element found:', blogTextareaElement);
+    
+    if (blogTextareaElement) {
         console.log('Initializing TinyMCE for blog post content...');
         tinymce.init({
             selector: '.i-question-textarea',
@@ -325,4 +349,136 @@ function destroyEditor(selector) {
     if (tinymce.get(selector)) {
         tinymce.get(selector).destroy();
     }
-} 
+}
+
+// Function to initialize TinyMCE for dynamically created elements
+function initializeTinyMCEForElement(selector) {
+    console.log('Initializing TinyMCE for element:', selector);
+    
+    if (selector === '.question-description') {
+        if (tinymce.get(selector)) {
+            tinymce.get(selector).destroy();
+        }
+        
+        tinymce.init({
+            selector: selector,
+            height: 300,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste',
+                'codehighlight', 'localimage'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | localimage | codehighlight | code fullscreen | help',
+            menubar: false,
+            branding: false,
+            promotion: false,
+            paste_as_text: false,
+            paste_enable_default_filters: true,
+            paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,p,br,ul,ol,li",
+            relative_urls: false,
+            remove_script_host: false,
+            convert_urls: false,
+            content_style: `
+                body { 
+                    font-family: 'Poppins', sans-serif; 
+                    font-size: 14px; 
+                    line-height: 1.6; 
+                    color: #333; 
+                    padding: 10px;
+                }
+                p { margin: 0 0 10px 0; }
+                ul, ol { margin: 0 0 10px 20px; }
+                li { margin: 0 0 5px 0; }
+                h1, h2, h3, h4, h5, h6 { margin: 0 0 10px 0; font-weight: 600; }
+                blockquote { margin: 0 0 10px 0; padding: 10px 15px; border-left: 4px solid #ddd; background: #f9f9f9; }
+                code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace; }
+                pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+            `,
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+                
+                editor.on('PastePreProcess', function(e) {
+                    e.content = e.content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                });
+            },
+            init_instance_callback: function(editor) {
+                console.log('TinyMCE question description editor initialized successfully');
+                
+                editor.on('change keyup', function() {
+                    setTimeout(function() {
+                        if (typeof highlightCodeAfterLoad === 'function') {
+                            highlightCodeAfterLoad();
+                        }
+                    }, 100);
+                });
+            }
+        });
+    } else if (selector === '.i-question-textarea') {
+        if (tinymce.get(selector)) {
+            tinymce.get(selector).destroy();
+        }
+        
+        tinymce.init({
+            selector: selector,
+            height: 400,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste',
+                'codehighlight', 'localimage'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | localimage | media | codehighlight | code fullscreen | help',
+            menubar: false,
+            branding: false,
+            promotion: false,
+            paste_as_text: false,
+            paste_enable_default_filters: true,
+            paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,p,br,ul,ol,li,blockquote,pre,code",
+            relative_urls: false,
+            remove_script_host: false,
+            convert_urls: false,
+            content_style: `
+                body { 
+                    font-family: 'Poppins', sans-serif; 
+                    font-size: 14px; 
+                    line-height: 1.6; 
+                    color: #333; 
+                    padding: 10px;
+                }
+                p { margin: 0 0 10px 0; }
+                ul, ol { margin: 0 0 10px 20px; }
+                li { margin: 0 0 5px 0; }
+                h1, h2, h3, h4, h5, h6 { margin: 0 0 10px 0; font-weight: 600; }
+                blockquote { margin: 0 0 10px 0; padding: 10px 15px; border-left: 4px solid #ddd; background: #f9f9f9; }
+                code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace; }
+                pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+            `,
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+                
+                editor.on('PastePreProcess', function(e) {
+                    e.content = e.content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                });
+            },
+            init_instance_callback: function(editor) {
+                console.log('TinyMCE blog post editor initialized successfully');
+                
+                editor.on('change keyup', function() {
+                    setTimeout(function() {
+                        if (typeof highlightCodeAfterLoad === 'function') {
+                            highlightCodeAfterLoad();
+                        }
+                    }, 100);
+                });
+            }
+        });
+    }
+}
+
+// Make the function globally available
+window.initializeTinyMCEForElement = initializeTinyMCEForElement; 
