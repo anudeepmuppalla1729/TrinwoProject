@@ -256,7 +256,7 @@ class AnswerController extends Controller
         $request->validate([
             'reason' => 'required|string|max:255',
         ]);
-        $userId = $user->id;
+        $userId = $user->user_id;
         $answerId = $id;
         // Prevent duplicate reports by same user
         $existing = \App\Models\AnswerReport::where('reporter_id', $userId)->where('answer_id', $answerId)->first();

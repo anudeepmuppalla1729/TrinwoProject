@@ -195,7 +195,7 @@ class AdminController extends Controller
                 return [
                     'id' => $report->report_id,
                     'type' => 'post',
-                    'content_title' => $report->post ? $report->post->heading : 'Deleted Post',
+                    'content_title' => $report->post ? ($report->post->heading ?? $report->post->title) : 'Deleted Post',
                     'content' => $report->post ? $report->post->details : 'Content not available',
                     'reporter_name' => $report->reporter->name ?? 'Unknown User',
                     'reporter_id' => $report->reporter_id,
@@ -420,8 +420,8 @@ class AdminController extends Controller
                 if ($report->post) {
                     $data['content'] = [
                         'id' => $report->post->post_id,
-                        'title' => $report->post->heading,
-                        'content' => $report->post->details,
+                        'title' => $report->post->heading ?? $report->post->title,
+                        'content' => $report->post->details ?? $report->post->content,
                         'author' => $report->post->user->name ?? 'Unknown',
                         'created_at' => $report->post->created_at
                     ];
