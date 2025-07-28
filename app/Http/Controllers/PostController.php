@@ -294,8 +294,13 @@ class PostController extends Controller
             'user_id' => $userId,
             'vote_type' => 'upvote'
         ]);
-        
         $post->increment('upvotes');
+
+        // Send upvote notification and check milestones
+        if ($post->user_id !== $userId) {
+            \App\NotificationService::createUpvoteNotification($post->user, Auth::user(), $post, 'post');
+            \App\NotificationService::checkAndCreateMilestones($post->user);
+        }
         
         return response()->json([
             'success' => true,

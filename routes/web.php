@@ -6,6 +6,7 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
@@ -147,6 +148,17 @@ Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::post('/posts/{id}/report', [PostController::class, 'report'])->name('posts.report');
     Route::post('/questions/{id}/report', [QuestionController::class, 'report'])->name('questions.report');
     Route::post('/answers/{id}/report', [AnswerController::class, 'report'])->name('answers.report');
+    
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/api/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('api.notifications.unread-count');
+    Route::get('/api/notifications', [NotificationController::class, 'getNotifications'])->name('api.notifications.get');
+    Route::post('/api/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('api.notifications.mark-read');
+    Route::post('/api/notifications/mark-unread', [NotificationController::class, 'markAsUnread'])->name('api.notifications.mark-unread');
+    Route::delete('/api/notifications/delete', [NotificationController::class, 'delete'])->name('api.notifications.delete');
+    Route::delete('/api/notifications/clear-all', [NotificationController::class, 'clearAll'])->name('api.notifications.clear-all');
+    Route::post('/api/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('api.notifications.mark-all-read');
+    Route::post('/api/notifications/test', [NotificationController::class, 'createTestNotification'])->name('api.notifications.test');
 });
 
 Route::post('/forgot-password/send-otp', [App\Http\Controllers\ForgotPasswordController::class, 'sendOtp']);

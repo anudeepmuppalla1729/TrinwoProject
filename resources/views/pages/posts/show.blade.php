@@ -291,7 +291,7 @@ html, body {
                         <span class="custom-comment-user">{{ $comment->user->name }}</span>
                         <span class="custom-comment-date">{{ $comment->created_at->diffForHumans() }}</span>
                     </div>
-                    <div class="custom-comment-content">{{ $comment->comment_text }}</div>
+                    <div class="custom-comment-content">{!! nl2br(e(strip_tags($comment->comment_text))) !!}</div>
                 </div>
             @endforeach
             <form id="commentForm" method="POST" action="{{ route('comments.store', $post->post_id) }}" class="custom-comment-form mt-6">

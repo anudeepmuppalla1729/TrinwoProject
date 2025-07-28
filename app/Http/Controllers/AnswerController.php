@@ -33,11 +33,14 @@ class AnswerController extends Controller
         }
         
         // Create the answer
-        $answer = new Answer();
-        $answer->question_id = $questionId;
-        $answer->user_id = Auth::id();
-        $answer->content = $request->content;
-        $answer->save();
+        $answer = Answer::create([
+            'question_id' => $questionId,
+            'user_id' => Auth::id(),
+            'content' => $request->content,
+        ]);
+
+        // Check and create milestone notifications
+        \App\NotificationService::checkAndCreateMilestones(Auth::user());
         
         return redirect()->route('question', ['id' => $questionId])->with('success', 'Answer posted successfully!');
     }

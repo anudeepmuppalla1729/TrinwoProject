@@ -421,7 +421,10 @@ class ProfileController extends Controller
             'user_id' => $userId,
             'follower_user_id' => $currentUser->user_id
         ]);
-        
+
+        // Send new follower notification
+        \App\NotificationService::createFollowerNotification($userToFollow, $currentUser);
+
         return response()->json([
             'success' => true,
             'message' => 'You are now following ' . $userToFollow->name

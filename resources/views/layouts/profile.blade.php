@@ -9,6 +9,7 @@
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> -->
     <script src="https://kit.fontawesome.com/447522222b.js" crossorigin="anonymous"></script>
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('css/notifications.css') }}">
     <link rel="stylesheet" href="{{ asset('css/profile_sidebar.css') }}">
     <style>
         @media (max-width: 600px) {
@@ -59,6 +60,7 @@
     </div>
     @stack('scripts')
     <script src="{{ asset('js/profile.js') }}"></script>
+    <script src="{{ asset('js/notifications.js') }}"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.flash-toast').forEach(function(el) {

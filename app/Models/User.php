@@ -162,4 +162,20 @@ class User extends Authenticatable
         return !$this->hasCompletedProfile();
     }
 
+    /**
+     * Get the notifications for the user
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id', 'user_id');
+    }
+
+    /**
+     * Get unread notifications count
+     */
+    public function getUnreadNotificationsCount()
+    {
+        return $this->notifications()->unread()->count();
+    }
+
 }

@@ -61,6 +61,13 @@
             <i class="fas fa-bookmark"></i>
             <span>Bookmarks</span>
         </a>
+        <a href="{{ route('notifications.index') }}" class="nav-item @if(Route::is('notifications.index')) active @endif">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+            @if(Auth::user()->unreadNotifications()->count() > 0)
+                <span class="notification-count">{{ Auth::user()->unreadNotifications()->count() }}</span>
+            @endif
+        </a>
         <a href="{{ route('profile.settings') }}" class="nav-item @if(Route::is('profile.settings')) active @endif">
             <i class="fas fa-cog"></i>
             <span>Settings</span>
