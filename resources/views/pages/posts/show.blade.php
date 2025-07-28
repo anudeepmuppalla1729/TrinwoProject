@@ -260,14 +260,14 @@ html, body {
         <div class="custom-blog-meta">
             <form id="upvoteForm" method="POST" action="{{ route('posts.upvote', $post->post_id) }}" style="display:inline;">
                 @csrf
-                <button type="submit" id="upvoteBtn" class="action-btn upvote-btn{{ (isset($userVote) && $userVote === 'upvote') ? ' voted' : '' }}" style="font-size:1.2rem;">
+                <button type="submit" id="upvoteBtn" class="action-btn upvote-btn{{ ($userVoteType === 'upvote') ? ' voted' : '' }}" style="font-size:1.2rem;">
                     <i class="bi bi-arrow-up-circle"></i>
                     <span id="upvoteCount">{{ $post->upvotes ?? 0 }}</span>
                 </button>
             </form>
             <form id="downvoteForm" method="POST" action="{{ route('posts.downvote', $post->post_id) }}" style="display:inline;">
                 @csrf
-                <button type="submit" id="downvoteBtn" class="action-btn downvote-btn{{ (isset($userVote) && $userVote === 'downvote') ? ' voted' : '' }}" style="font-size:1.2rem;">
+                <button type="submit" id="downvoteBtn" class="action-btn downvote-btn{{ ($userVoteType === 'downvote') ? ' voted' : '' }}" style="font-size:1.2rem;">
                     <i class="bi bi-arrow-down-circle"></i>
                     <span id="downvoteCount">{{ $post->downvotes ?? 0 }}</span>
                 </button>

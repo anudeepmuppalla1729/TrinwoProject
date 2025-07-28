@@ -132,9 +132,10 @@ class NotificationService
         }
 
         // Check first upvote
-        $upvotes = PostVote::where('post_id', function($query) use ($user) {
-            $query->select('post_id')->from('posts')->where('user_id', $user->user_id);
-        })->where('vote_type', 'upvote')->count();
+        $upvotes = PostVote::join('posts', 'post_votes.post_id', '=', 'posts.post_id')
+            ->where('posts.user_id', $user->user_id)
+            ->where('post_votes.vote_type', 'upvote')
+            ->count();
 
         if ($upvotes === 1) {
             $milestones[] = 'first_upvote';
