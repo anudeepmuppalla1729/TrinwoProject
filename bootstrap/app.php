@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'check.user.status' => \App\Http\Middleware\CheckUserStatus::class,
             'check.admin.status' => \App\Http\Middleware\CheckAdminStatus::class,
+            'check.profile.completion' => \App\Http\Middleware\CheckProfileCompletion::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

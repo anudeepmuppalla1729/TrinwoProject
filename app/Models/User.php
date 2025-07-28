@@ -142,4 +142,24 @@ class User extends Authenticatable
         return $this->belongsToMany(Question::class, 'question_bookmarks', 'user_id', 'question_id');
     }
 
+    /**
+     * Check if the user has completed their profile setup
+     */
+    public function hasCompletedProfile(): bool
+    {
+        return !empty($this->username) && 
+               !empty($this->age) && 
+               !empty($this->gender) && 
+               !empty($this->studying_in) && 
+               !empty($this->expert_in);
+    }
+
+    /**
+     * Check if the user needs to complete their profile
+     */
+    public function needsProfileCompletion(): bool
+    {
+        return !$this->hasCompletedProfile();
+    }
+
 }

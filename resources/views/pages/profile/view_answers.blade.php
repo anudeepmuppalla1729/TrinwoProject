@@ -32,7 +32,7 @@
                 <div class="card-date">{{ $answer->created_at->format('M d, Y') }}</div>
             </div>
             <div class="card-content">
-                {{ Str::limit(strip_tags($answer->content), 200) }}
+                {!! Str::limit(strip_tags($answer->content), 200) !!}
             </div>
             <div class="card-stats">
                 @if(isset($answer->upvotes))

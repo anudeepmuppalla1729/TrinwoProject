@@ -50,7 +50,7 @@
             <div class="card-date">{{ $answer->created_at->format('M d, Y') }}</div>
         </div>
         <div class="card-content">
-            {{ $answer->content }}
+            {!! Str::limit(strip_tags($answer->content), 200) !!}
         </div>
         <div class="card-stats">
             <span><i class="fas fa-heart"></i> {{ $answer->upvotes }} upvotes</span>

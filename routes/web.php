@@ -38,7 +38,7 @@ Route::get('/question/{id?}', [QuestionController::class, 'show'])->name('questi
 Route::get('/api/questions/search', [QuestionController::class, 'search'])->name('api.questions.search');
 
 // Question routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::post('/questions', [QuestionController::class, 'store'])->name('questions.store');
     Route::get('/questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::get('/questions/{id}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
@@ -90,9 +90,11 @@ Route::get('/user-information', function () {
     return view('pages.user_information');
 })->name('user_information');
 
-Route::get('/dashboard', function () {
-    return view('pages.dashboard');
-})->name('dashboard');
+Route::middleware(['auth', 'check.profile.completion'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('pages.dashboard');
+    })->name('dashboard');
+});
 
 // User profile viewing routes
 Route::get('/user/{userId}', [ProfileController::class, 'viewProfile'])->name('user.profile');
@@ -101,7 +103,7 @@ Route::get('/user/{userId}/questions', [ProfileController::class, 'viewUserQuest
 Route::get('/user/{userId}/answers', [ProfileController::class, 'viewUserAnswers'])->name('user.answers');
 
 // User follow/unfollow routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::post('/user/{userId}/follow', [ProfileController::class, 'followUser'])->name('user.follow');
     Route::post('/user/{userId}/unfollow', [ProfileController::class, 'unfollowUser'])->name('user.unfollow');
     Route::get('/user/{userId}/follow-status', [ProfileController::class, 'getFollowStatus'])->name('user.follow-status');
@@ -114,14 +116,14 @@ Route::middleware(['auth'])->group(function () {
 // API route for dashboard posts (accessible without authentication)
 Route::get('/api/dashboard/posts', [PostController::class, 'getDashboardPosts'])->name('api.dashboard.posts');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('password.update');
 });
 
-Route::middleware(['auth'])->prefix('profile')->name('profile.')->group(function () {
+Route::middleware(['auth', 'check.profile.completion'])->prefix('profile')->name('profile.')->group(function () {
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/answers', [ProfileController::class, 'answers'])->name('answers');
     Route::get('/questions', [ProfileController::class, 'questions'])->name('questions');
@@ -138,9 +140,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/user-information', [\App\Http\Controllers\UserOnboardingController::class, 'submitUserInfo']);
     Route::get('/user-interests', [\App\Http\Controllers\UserOnboardingController::class, 'showInterestsForm'])->name('user.interests');
     Route::post('/user-interests', [\App\Http\Controllers\UserOnboardingController::class, 'submitInterests']);
+    Route::post('/api/check-username', [\App\Http\Controllers\UserOnboardingController::class, 'checkUsername']);
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::post('/posts/{id}/report', [PostController::class, 'report'])->name('posts.report');
     Route::post('/questions/{id}/report', [QuestionController::class, 'report'])->name('questions.report');
     Route::post('/answers/{id}/report', [AnswerController::class, 'report'])->name('answers.report');

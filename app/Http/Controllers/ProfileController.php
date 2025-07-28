@@ -243,6 +243,7 @@ class ProfileController extends Controller
         $user = Auth::user();
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->user_id . ',user_id|regex:/^[a-zA-Z0-9_]+$/',
             'email' => 'required|email|max:100',
             'phone' => 'nullable|string|max:15',
             'age' => 'nullable|integer|min:1|max:120',
@@ -252,6 +253,9 @@ class ProfileController extends Controller
             'interests' => 'nullable|string',
             'bio' => 'nullable|string',
             'avatar' => 'nullable|image|max:2048',
+        ], [
+            'username.unique' => 'This username is already taken. Please choose a different one.',
+            'username.regex' => 'Username can only contain letters, numbers, and underscores.',
         ]);
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('profile_pics', 's3');

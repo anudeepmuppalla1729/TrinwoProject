@@ -323,7 +323,7 @@ class QuestionsManager {
                     <td>
                         <div>
                             <div style="font-weight: 500; margin-bottom: 5px;">${this.truncateText(question.title, 60)}</div>
-                            <div style="font-size: 0.85rem; color: var(--gray);">${this.truncateText(question.content, 80)}</div>
+                            <div style="font-size: 0.85rem; color: var(--gray);">${this.truncateText(this.stripHtml(question.content), 80)}</div>
                         </div>
                     </td>
                     <td>
@@ -463,6 +463,13 @@ class QuestionsManager {
         return text.substring(0, maxLength) + '...';
     }
 
+    stripHtml(html) {
+        if (!html) return '';
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    }
+
     updateSearchResultsInfo(count, searchTerm) {
         const searchResultsInfo = document.getElementById('search-results-info');
         const searchResultsCount = document.getElementById('search-results-count');
@@ -556,7 +563,7 @@ class QuestionsManager {
                 </div>
                 
                 <div class="question-content">
-                    <p>${question.content}</p>
+                    <div>${question.content}</div>
                 </div>
                 
                 <div class="question-meta">
@@ -591,9 +598,9 @@ class QuestionsManager {
                                     <span class="answer-date">${this.formatDate(answer.created_at)}</span>
                                     ${answer.is_accepted ? '<span class="badge badge-success">Accepted</span>' : ''}
                                 </div>
-                                <div class="answer-content">
-                                    <p>${this.truncateText(answer.content, 200)}</p>
-                                </div>
+                                                            <div class="answer-content">
+                                <div>${this.truncateText(answer.content, 200)}</div>
+                            </div>
                             </div>
                         `).join('')}
                     </div>

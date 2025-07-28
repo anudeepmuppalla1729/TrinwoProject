@@ -18,10 +18,14 @@ class UserOnboardingController extends Controller
     {
         $user = Auth::user();
         $data = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username,' . $user->user_id . ',user_id|regex:/^[a-zA-Z0-9_]+$/',
             'age' => 'required|integer|min:1|max:120',
             'gender' => 'required|in:Male,Female,Other',
             'studying_in' => 'required|string|max:150',
             'expert_in' => 'required|string|max:150',
+        ], [
+            'username.unique' => 'This username is already taken. Please choose a different one.',
+            'username.regex' => 'Username can only contain letters, numbers, and underscores.',
         ]);
         $user->update($data);
         return redirect()->route('user.interests');
@@ -43,5 +47,17 @@ class UserOnboardingController extends Controller
         $user->interests = is_array($interests) ? json_encode($interests) : $interests;
         $user->save();
         return redirect()->route('dashboard');
+    }
+
+    public function checkUsername(Request $request)
+    {
+        $username = $request->input('username');
+        $user = Auth::user();
+        
+        $exists = User::where('username', $username)
+                     ->where('user_id', '!=', $user->user_id)
+                     ->exists();
+        
+        return response()->json(['available' => !$exists]);
     }
 } 

@@ -91,7 +91,7 @@
                     @elseif(isset($activity->heading))
                         {{ $activity->heading }}
                     @else
-                        Answered: {{ Str::limit(strip_tags($activity->content ?? ''), 40) }}
+                        Answered: {!! Str::limit(strip_tags($activity->content ?? ''), 40) !!}
                     @endif
                 </h3>
                 <div class="card-date">{{ $activity->created_at->format('M d, Y') }}</div>

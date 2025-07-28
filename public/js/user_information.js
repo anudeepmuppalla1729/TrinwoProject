@@ -28,13 +28,73 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Username validation with real-time uniqueness check
+  const usernameInput = form.querySelector('input[name="username"]');
+  if (usernameInput) {
+    let usernameTimeout;
+    usernameInput.addEventListener('input', function() {
+      clearTimeout(usernameTimeout);
+      const username = this.value.trim();
+      
+      // Clear previous error
+      clearError(this);
+      
+      // Basic validation
+      if (!username) {
+        showError(this, 'Username is required');
+        return;
+      }
+      
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        showError(this, 'Username can only contain letters, numbers, and underscores');
+        return;
+      }
+      
+      if (username.length < 3) {
+        showError(this, 'Username must be at least 3 characters long');
+        return;
+      }
+      
+      if (username.length > 20) {
+        showError(this, 'Username must be less than 20 characters');
+        return;
+      }
+      
+      // Check uniqueness after a delay
+      usernameTimeout = setTimeout(() => {
+        checkUsernameUniqueness(username, this);
+      }, 500);
+    });
+  }
+
   // Validate first step before proceeding to next step
   nextBtn.addEventListener('click', function(e) {
     const currentStep = document.querySelector('.form-step.active');
+    const usernameInput = currentStep.querySelector('input[name="username"]');
     const ageInput = currentStep.querySelector('input[name="age"]');
     const genderSelect = currentStep.querySelector('select[name="gender"]');
     
     let isValid = true;
+    
+    // Validate username
+    if (usernameInput) {
+      const username = usernameInput.value.trim();
+      if (!username) {
+        showError(usernameInput, 'Username is required');
+        isValid = false;
+      } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        showError(usernameInput, 'Username can only contain letters, numbers, and underscores');
+        isValid = false;
+      } else if (username.length < 3) {
+        showError(usernameInput, 'Username must be at least 3 characters long');
+        isValid = false;
+      } else if (username.length > 20) {
+        showError(usernameInput, 'Username must be less than 20 characters');
+        isValid = false;
+      } else {
+        clearError(usernameInput);
+      }
+    }
     
     // Validate age
     if (!ageInput.value.trim()) {
@@ -111,5 +171,28 @@ document.addEventListener('DOMContentLoaded', function() {
       errorDiv.textContent = '';
     }
     input.style.borderColor = '';
+  }
+
+  // Check username uniqueness via AJAX
+  function checkUsernameUniqueness(username, input) {
+    fetch('/api/check-username', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      body: JSON.stringify({ username: username })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (!data.available) {
+        showError(input, 'This username is already taken');
+      } else {
+        clearError(input);
+      }
+    })
+    .catch(error => {
+      console.error('Error checking username:', error);
+    });
   }
 });
