@@ -66,12 +66,12 @@
 
             <p style="margin-top: 32px; color: #555; font-size: 1rem;">If you have any questions, please reply to this email or contact our support team.</p>
             <div style="margin-top: 32px; text-align: center;">
-                <span style="color: #4361ee; font-weight: bold; font-size: 1.1rem;">Q&A Forum Team</span>
+                <span style="color: #4361ee; font-weight: bold; font-size: 1.1rem;">Inqube Team</span>
             </div>
         </div>
     </div>
     <div style="text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 18px;">
-        &copy; {{ date('Y') }} Q&A Forum. All rights reserved.
+                        &copy; {{ date('Y') }} Inqube. All rights reserved.
     </div>
 </body>
 </html> 

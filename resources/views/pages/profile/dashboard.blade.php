@@ -107,7 +107,7 @@
 }
 </style>
 @endpush
-@section('title', 'Dashboard - User Profile')
+@section('title', 'Dashboard - User Profile | Inqube')
 
 @section('main_content')
 <div class="top-bar">

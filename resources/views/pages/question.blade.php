@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Question Detail | TRINWOPJ')
+@section('title', 'Question Detail | Inqube')
 
 @push('styles')
 <style>

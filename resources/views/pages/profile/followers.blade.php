@@ -2,7 +2,7 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/user_profile.css') }}">
 @endpush
-@section('title', 'Followers - User Profile')
+@section('title', 'Followers - User Profile | Inqube')
 
 @section('main_content')
 <div class="flw">

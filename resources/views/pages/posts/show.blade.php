@@ -235,7 +235,7 @@ html, body {
 }
 </style>
 @endpush
-@section('title', $post->title)
+@section('title', $post->title . ' | Inqube')
 @section('content')
 <div class="home_content">
     <div class="custom-blog-container">

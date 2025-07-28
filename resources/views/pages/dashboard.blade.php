@@ -322,7 +322,7 @@
 }
 </style>
 @endpush
-@section('title', 'Home | TRINWOPJ')
+@section('title', 'Home | Inqube')
 @section('content')
 <div class="home_content">
     <div class="question-box">

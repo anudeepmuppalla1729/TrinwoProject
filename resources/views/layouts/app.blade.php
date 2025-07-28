@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-authenticated" content="{{ Auth::check() ? 'true' : 'false' }}">
-    <title>@yield('title', 'Q&A Forum')</title>
+    <title>@yield('title', 'Inqube')</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/logo-only.png') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.mobile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/navbar-search.css') }}">

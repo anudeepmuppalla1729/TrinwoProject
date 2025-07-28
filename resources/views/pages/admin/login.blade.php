@@ -362,7 +362,7 @@
         </div>
         
         <div class="login-footer">
-            <p>© 2023 KnowledgeBase Q&A Forum. Strictly for authorized personnel only.</p>
+                            <p>© 2023 Inqube. Strictly for authorized personnel only.</p>
             <p>Contact <a href="mailto:security@knowledgebase.com">security@knowledgebase.com</a> for assistance</p>
         </div>
     </div>
