@@ -22,12 +22,19 @@ RUN apt-get update && apt-get install -y \
         zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install Node.js and npm (for frontend build)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# Install JS dependencies and build assets
+
 # Set working directory
 WORKDIR /var/www/html
 
 # Copy application code
 COPY . .
 
+RUN npm install && npm run build
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache

@@ -46,6 +46,11 @@
                                 <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" placeholder="Enter your full name" required>
                             </div>
                             <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" value="{{ old('username', $user->username) }}" placeholder="Enter a unique username" required>
+                                <!-- <small class="form-text text-muted">Username can only contain letters, numbers, and underscores.</small> -->
+                            </div>
+                            <div class="form-group">
                                 <label for="email">Email</label>
                                 <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" placeholder="Enter your email" required>
                             </div>
@@ -161,6 +166,91 @@
         </div>
         <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Username validation for profile settings
+        const usernameInput = document.getElementById('username');
+        if (usernameInput) {
+            let usernameTimeout;
+            usernameInput.addEventListener('input', function() {
+                clearTimeout(usernameTimeout);
+                const username = this.value.trim();
+                
+                // Clear previous error
+                clearUsernameError(this);
+                
+                // Basic validation
+                if (!username) {
+                    showUsernameError(this, 'Username is required');
+                    return;
+                }
+                
+                if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                    showUsernameError(this, 'Username can only contain letters, numbers, and underscores');
+                    return;
+                }
+                
+                if (username.length < 3) {
+                    showUsernameError(this, 'Username must be at least 3 characters long');
+                    return;
+                }
+                
+                if (username.length > 20) {
+                    showUsernameError(this, 'Username must be less than 20 characters');
+                    return;
+                }
+                
+                // Check uniqueness after a delay
+                usernameTimeout = setTimeout(() => {
+                    checkUsernameUniqueness(username, this);
+                }, 500);
+            });
+        }
+
+        // Username validation helper functions
+        function showUsernameError(input, message) {
+            let errorDiv = input.parentNode.querySelector('.username-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'username-error';
+                errorDiv.style.color = 'red';
+                errorDiv.style.fontSize = '0.85rem';
+                errorDiv.style.marginTop = '0.3rem';
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = message;
+            input.style.borderColor = 'red';
+        }
+
+        function clearUsernameError(input) {
+            const errorDiv = input.parentNode.querySelector('.username-error');
+            if (errorDiv) {
+                errorDiv.textContent = '';
+            }
+            input.style.borderColor = '';
+        }
+
+        // Check username uniqueness via AJAX
+        function checkUsernameUniqueness(username, input) {
+            fetch('/api/check-username', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ username: username })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.available) {
+                    showUsernameError(input, 'This username is already taken');
+                } else {
+                    clearUsernameError(input);
+                }
+            })
+            .catch(error => {
+                console.error('Error checking username:', error);
+            });
+        }
+
         const interestsInput = document.getElementById('interests');
         const interestsContainer = document.querySelector('.interests-container');
         const form = interestsInput.closest('form');

@@ -262,7 +262,7 @@ class AnswersManager {
             html += `
                 <tr data-answer-id="${answer.id}">
                     <td>
-                        <div style="font-weight: 500; margin-bottom: 5px;">${this.truncateText(answer.content, 80)}</div>
+                        <div style="font-weight: 500; margin-bottom: 5px;">${this.truncateText(this.stripHtml(answer.content), 80)}</div>
                     </td>
                     <td>
                         <div style="font-size: 0.85rem; color: var(--gray);">${this.truncateText(answer.question.title, 50)}</div>
@@ -411,6 +411,13 @@ class AnswersManager {
         if (!text) return 'N/A';
         if (text.length <= maxLength) return text;
         return text.substring(0, maxLength) + '...';
+    }
+
+    stripHtml(html) {
+        if (!html) return '';
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || '';
     }
 
     formatDate(dateString) {

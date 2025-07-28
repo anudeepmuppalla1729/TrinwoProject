@@ -31,7 +31,7 @@
                 <div class="card-date">{{ $question['created_at'] }}</div>
             </div>
             <div class="card-content">
-                {{ Str::limit(strip_tags($question['description']), 200) }}
+                {!! Str::limit(strip_tags($question['description']), 200) !!}
             </div>
             <div class="card-stats">
                 <span><i class="fas fa-comment"></i> {{ $question['answers'] }} answers</span>
