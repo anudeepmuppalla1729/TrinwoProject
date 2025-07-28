@@ -1,4 +1,4 @@
-# DevCol – Q&A Forum Platform
+# INCUBE – Q&A Forum Platform
 
 ## Table of Contents
 1. [Overview](#overview)  
@@ -8,19 +8,15 @@
 5. [Getting Started](#getting-started)  
    - [Prerequisites](#prerequisites)  
    - [Installation](#installation)  
-   - [Environment Variables](#environment-variables)  
    - [Database Setup & Migrations](#database-setup--migrations)  
-   - [Running the Application](#running-the-application)  
-6. [Usage](#usage)  
-7. [Contributing](#contributing)  
-8. [Roadmap](#roadmap)  
-9. [License](#license)  
-10. [Contact](#contact)  
+   - [Run The Application](#run-the-application)  
+
+
 
 ---
 
 ## Overview
-DevCol is an open-source Q&A forum designed for developers to ask questions, share knowledge, and collaborate on solutions. With robust features like voting, tagging, bookmarks, and user profiles, DevCol aims to foster a vibrant community where developers can learn and contribute.
+Incube is an open-source Q&A forum designed for developers to ask questions, share knowledge, and collaborate on solutions. With robust features like voting, tagging, bookmarks, and user profiles, Incube aims to foster a vibrant community where developers can learn and contribute.
 
 ---
 
@@ -37,17 +33,25 @@ DevCol is an open-source Q&A forum designed for developers to ask questions, sha
 ---
 
 ## Demo
-*Include screenshots or GIFs here when you have them!*
+![Landing Page](/public/assets/landingpage.png)
+
+![Feed](/public/assets/feed.png)
+
+![Questions](/public/assets/questions.png)
+
+![My Profile](/public/assets/myprofile.png)
+
+
 
 ---
 
 ## Tech Stack
 - **Backend**: Laravel, PHP  
-- **Frontend**: Blade (or Vue/React—update as needed)  
-- **Database**: MySQL / PostgreSQL  
-- **Authentication**: Laravel Breeze / Sanctum  
-- **Styling**: Tailwind CSS (or Bootstrap)  
-- **Deployment**: Docker, Render / Heroku / DigitalOcean  
+- **Frontend**: Blade
+- **Database**: MySQL   
+- **Authentication**: Self Implemented   
+- **Styling**: Mainly CSS and Bootstrap  
+- **Deployment**: Not Done Yet 
 
 ---
 
@@ -62,11 +66,38 @@ DevCol is an open-source Q&A forum designed for developers to ask questions, sha
 ### Installation
 ```bash
 # 1. Clone the repo
-git clone https://github.com/your-username/DevCol.git
-cd DevCol
+git clone https://github.com/anudeepmuppalla1729/TrinwoProject.git
 
 # 2. Install PHP dependencies
 composer install
 
 # 3. Install JavaScript dependencies
 npm install
+```
+### Database Setup & Migrations
+#### Create The Database In MySql Workbench First
+
+```bash
+
+# 4. For Local Database (MySQl) -- change details in env file if provided (MySql Cloud DB Currently Unavailable)
+php artisan migrate:fresh --seed
+
+# 5. If no env file avialable
+copy .env.example .env
+```
+### Run The Application
+
+```bash
+php artisan serve
+```
+
+### Admin Panel Access
+Route : /admin/login
+
+#### Admin Details : 
+
+User Name : admin
+
+Password : StrongPassword123!
+
+
