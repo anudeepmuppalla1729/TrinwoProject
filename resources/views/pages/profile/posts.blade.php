@@ -28,6 +28,31 @@
                 <h3 class="card-title">{{ $post->title }}</h3>
                 <div class="card-date">{{ $post->created_at->format('M d, Y') }}</div>
             </div>
+            @php
+                $coverUrl = $post->cover_image
+                    ? (Str::startsWith($post->cover_image, ['http://', 'https://']) ? $post->cover_image : Storage::disk('s3')->url($post->cover_image))
+                    : null;
+            @endphp
+            @if($coverUrl)
+                <div class="card-images">
+                    <img src="{{ $coverUrl }}" alt="Cover image" style="max-width:100%;border-radius:8px;">
+                </div>
+            @elseif($post->images->count() > 0)
+                <div class="card-images">
+                    @foreach($post->images as $image)
+                        @php
+                            $imgUrl = $image->image_url;
+                        @endphp
+                        @if(!empty($imgUrl))
+                            @if(Str::startsWith($imgUrl, 'http'))
+                                <img src="{{ $imgUrl }}" alt="Post image">
+                            @else
+                                <img src="{{ Storage::disk('s3')->url($imgUrl) }}" alt="Post image">
+                            @endif
+                        @endif
+                    @endforeach
+                </div>
+            @endif
             <div class="card-content">
                 {{ Str::limit(strip_tags($post->content), 200) }}
             </div>
@@ -60,22 +85,6 @@
                     @endauth
                 </div>
             </div>
-            @if($post->images->count() > 0)
-                <div class="card-images">
-                    @foreach($post->images as $image)
-                        @php
-                            $imgUrl = $image->image_url;
-                        @endphp
-                        @if(!empty($imgUrl))
-                            @if(Str::startsWith($imgUrl, 'http'))
-                                <img src="{{ $imgUrl }}" alt="Post image">
-                            @else
-                                <img src="{{ Storage::disk('s3')->url($imgUrl) }}" alt="Post image">
-                            @endif
-                        @endif
-                    @endforeach
-                </div>
-            @endif
         </div>
     @empty
         <div class="content-card">

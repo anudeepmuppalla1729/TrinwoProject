@@ -11,6 +11,9 @@ let posts = [];
 // Function to fetch posts from the server
 async function fetchPosts() {
   try {
+    if (postsContainer) {
+      postsContainer.innerHTML = `<div class="loader" style="display:flex;justify-content:center;align-items:center;padding:40px 0;"><span class='spinner' style='width:2.5em;height:2.5em;'></span></div>`;
+    }
     const response = await fetch('/api/dashboard/posts');
     if (!response.ok) {
       throw new Error('Failed to fetch posts');
@@ -302,6 +305,9 @@ function attachPostEvents() {
       const isFollowing = this.classList.contains('following');
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
       const url = isFollowing ? `/user/${userId}/unfollow` : `/user/${userId}/follow`;
+      const originalContent = this.innerHTML;
+      this.innerHTML = `<span class='spinner'></span>`;
+      this.disabled = true;
       fetch(url, {
         method: 'POST',
         headers: {
@@ -317,6 +323,8 @@ function attachPostEvents() {
         } catch (err) {
           const text = await response.text();
           showToast('Follow failed: ' + (text || 'Unknown error'), 'error');
+          this.innerHTML = originalContent;
+          this.disabled = false;
           return;
         }
         if (data.success) {
@@ -331,10 +339,14 @@ function attachPostEvents() {
           }
         } else {
           showToast(data.message || 'Follow failed', 'error');
+          this.innerHTML = originalContent;
         }
+        this.disabled = false;
       })
       .catch(error => {
         showToast('Follow failed: ' + error, 'error');
+        this.innerHTML = originalContent;
+        this.disabled = false;
       });
     });
   });

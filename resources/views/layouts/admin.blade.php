@@ -7,6 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/rich-text-editor.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/code-highlighting.css') }}">
     @stack('styles')
 </head>
 <body>
@@ -77,6 +79,29 @@
       window.s3BaseUrl = "{{ config('filesystems.disks.s3.url') ? rtrim(config('filesystems.disks.s3.url'), '/') . '/' : '' }}";
     </script>
     <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/rich-text-editor.js') }}"></script>
+    <script src="{{ asset('js/code-highlighting.js') }}"></script>
+    <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('prismjs/prism.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-python.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-javascript.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-php.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-java.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-cpp.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-csharp.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-ruby.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-go.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-rust.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-swift.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-kotlin.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-typescript.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-sql.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-bash.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-powershell.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-yaml.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-json.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-xml.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-markdown.js') }}"></script>
     @stack('scripts')
 </body>
 </html> 

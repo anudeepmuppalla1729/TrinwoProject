@@ -1,5 +1,5 @@
 <div id="askModal" class="modal-overlay">
-    <div class="modal-box" style="height: auto; min-height: 60vh; padding-bottom: 80px;">
+    <div class="modal-box" style="height: auto; min-height: 60vh;">
         <div class="modal-header">
             <span class="modal-title">Ask Question</span>
             <button class="close-btn">&times;</button>
@@ -59,7 +59,7 @@
 </div>
 
 <div id="insightModal" class="modal-overlay">
-    <div class="modal-box" style="height: auto; min-height: 60vh; padding-bottom: 80px;">
+    <div class="modal-box" style="height: auto; min-height: 60vh;">
         <div class="modal-header">
             <span class="modal-title">Create Blog Post</span>
             <button class="close-btn">&times;</button>

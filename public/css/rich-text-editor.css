@@ -1,0 +1,107 @@
+/* Rich Text Editor Styles */
+.tox-tinymce {
+    border-radius: 10px !important;
+    border: 1px solid #ddd !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    font-family: 'Poppins', sans-serif !important;
+    max-height: 400px !important;
+    overflow: hidden !important;
+}
+
+.tox .tox-toolbar {
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #ddd !important;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.tox .tox-toolbar__group {
+    padding: 5px !important;
+}
+
+.tox .tox-tbtn {
+    border-radius: 5px !important;
+    margin: 1px !important;
+}
+
+.tox .tox-tbtn:hover {
+    background-color: #e9ecef !important;
+}
+
+.tox .tox-tbtn--enabled {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+.tox .tox-edit-area {
+    border-radius: 0 0 10px 10px !important;
+}
+
+.tox .tox-edit-area__iframe {
+    border-radius: 0 0 10px 10px !important;
+}
+
+.tox .tox-statusbar {
+    border-radius: 0 0 10px 10px !important;
+    background: #f8f9fa !important;
+    border-top: 1px solid #ddd !important;
+}
+
+/* Custom styling for editor content */
+.tox .tox-edit-area__iframe {
+    background: white !important;
+}
+
+/* Focus state */
+.tox-tinymce:focus-within {
+    border-color: rgb(42, 60, 98) !important;
+    box-shadow: 0 0 0 2px rgba(201, 42, 224, 0.1) !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .tox .tox-toolbar__group {
+        padding: 3px !important;
+    }
+    
+    .tox .tox-tbtn {
+        padding: 4px 6px !important;
+        font-size: 12px !important;
+    }
+    
+    .tox-tinymce {
+        border-radius: 8px !important;
+    }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+    .tox-tinymce {
+        background: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+    
+    .tox .tox-toolbar {
+        background: #4a5568 !important;
+        border-color: #718096 !important;
+    }
+    
+    .tox .tox-statusbar {
+        background: #4a5568 !important;
+        border-color: #718096 !important;
+    }
+}
+
+/* Modal-specific TinyMCE styling */
+.modal-box .tox-tinymce {
+    max-height: 300px !important;
+    margin-bottom: 15px !important;
+}
+
+.modal-box .tox .tox-edit-area {
+    max-height: 250px !important;
+    overflow-y: auto !important;
+}
+
+.modal-box .tox .tox-edit-area__iframe {
+    max-height: 250px !important;
+} 

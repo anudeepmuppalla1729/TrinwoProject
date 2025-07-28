@@ -50,7 +50,7 @@
                         <img src="{{ Storage::disk('s3')->url($imgUrl) }}" alt="{{ $post->heading }}" style="max-width: 100%; border-radius: 8px;">
                     </div>
                 @endif
-                <p>{{ $post->details }}</p>
+                <div class="post-content">{!! $post->content ?? $post->details !!}</div>
                 <div class="post-meta">
                     <small>Posted on {{ $post->created_at->format('M d, Y') }}</small>
                 </div>
@@ -82,7 +82,7 @@
                 </div>
                 <hr>
                 <h2>{{ $question->title }}</h2>
-                <p>{{ $question->description }}</p>
+                <div class="post-content">{!! $question->description !!}</div>
                 <div class="post-meta">
                     <small>Asked on {{ $question->created_at->format('M d, Y') }}</small>
                 </div>

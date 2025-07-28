@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add the card to the questions list
                 questionsList.appendChild(card);
                 
-                // Animate the card in
+    
                 setTimeout(() => {
                     card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                     card.style.opacity = '1';
@@ -545,4 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
     }
+
+    // Show loader on initial page load
+    // Remove loader from DOMContentLoaded (do not set loader here)
 });

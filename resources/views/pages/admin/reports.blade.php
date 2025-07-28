@@ -186,7 +186,7 @@ class ReportsManager {
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Content</th>
+                        <th>Content Title</th>
                         <th>Type</th>
                         <th>Reported By</th>
                         <th>Date</th>

@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.mobile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/navbar-search.css') }}">
-   
+    <link rel="stylesheet" href="{{ asset('css/rich-text-editor.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/code-highlighting.css') }}">
     <link rel="stylesheet" href="{{ asset('css/flash.css') }}">
     <link rel="stylesheet" href="{{ asset('css/button-hover.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -30,6 +31,29 @@
     @stack('scripts')
     <script src="{{ asset('js/global.js') }}"></script>
     <script src="{{ asset('js/navbar-search.js') }}"></script>
+    <script src="{{ asset('js/rich-text-editor.js') }}"></script>
+    <script src="{{ asset('js/code-highlighting.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('prismjs/prism.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-python.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-javascript.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-php.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-java.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-cpp.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-csharp.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-ruby.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-go.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-rust.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-swift.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-kotlin.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-typescript.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-sql.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-bash.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-powershell.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-yaml.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-json.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-xml.js') }}"></script>
+    <script src="{{ asset('prismjs/components/prism-markdown.js') }}"></script>
 </body>
 </html>
