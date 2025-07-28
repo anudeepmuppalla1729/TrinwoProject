@@ -73,13 +73,15 @@ class ProfileController extends Controller
         $postsCount = $user->posts()->count();
         
         // Calculate total upvotes from answer_votes and post_votes tables
-        $answerUpvotes = \App\Models\AnswerVote::whereHas('answer', function($query) use ($user) {
-            $query->where('user_id', $user->user_id);
-        })->where('vote_type', 'upvote')->count();
+        $answerUpvotes = \App\Models\AnswerVote::join('answers', 'answer_votes.answer_id', '=', 'answers.answer_id')
+            ->where('answers.user_id', $user->user_id)
+            ->where('answer_votes.vote_type', 'upvote')
+            ->count();
         
-        $postUpvotes = \App\Models\PostVote::whereHas('post', function($query) use ($user) {
-            $query->where('user_id', $user->user_id);
-        })->where('vote_type', 'upvote')->count();
+        $postUpvotes = \App\Models\PostVote::join('posts', 'post_votes.post_id', '=', 'posts.post_id')
+            ->where('posts.user_id', $user->user_id)
+            ->where('post_votes.vote_type', 'upvote')
+            ->count();
         
         $totalUpvotes = $answerUpvotes + $postUpvotes;
 
@@ -303,13 +305,15 @@ class ProfileController extends Controller
         $postsCount = $user->posts()->count();
         
         // Calculate total upvotes from answer_votes and post_votes tables
-        $answerUpvotes = AnswerVote::whereHas('answer', function($query) use ($user) {
-            $query->where('user_id', $user->user_id);
-        })->where('vote_type', 'upvote')->count();
+        $answerUpvotes = AnswerVote::join('answers', 'answer_votes.answer_id', '=', 'answers.answer_id')
+            ->where('answers.user_id', $user->user_id)
+            ->where('answer_votes.vote_type', 'upvote')
+            ->count();
         
-        $postUpvotes = PostVote::whereHas('post', function($query) use ($user) {
-            $query->where('user_id', $user->user_id);
-        })->where('vote_type', 'upvote')->count();
+        $postUpvotes = PostVote::join('posts', 'post_votes.post_id', '=', 'posts.post_id')
+            ->where('posts.user_id', $user->user_id)
+            ->where('post_votes.vote_type', 'upvote')
+            ->count();
         
         $totalUpvotes = $answerUpvotes + $postUpvotes;
 
@@ -421,7 +425,10 @@ class ProfileController extends Controller
             'user_id' => $userId,
             'follower_user_id' => $currentUser->user_id
         ]);
-        
+
+        // Send new follower notification
+        \App\NotificationService::createFollowerNotification($userToFollow, $currentUser);
+
         return response()->json([
             'success' => true,
             'message' => 'You are now following ' . $userToFollow->name

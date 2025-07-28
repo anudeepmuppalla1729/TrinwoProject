@@ -2,7 +2,7 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/user_profile_posts.css') }}">
 @endpush
-@section('title', 'Posts - User Profile')
+@section('title', 'Posts - User Profile | Inqube')
 
 @section('main_content')
 <div class="top-bar">

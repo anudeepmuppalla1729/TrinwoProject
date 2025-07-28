@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Settings')
+@section('title', 'Settings | Inqube')
 
 @section('content')
 <div class="page-header">
@@ -18,7 +18,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Forum Name</label>
-                    <input type="text" name="forum_name" class="form-control" value="{{ $settings->forum_name ?? 'KnowledgeBase Q&A Forum' }}" required>
+                    <input type="text" name="forum_name" class="form-control" value="{{ $settings->forum_name ?? 'Inqube' }}" required>
                 </div>
                 <div class="form-group">
                     <label>Forum Description</label>

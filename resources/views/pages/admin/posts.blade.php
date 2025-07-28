@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Posts')
+@section('title', 'Posts | Inqube')
 
 @section('content')
 

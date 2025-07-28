@@ -60,7 +60,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Q&A Forum - Report Notification</h1>
+                        <h1>Inqube - Report Notification</h1>
     </div>
     
     <div class="content">
@@ -103,7 +103,7 @@
     </div>
     
     <div class="footer">
-        <p>&copy; {{ date('Y') }} Q&A Forum. All rights reserved.</p>
+                        <p>&copy; {{ date('Y') }} Inqube. All rights reserved.</p>
         <p>This is an automated message, please do not reply directly to this email.</p>
     </div>
 </body>

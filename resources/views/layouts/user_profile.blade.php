@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'User Profile - Q&A Forum')</title>
+    <title>@yield('title', 'User Profile - Inqube')</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/logo-only.png') }}">
     <script src="https://kit.fontawesome.com/447522222b.js" crossorigin="anonymous"></script>
     @stack('styles')
     <link rel="stylesheet" href="{{ asset('css/profile_sidebar.css') }}">

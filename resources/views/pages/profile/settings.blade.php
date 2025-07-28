@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('css/settings.css') }}">
 
 @endpush
-@section('title', 'Following - User Settings')
+@section('title', 'Settings | Inqube')
 
 @section('main_content')
 

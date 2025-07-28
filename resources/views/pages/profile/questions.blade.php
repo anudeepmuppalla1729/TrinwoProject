@@ -68,7 +68,7 @@
     }
 </style>
 @endpush
-@section('title', 'Questions - User Profile')
+@section('title', 'Questions - User Profile | Inqube')
 
 @php
 use Illuminate\Support\Str;

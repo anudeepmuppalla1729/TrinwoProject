@@ -1,5 +1,5 @@
 // Home page specific JavaScript
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Any home-specific functionality can go here
   // The modal and hamburger menu functionality has been moved to global.js
 });
@@ -44,9 +44,9 @@ function renderPosts() {
     console.error('Posts container element not found');
     return;
   }
-  
+
   postsContainer.innerHTML = '';
-  
+
   if (posts.length === 0) {
     postsContainer.innerHTML = `
       <div class="alert alert-info">
@@ -55,7 +55,7 @@ function renderPosts() {
     `;
     return;
   }
-  
+
   // Use the new blog-feed-section wrapper
   let html = '<div class="blog-feed-section">';
   const currentUserId = window.currentUserId;
@@ -159,17 +159,17 @@ function attachPostEvents() {
       opt.querySelector('.options-menu').classList.toggle('active');
     });
   });
-  
+
   // Upvote button
   document.querySelectorAll('.upvote-btn').forEach((btn) => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const postElement = this.closest('.post');
       const postId = postElement.dataset.id.replace('post-', '');
       const countSpan = this.querySelector('span');
-      
+
       // Get CSRF token
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      
+
       // Send AJAX request to upvote the post
       fetch(`/posts/${postId}/upvote`, {
         method: 'POST',
@@ -178,50 +178,50 @@ function attachPostEvents() {
           'X-CSRF-TOKEN': csrfToken
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Update the upvote count with the value from the server
-          countSpan.textContent = data.upvotes;
-          
-          // Check the userVote status from the response
-          if (data.userVote === 'upvote') {
-            // User upvoted
-            this.style.color = 'rgb(49, 60, 95)';
-            this.querySelector('i').classList.remove('bi-hand-thumbs-up');
-            this.querySelector('i').classList.add('bi-hand-thumbs-up-fill');
-            
-            // Reset downvote if it was active
-            const downvoteBtn = postElement.querySelector('.downvote-btn');
-            downvoteBtn.style.color = '#555';
-            downvoteBtn.querySelector('i').classList.remove('bi-hand-thumbs-down-fill');
-            downvoteBtn.querySelector('i').classList.add('bi-hand-thumbs-down');
-          } else if (data.userVote === null) {
-            // Vote was removed
-            this.style.color = '#555';
-            this.querySelector('i').classList.remove('bi-hand-thumbs-up-fill');
-            this.querySelector('i').classList.add('bi-hand-thumbs-up');
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update the upvote count with the value from the server
+            countSpan.textContent = data.upvotes;
+
+            // Check the userVote status from the response
+            if (data.userVote === 'upvote') {
+              // User upvoted
+              this.classList.add('voted');
+              this.querySelector('i').classList.remove('bi-hand-thumbs-up');
+              this.querySelector('i').classList.add('bi-hand-thumbs-up-fill');
+
+              // Reset downvote if it was active
+              const downvoteBtn = postElement.querySelector('.downvote-btn');
+              downvoteBtn.classList.remove('voted');
+              downvoteBtn.querySelector('i').classList.remove('bi-hand-thumbs-down-fill');
+              downvoteBtn.querySelector('i').classList.add('bi-hand-thumbs-down');
+            } else if (data.userVote === null) {
+              // Vote was removed
+              this.classList.remove('voted');
+              this.querySelector('i').classList.remove('bi-hand-thumbs-up-fill');
+              this.querySelector('i').classList.add('bi-hand-thumbs-up');
+            }
+          } else {
+            console.error('Failed to upvote post:', data.message);
           }
-        } else {
-          console.error('Failed to upvote post:', data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error upvoting post:', error);
-      });
+        })
+        .catch(error => {
+          console.error('Error upvoting post:', error);
+        });
     });
   });
-  
+
   // Downvote button
   document.querySelectorAll('.downvote-btn').forEach((btn) => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const postElement = this.closest('.post');
       const postId = postElement.dataset.id.replace('post-', '');
       const countSpan = this.querySelector('span');
-      
+
       // Get CSRF token
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      
+
       // Send AJAX request to downvote the post
       fetch(`/posts/${postId}/downvote`, {
         method: 'POST',
@@ -230,43 +230,43 @@ function attachPostEvents() {
           'X-CSRF-TOKEN': csrfToken
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Update the downvote count with the value from the server
-          countSpan.textContent = data.downvotes;
-          
-          // Check the userVote status from the response
-          if (data.userVote === 'downvote') {
-            // User downvoted
-            this.style.color = '#dc3545';
-            this.querySelector('i').classList.remove('bi-hand-thumbs-down');
-            this.querySelector('i').classList.add('bi-hand-thumbs-down-fill');
-            
-            // Reset upvote if it was active
-            const upvoteBtn = postElement.querySelector('.upvote-btn');
-            upvoteBtn.style.color = '#555';
-            upvoteBtn.querySelector('i').classList.remove('bi-hand-thumbs-up-fill');
-            upvoteBtn.querySelector('i').classList.add('bi-hand-thumbs-up');
-          } else if (data.userVote === null) {
-            // Vote was removed
-            this.style.color = '#555';
-            this.querySelector('i').classList.remove('bi-hand-thumbs-down-fill');
-            this.querySelector('i').classList.add('bi-hand-thumbs-down');
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update the downvote count with the value from the server
+            countSpan.textContent = data.downvotes;
+
+            // Check the userVote status from the response
+            if (data.userVote === 'downvote') {
+              // User downvoted
+              this.classList.add('voted');
+              this.querySelector('i').classList.remove('bi-hand-thumbs-down');
+              this.querySelector('i').classList.add('bi-hand-thumbs-down-fill');
+
+              // Reset upvote if it was active
+              const upvoteBtn = postElement.querySelector('.upvote-btn');
+              upvoteBtn.classList.remove('voted');
+              upvoteBtn.querySelector('i').classList.remove('bi-hand-thumbs-up-fill');
+              upvoteBtn.querySelector('i').classList.add('bi-hand-thumbs-up');
+            } else if (data.userVote === null) {
+              // Vote was removed
+              this.classList.remove('voted');
+              this.querySelector('i').classList.remove('bi-hand-thumbs-down-fill');
+              this.querySelector('i').classList.add('bi-hand-thumbs-down');
+            }
+          } else {
+            console.error('Failed to downvote post:', data.message);
           }
-        } else {
-          console.error('Failed to downvote post:', data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error downvoting post:', error);
-      });
+        })
+        .catch(error => {
+          console.error('Error downvoting post:', error);
+        });
     });
   });
-  
+
   // Bookmark button AJAX
   document.querySelectorAll('.bookmark-btn').forEach((btn) => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       const postId = this.getAttribute('data-post-id');
@@ -279,26 +279,26 @@ function attachPostEvents() {
           'Accept': 'application/json'
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          if (data.isBookmarked) {
-            this.classList.add('bookmarked');
-            this.innerHTML = '<i class="fas fa-bookmark"></i>';
-            this.style.color = 'rgb(42, 60, 98)';
-          } else {
-            this.classList.remove('bookmarked');
-            this.innerHTML = '<i class="far fa-bookmark"></i>';
-            this.style.color = '';
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (data.isBookmarked) {
+              this.classList.add('bookmarked');
+              this.innerHTML = '<i class="fas fa-bookmark"></i>';
+              this.style.color = 'rgb(42, 60, 98)';
+            } else {
+              this.classList.remove('bookmarked');
+              this.innerHTML = '<i class="far fa-bookmark"></i>';
+              this.style.color = '';
+            }
           }
-        }
-      });
+        });
     });
   });
-  
+
   // Follow button AJAX
   document.querySelectorAll('.follow-btn').forEach((btn) => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       const userId = this.getAttribute('data-user-id');
@@ -316,38 +316,38 @@ function attachPostEvents() {
         },
         body: JSON.stringify({})
       })
-      .then(async response => {
-        let data;
-        try {
-          data = await response.clone().json();
-        } catch (err) {
-          const text = await response.text();
-          showToast('Follow failed: ' + (text || 'Unknown error'), 'error');
+        .then(async response => {
+          let data;
+          try {
+            data = await response.clone().json();
+          } catch (err) {
+            const text = await response.text();
+            showToast('Follow failed: ' + (text || 'Unknown error'), 'error');
+            this.innerHTML = originalContent;
+            this.disabled = false;
+            return;
+          }
+          if (data.success) {
+            if (!isFollowing) {
+              this.textContent = 'Following';
+              this.classList.add('following');
+              showToast(data.message || 'Now following', 'success');
+            } else {
+              this.textContent = 'Follow';
+              this.classList.remove('following');
+              showToast(data.message || 'Unfollowed', 'success');
+            }
+          } else {
+            showToast(data.message || 'Follow failed', 'error');
+            this.innerHTML = originalContent;
+          }
+          this.disabled = false;
+        })
+        .catch(error => {
+          showToast('Follow failed: ' + error, 'error');
           this.innerHTML = originalContent;
           this.disabled = false;
-          return;
-        }
-        if (data.success) {
-          if (!isFollowing) {
-            this.textContent = 'Following';
-            this.classList.add('following');
-            showToast(data.message || 'Now following', 'success');
-          } else {
-            this.textContent = 'Follow';
-            this.classList.remove('following');
-            showToast(data.message || 'Unfollowed', 'success');
-          }
-        } else {
-          showToast(data.message || 'Follow failed', 'error');
-          this.innerHTML = originalContent;
-        }
-        this.disabled = false;
-      })
-      .catch(error => {
-        showToast('Follow failed: ' + error, 'error');
-        this.innerHTML = originalContent;
-        this.disabled = false;
-      });
+        });
     });
   });
 
@@ -358,10 +358,10 @@ function attachPostEvents() {
 
   // Comment count button - toggle comments visibility
   document.querySelectorAll('.comment-count-btn').forEach((btn) => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const postElement = this.closest('.post');
       const commentsContainer = postElement.querySelector('.comments-container');
-      
+
       // Toggle comments visibility
       if (commentsContainer.style.display === 'none' || commentsContainer.style.display === '') {
         commentsContainer.style.display = 'block';
@@ -373,11 +373,11 @@ function attachPostEvents() {
 
   // Delete comment buttons
   document.querySelectorAll('.delete-comment-btn').forEach((btn) => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const commentId = this.dataset.commentId;
       const commentElement = this.closest('.comment-item');
       const postElement = this.closest('.post');
-      
+
       if (confirm('Are you sure you want to delete this comment?')) {
         deleteComment(commentId, commentElement, postElement);
       }
@@ -386,19 +386,19 @@ function attachPostEvents() {
 
   // Comment buttons
   document.querySelectorAll('.comment-btn').forEach((btn) => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const postElement = this.closest('.post');
       const postId = postElement.dataset.id.replace('post-', '');
       const commentsContainer = postElement.querySelector('.comments-container');
-      
+
       // Show comments container when comment button is clicked
       commentsContainer.style.display = 'block';
-      
+
       // Check if comment form already exists
       if (postElement.querySelector('.comment-form')) {
         return;
       }
-      
+
       // Create comment form
       const commentForm = document.createElement('div');
       commentForm.className = 'comment-form';
@@ -406,18 +406,18 @@ function attachPostEvents() {
         <textarea placeholder="Write your comment here..." rows="3" style="width: 100%; padding: 8px; margin-top: 10px; border-radius: 4px; border: 1px solid #ccc;"></textarea>
         <button class="submit-comment" style="background-color: rgb(49, 60, 95); color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-top: 5px; cursor: pointer;">Submit Comment</button>
       `;
-      
+
       // Insert form after post actions
       postElement.querySelector('.post-actions').insertAdjacentElement('afterend', commentForm);
-      
+
       // Add event listener to submit button
-      commentForm.querySelector('.submit-comment').addEventListener('click', function() {
+      commentForm.querySelector('.submit-comment').addEventListener('click', function () {
         const commentText = commentForm.querySelector('textarea').value.trim();
         if (!commentText) {
           showToast('Please enter a comment', 'error');
           return;
         }
-        
+
         submitComment(postId, commentText, postElement, commentForm);
       });
     });
@@ -425,7 +425,7 @@ function attachPostEvents() {
 
   // Report button logic
   document.querySelectorAll('.report-btn').forEach((btn) => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', function (e) {
       e.preventDefault();
       const postId = btn.getAttribute('data-post-id');
       // Open modal
@@ -448,18 +448,18 @@ function attachPostEvents() {
   if (reportModal) {
     const closeModalBtn = reportModal.querySelector('.close-modal');
     if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', function() {
+      closeModalBtn.addEventListener('click', function () {
         reportModal.style.display = 'none';
       });
     }
     // Close on outside click
-    reportModal.addEventListener('click', function(e) {
+    reportModal.addEventListener('click', function (e) {
       if (e.target === reportModal) reportModal.style.display = 'none';
     });
     // Handle form submit
     const reportForm = document.getElementById('reportForm');
     if (reportForm) {
-      reportForm.addEventListener('submit', function(e) {
+      reportForm.addEventListener('submit', function (e) {
         const reasonSelect = document.getElementById('reasonSelect');
         const detailsInput = document.getElementById('detailsInput');
         const reportError = document.getElementById('reportError');
@@ -486,43 +486,43 @@ function attachPostEvents() {
             details: detailsInput.value
           })
         })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            reportModal.style.display = 'none';
-            
-            // Create and show success notification
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success';
-            alertDiv.textContent = 'Report submitted successfully!';
-            alertDiv.style.padding = '10px 15px';
-            alertDiv.style.marginBottom = '15px';
-            alertDiv.style.borderRadius = '5px';
-            alertDiv.style.backgroundColor = '#d4edda';
-            alertDiv.style.color = '#155724';
-            alertDiv.style.border = '1px solid #c3e6cb';
-            alertDiv.style.position = 'fixed';
-            alertDiv.style.top = '20px';
-            alertDiv.style.left = '50%';
-            alertDiv.style.transform = 'translateX(-50%)';
-            alertDiv.style.zIndex = '9999';
-            alertDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            
-            document.body.appendChild(alertDiv);
-            
-            // Remove alert after 2 seconds
-            setTimeout(() => {
-              alertDiv.remove();
-            }, 2000);
-          } else {
-            reportError.textContent = data.message || 'Failed to submit report.';
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              reportModal.style.display = 'none';
+
+              // Create and show success notification
+              const alertDiv = document.createElement('div');
+              alertDiv.className = 'alert alert-success';
+              alertDiv.textContent = 'Report submitted successfully!';
+              alertDiv.style.padding = '10px 15px';
+              alertDiv.style.marginBottom = '15px';
+              alertDiv.style.borderRadius = '5px';
+              alertDiv.style.backgroundColor = '#d4edda';
+              alertDiv.style.color = '#155724';
+              alertDiv.style.border = '1px solid #c3e6cb';
+              alertDiv.style.position = 'fixed';
+              alertDiv.style.top = '20px';
+              alertDiv.style.left = '50%';
+              alertDiv.style.transform = 'translateX(-50%)';
+              alertDiv.style.zIndex = '9999';
+              alertDiv.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+
+              document.body.appendChild(alertDiv);
+
+              // Remove alert after 2 seconds
+              setTimeout(() => {
+                alertDiv.remove();
+              }, 2000);
+            } else {
+              reportError.textContent = data.message || 'Failed to submit report.';
+              reportError.style.display = 'block';
+            }
+          })
+          .catch(() => {
+            reportError.textContent = 'Failed to submit report.';
             reportError.style.display = 'block';
-          }
-        })
-        .catch(() => {
-          reportError.textContent = 'Failed to submit report.';
-          reportError.style.display = 'block';
-        });
+          });
       });
     }
   }
@@ -535,7 +535,7 @@ async function submitComment(postId, commentText, postElement, commentForm) {
   try {
     // Get CSRF token from meta tag
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
+
     const response = await fetch(`/posts/${postId}/comments`, {
       method: 'POST',
       headers: {
@@ -546,38 +546,38 @@ async function submitComment(postId, commentText, postElement, commentForm) {
         comment_text: commentText
       })
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to submit comment');
     }
-    
+
     const data = await response.json();
-    
+
     if (data.success) {
       // Get the comments container
       const commentsContainer = postElement.querySelector('.comments-container');
-      
+
       // Make sure the comments container is visible
       commentsContainer.style.display = 'block';
-      
+
       // Remove the "No comments yet" message if it exists
       const noCommentsMsg = commentsContainer.querySelector('p[style*="text-align: center"]');
       if (noCommentsMsg) {
         noCommentsMsg.remove();
       }
-      
+
       // Create the new comment element with styling
       const newComment = document.createElement('div');
       newComment.className = 'comment-item';
       newComment.dataset.commentId = data.comment.id;
       newComment.style.cssText = 'padding: 10px; margin-bottom: 10px; border: 1px solid #e0e0e0; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
-      
+
       newComment.innerHTML = `
         <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 5px; justify-content: space-between;">
           <div style="display: flex; align-items: center;">
             ${data.comment.avatar && data.comment.avatar.length > 0
-              ? `<img src="${data.comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
-              : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`}
+          ? `<img src="${data.comment.avatar}" alt="Profile" style="width:1.5rem;height:1.5rem;border-radius:50%;object-fit:cover;margin-right:10px;">`
+          : `<i class="bi bi-person-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>`}
             <div>
               <strong style="color: rgb(49, 60, 95);">${data.comment.user}</strong>
               <small style="display: block; color: #777; font-size: 0.8rem;">Posted on ${data.comment.created_at}</small>
@@ -587,15 +587,15 @@ async function submitComment(postId, commentText, postElement, commentForm) {
         </div>
         <div class="comment-text" style="max-height: 100px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word;">${data.comment.text}</div>
       `;
-      
+
       // Add the new comment to the comments container
       commentsContainer.appendChild(newComment);
-      
+
       // Update comment count
       const commentCountBtn = postElement.querySelector('.comment-count-btn');
       const currentCount = parseInt(commentCountBtn.querySelector('span').textContent || 0);
       commentCountBtn.querySelector('span').textContent = currentCount + 1;
-      
+
       // Remove the comment form
       commentForm.remove();
     } else {
@@ -618,7 +618,7 @@ async function deleteComment(commentId, commentElement, postElement) {
   try {
     // Get CSRF token from meta tag
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
+
     const response = await fetch(`/comments/${commentId}`, {
       method: 'DELETE',
       headers: {
@@ -626,22 +626,22 @@ async function deleteComment(commentId, commentElement, postElement) {
         'X-CSRF-TOKEN': csrfToken
       }
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to delete comment');
     }
-    
+
     const data = await response.json();
-    
+
     if (data.success) {
       // Remove the comment element from the DOM
       commentElement.remove();
-      
+
       // Update comment count
       const commentCountBtn = postElement.querySelector('.comment-count-btn');
       const currentCount = parseInt(commentCountBtn.querySelector('span').textContent || 0);
       commentCountBtn.querySelector('span').textContent = Math.max(0, currentCount - 1);
-      
+
       // If no comments left, add the "No comments yet" message
       const commentsContainer = postElement.querySelector('.comments-container');
       if (commentsContainer.querySelectorAll('.comment-item').length === 0) {
@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const newsFeedButton = document.querySelector('.dashboard_items .menu a'); // First <a> in .menu is News Feed
 
-newsFeedButton.addEventListener('click', function(e) {
+newsFeedButton.addEventListener('click', function (e) {
   e.preventDefault();
   renderPosts();
 });

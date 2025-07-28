@@ -34,7 +34,7 @@
 </style>
 @endpush
 
-@section('title', 'Answers - User Profile')
+@section('title', 'Answers - User Profile | Inqube')
 
 @section('main_content')
 <div class="yans">

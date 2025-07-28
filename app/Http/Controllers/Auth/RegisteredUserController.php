@@ -42,6 +42,9 @@ class RegisteredUserController extends Controller
             'last_login_at' => now(),
         ]);
 
+        // Send welcome notification
+        \App\NotificationService::createWelcomeNotification($user);
+
         event(new Registered($user));
 
         Auth::login($user);

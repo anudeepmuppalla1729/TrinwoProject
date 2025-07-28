@@ -27,6 +27,11 @@ class CommentController extends Controller
             'comment_text' => $request->comment_text,
         ]);
 
+        // Send comment notification to post author (if not self)
+        if ($post->user_id !== Auth::id()) {
+            \App\NotificationService::createCommentNotification($post->user, Auth::user(), $post, 'post', $comment);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Comment added successfully!',

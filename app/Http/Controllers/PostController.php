@@ -93,8 +93,12 @@ class PostController extends Controller
         $post->authorInitials = collect(explode(' ', $post->user->name))->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
         $post->isFollowing = $user->following()->where('user_id', $post->user->user_id)->exists();
 
+        // Get user's vote status
+        $userVote = $post->getUserVote($user->user_id);
+        $userVoteType = $userVote ? $userVote->vote_type : null;
+
         // Pass all necessary data to the view
-        return view('pages.posts.show', compact('post'));
+        return view('pages.posts.show', compact('post', 'userVoteType'));
     }
 
     /**
@@ -294,8 +298,13 @@ class PostController extends Controller
             'user_id' => $userId,
             'vote_type' => 'upvote'
         ]);
-        
         $post->increment('upvotes');
+
+        // Send upvote notification and check milestones
+        if ($post->user_id !== $userId) {
+            \App\NotificationService::createUpvoteNotification($post->user, Auth::user(), $post, 'post');
+            \App\NotificationService::checkAndCreateMilestones($post->user);
+        }
         
         return response()->json([
             'success' => true,

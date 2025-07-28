@@ -130,6 +130,9 @@ class QuestionController extends Controller
                 }
             }
 
+            // Check and create milestone notifications
+            \App\NotificationService::checkAndCreateMilestones(Auth::user());
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,

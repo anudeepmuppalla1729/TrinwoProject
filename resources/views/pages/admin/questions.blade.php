@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Questions')
+@section('title', 'Questions | Inqube')
 
 @section('content')
 <div class="header">

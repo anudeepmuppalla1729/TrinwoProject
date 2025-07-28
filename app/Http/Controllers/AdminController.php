@@ -334,6 +334,14 @@ class AdminController extends Controller
         if ($status === 'resolved') {
             try {
                 Mail::to($report->reporter->email)->send(new ReportNotification($report, 'resolved', $type));
+                // Send report action notification to content author
+                if ($type === 'post' && $report->post && $report->post->user) {
+                    \App\NotificationService::createReportActionNotification($report->post->user, 'post', $report, 'resolved');
+                } elseif ($type === 'question' && $report->question && $report->question->user) {
+                    \App\NotificationService::createReportActionNotification($report->question->user, 'question', $report, 'resolved');
+                } elseif ($type === 'answer' && $report->answer && $report->answer->user) {
+                    \App\NotificationService::createReportActionNotification($report->answer->user, 'answer', $report, 'resolved');
+                }
             } catch (\Exception $e) {
                 // Log email error but don't fail the request
                 \Log::error('Failed to send report notification email: ' . $e->getMessage());
