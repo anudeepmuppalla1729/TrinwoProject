@@ -118,7 +118,7 @@ class Notification extends Model
             'type' => self::TYPE_WELCOME,
             'title' => 'Welcome to Inqube!',
             'message' => 'Welcome to Inqube! We\'re excited to have you join our community. Start exploring questions, sharing knowledge, and connecting with other users.',
-            'link' => route('dashboard')
+            'link' => route('dashboard', false)
         ]);
     }
 
@@ -131,7 +131,7 @@ class Notification extends Model
             'type' => self::TYPE_FOLLOWER,
             'title' => 'New Follower',
             'message' => $follower->name . ' started following you',
-            'link' => route('user.profile', $follower->user_id),
+            'link' => route('user.profile', $follower->user_id, false),
             'data' => [
                 'follower_name' => $follower->name,
                 'follower_username' => $follower->username,
@@ -172,7 +172,7 @@ class Notification extends Model
             'type' => self::TYPE_UPVOTE,
             'title' => 'New Upvote',
             'message' => $sender->name . ' upvoted your ' . $contentType,
-            'link' => $contentType === 'question' ? route('question.show', $contentId) : route('posts.show', $contentId),
+            'link' => $contentType === 'question' ? route('question.show', $contentId, false) : route('posts.show', $contentId, false),
             'data' => [
                 'content_type' => $contentType,
                 'content_id' => $contentId,
@@ -192,7 +192,7 @@ class Notification extends Model
             'type' => self::TYPE_COMMENT,
             'title' => 'New Comment',
             'message' => $sender->name . ' commented on your ' . $contentType,
-            'link' => $contentType === 'question' ? route('question.show', $contentId) : route('posts.show', $contentId),
+            'link' => $contentType === 'question' ? route('question.show', $contentId, false) : route('posts.show', $contentId, false),
             'data' => [
                 'content_type' => $contentType,
                 'content_id' => $contentId,
@@ -213,7 +213,7 @@ class Notification extends Model
             'type' => self::TYPE_REPLY,
             'title' => 'New Reply',
             'message' => $sender->name . ' replied to your comment',
-            'link' => $contentType === 'question' ? route('question.show', $contentId) : route('posts.show', $contentId),
+            'link' => $contentType === 'question' ? route('question.show', $contentId, false) : route('posts.show', $contentId, false),
             'data' => [
                 'content_type' => $contentType,
                 'content_id' => $contentId,
