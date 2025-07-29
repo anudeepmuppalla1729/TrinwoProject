@@ -39,6 +39,9 @@ class AnswerController extends Controller
             'content' => $request->content,
         ]);
 
+        // Send notification to question owner
+        \App\NotificationService::handleAnswer($question, $answer, Auth::user());
+
         // Check and create milestone notifications
         \App\NotificationService::checkAndCreateMilestones(Auth::user());
         

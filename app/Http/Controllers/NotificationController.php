@@ -67,7 +67,7 @@ class NotificationController extends Controller
                     'sender' => $notification->sender ? [
                         'name' => $notification->sender->name,
                         'username' => $notification->sender->username,
-                        'avatar' => $notification->sender->avatar
+                        'avatar' => $notification->sender->avatar_url
                     ] : null,
                     'data' => $notification->data
                 ];
