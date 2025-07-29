@@ -195,6 +195,12 @@ class QuestionController extends Controller
         
         // Format the answers data
         $answers = $questionModel->answers->map(function($answer) {
+            $userVote = null;
+            if (Auth::check()) {
+                $userVote = $answer->getUserVote(Auth::id());
+                $userVote = $userVote ? $userVote->vote_type : null;
+            }
+            
             return [
                 'id' => $answer->answer_id,
                 'content' => $answer->content,
@@ -204,7 +210,8 @@ class QuestionController extends Controller
                 'created_at' => $answer->created_at->diffForHumans(),
                 'upvotes' => $answer->getUpvotesCount(),
                 'downvotes' => $answer->getDownvotesCount(),
-                'is_accepted' => $answer->isAccepted()
+                'is_accepted' => $answer->isAccepted(),
+                'user_vote' => $userVote
             ];
         });
         
@@ -452,23 +459,38 @@ class QuestionController extends Controller
         if (!$user) {
             return back()->with('error', 'You must be logged in to report.');
         }
+        
         $request->validate([
             'reason' => 'required|string|max:255',
         ]);
-        $userId = AUTH::id();
+        
+        $question = Question::findOrFail($id);
+        
+        // Prevent users from reporting their own questions
+        if ($question->user_id === $user->user_id) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'You cannot report your own question.'], 403);
+            }
+            return back()->with('error', 'You cannot report your own question.');
+        }
+        
+        $userId = $user->user_id;
         $questionId = $id;
+        
         // Prevent duplicate reports by same user
-        $existing = \App\Models\QuestionReport::where('reporter_id', $userId)->where('question_id', $questionId)->first();
+        $existing = QuestionReport::where('reporter_id', $userId)->where('question_id', $questionId)->first();
         if ($existing) {
             $msg = 'You have already reported this question.';
             if ($request->expectsJson()) return response()->json(['success' => false, 'message' => $msg], 409);
             return back()->with('error', $msg);
         }
-        \App\Models\QuestionReport::create([
+        
+        QuestionReport::create([
             'reporter_id' => $userId,
             'question_id' => $questionId,
             'reason' => $request->reason,
         ]);
+        
         $msg = 'Question reported successfully.';
         if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
         return back()->with('success', $msg);

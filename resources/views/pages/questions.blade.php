@@ -442,12 +442,14 @@
                             <span>{{ $question['answers'] }} answers</span>
                                 </div>
                         @auth
-                        <form method="POST" action="{{ route('questions.report', ['id' => $question['id']]) }}" class="d-inline report-form">
-                            @csrf
-                            <button type="button" class="action-btn report-btn" data-type="question" data-id="{{ $question['id'] }}">
-                                <i class="fas fa-flag"></i> Report
-                            </button>
-                        </form>
+                            @if(Auth::id() != $question['user_id'])
+                                <form method="POST" action="{{ route('questions.report', ['id' => $question['id']]) }}" class="d-inline report-form">
+                                    @csrf
+                                    <button type="button" class="action-btn report-btn" data-type="question" data-id="{{ $question['id'] }}">
+                                        <i class="fas fa-flag"></i> Report
+                                    </button>
+                                </form>
+                            @endif
                         @endauth
                     </div>
                     

@@ -181,8 +181,16 @@
         color: #2ecc71;
     }
     
+    .upvote-btn.voted {
+        color: #28a745 !important;
+    }
+    
     .downvote-btn:hover {
         color: #e74c3c;
+    }
+    
+    .downvote-btn.voted {
+        color: #dc3545 !important;
     }
     
     .report-btn:hover {
@@ -504,6 +512,7 @@
                 <span>Share</span>
             </button>
             @auth
+            @if(Auth::check() && Auth::id() != $question['user_id'])
             <form method="POST" action="{{ route('questions.report', ['id' => $question['id']]) }}" class="d-inline report-form">
                 @csrf
                 <button type="button" class="action-btn report-btn" data-type="question" data-id="{{ $question['id'] }}">
@@ -511,6 +520,7 @@
                     <span>Report</span>
                 </button>
             </form>
+            @endif
             
             @if(Auth::check() && Auth::id() == $question['user_id'])
                 @if($question['is_closed'])
@@ -572,27 +582,25 @@
             </div>
             <div class="answer-content">{!! $answer['content'] !!}</div>
             <div class="answer-actions">
-                <form action="{{ route('answers.upvote', $answer['id']) }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="action-btn upvote-btn">
-                        <i class="bi bi-arrow-up-circle"></i>
-                        <span>{{ $answer['upvotes'] }}</span>
-                    </button>
-                </form>
-                <form action="{{ route('answers.downvote', $answer['id']) }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="action-btn downvote-btn">
-                        <i class="bi bi-arrow-down-circle"></i>
-                        <span>{{ $answer['downvotes'] }}</span>
-                    </button>
-                </form>
-                <form method="POST" action="{{ route('answers.report', ['id' => $answer['id']]) }}" class="d-inline report-form">
-                    @csrf
-                    <button type="button" class="action-btn report-btn" data-type="answer" data-id="{{ $answer['id'] }}">
-                        <i class="fas fa-flag"></i>
-                        <span>Report</span>
-                    </button>
-                </form>
+                <button type="button" class="action-btn upvote-btn answer-vote-btn{{ ($answer['user_vote'] === 'upvote') ? ' voted' : '' }}" data-answer-id="{{ $answer['id'] }}" data-vote-type="{{ $answer['user_vote'] ?? null }}">
+                    <i class="bi bi-arrow-up-circle"></i>
+                    <span class="upvote-count">{{ $answer['upvotes'] }}</span>
+                </button>
+                <button type="button" class="action-btn downvote-btn answer-vote-btn{{ ($answer['user_vote'] === 'downvote') ? ' voted' : '' }}" data-answer-id="{{ $answer['id'] }}" data-vote-type="{{ $answer['user_vote'] ?? null }}">
+                    <i class="bi bi-arrow-down-circle"></i>
+                    <span class="downvote-count">{{ $answer['downvotes'] }}</span>
+                </button>
+                @auth
+                    @if(Auth::id() != $answer['user_id'])
+                        <form method="POST" action="{{ route('answers.report', ['id' => $answer['id']]) }}" class="d-inline report-form">
+                            @csrf
+                            <button type="button" class="action-btn report-btn" data-type="answer" data-id="{{ $answer['id'] }}">
+                                <i class="fas fa-flag"></i>
+                                <span>Report</span>
+                            </button>
+                        </form>
+                    @endif
+                @endauth
                 @auth
                     @if(auth()->id() == $question['user_id'] && !$answer['is_accepted'])
                         <form action="{{ route('answers.accept', $answer['id']) }}" method="POST" class="d-inline accept-answer-form">
@@ -663,7 +671,43 @@
 
 @push('scripts')
 <script src="{{ asset('js/question.js') }}"></script>
+<script src="{{ asset('js/global.js') }}"></script>
 <script>
+    // Fallback showToast function if not available
+    if (typeof showToast !== 'function') {
+        function showToast(message, type = 'info') {
+            // Create a simple toast notification
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 6px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+            
+            if (type === 'success') {
+                toast.style.backgroundColor = '#28a745';
+            } else if (type === 'error') {
+                toast.style.backgroundColor = '#dc3545';
+            } else {
+                toast.style.backgroundColor = '#17a2b8';
+            }
+            
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         let reportModal = document.getElementById('reportModal');
         let reportForm = document.getElementById('reportForm');
@@ -755,6 +799,67 @@
                 });
             });
         }
+        
+        // Answer vote functionality with AJAX
+        document.querySelectorAll('.answer-vote-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const answerId = this.getAttribute('data-answer-id');
+                const isUpvote = this.classList.contains('upvote-btn');
+                const url = isUpvote ? `/answers/${answerId}/upvote` : `/answers/${answerId}/downvote`;
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Find the answer card
+                        const answerCard = this.closest('.answer-card');
+                        const upvoteBtn = answerCard.querySelector('.upvote-btn');
+                        const downvoteBtn = answerCard.querySelector('.downvote-btn');
+                        
+                        // Update vote counts
+                        const upvoteCountElement = answerCard.querySelector('.upvote-count');
+                        const downvoteCountElement = answerCard.querySelector('.downvote-count');
+                        
+                        if (upvoteCountElement) {
+                            upvoteCountElement.textContent = data.upvotes;
+                        }
+                        
+                        if (downvoteCountElement) {
+                            downvoteCountElement.textContent = data.downvotes;
+                        }
+                        
+                        // Update button states
+                        upvoteBtn.classList.remove('voted');
+                        downvoteBtn.classList.remove('voted');
+                        
+                        if (data.userVote === 'upvote') {
+                            upvoteBtn.classList.add('voted');
+                        } else if (data.userVote === 'downvote') {
+                            downvoteBtn.classList.add('voted');
+                        }
+                        
+                        // Show success message
+                        showToast(data.message, 'success');
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('An error occurred while voting', 'error');
+                });
+            });
+        });
     });
 </script>
 @endpush

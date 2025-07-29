@@ -470,23 +470,38 @@ class PostController extends Controller
         if (!$user) {
             return back()->with('error', 'You must be logged in to report.');
         }
+        
         $request->validate([
             'reason' => 'required|string|max:255',
         ]);
-        $userId = AUTH::id();
+        
+        $post = Post::findOrFail($id);
+        
+        // Prevent users from reporting their own posts
+        if ($post->user_id === $user->user_id) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'You cannot report your own post.'], 403);
+            }
+            return back()->with('error', 'You cannot report your own post.');
+        }
+        
+        $userId = $user->user_id;
         $postId = $id;
+        
         // Prevent duplicate reports by same user
-        $existing = \App\Models\PostReport::where('reporter_id', $userId)->where('post_id', $postId)->first();
+        $existing = PostReport::where('reporter_id', $userId)->where('post_id', $postId)->first();
         if ($existing) {
             $msg = 'You have already reported this post.';
             if ($request->expectsJson()) return response()->json(['success' => false, 'message' => $msg], 409);
             return back()->with('error', $msg);
         }
-        \App\Models\PostReport::create([
+        
+        PostReport::create([
             'reporter_id' => $userId,
             'post_id' => $postId,
             'reason' => $request->reason,
         ]);
+        
         $msg = 'Post reported successfully.';
         if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
         return back()->with('success', $msg);
