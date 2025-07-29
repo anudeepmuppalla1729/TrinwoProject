@@ -93,6 +93,10 @@ function renderPosts() {
         ${followBtnHtml}
       </div>
     `;
+
+    // Check if current user is not the post author
+    const isOwnPost = currentUserId && String(post.user_id) === String(currentUserId);
+
     html += `
       <div class="blog-post-card" data-post-id="${post.post_id}">
         ${coverImageHtml}
@@ -108,7 +112,7 @@ function renderPosts() {
             <span><i class="fas fa-eye"></i> ${post.views || 0} views</span>
             <span><i class="fas fa-clock"></i> ${minToRead} min</span>
             <button class="bookmark-btn ${bookmarkBtnClass}" data-post-id="${post.post_id}" title="Bookmark" style="background:none;border:none;outline:none;cursor:pointer;">${bookmarkIcon}</button>
-            <button class="report-btn ml-2" data-post-id="${post.post_id}" title="Report this post" style="background:none;border:none;outline:none;cursor:pointer;"><i class="fas fa-flag"></i></button>
+            ${!isOwnPost ? `<button class="report-btn ml-2" data-post-id="${post.post_id}" title="Report this post" style="background:none;border:none;outline:none;cursor:pointer;"><i class="fas fa-flag"></i></button>` : ''}
           </div>
         </div>
       </div>
@@ -147,7 +151,9 @@ blogCardBookmarkStyle.textContent = `.bookmark-btn.bookmarked { color: rgb(42, 6
 document.head.appendChild(blogCardBookmarkStyle);
 
 // Fetch posts when page loads
-fetchPosts();
+document.addEventListener('DOMContentLoaded', function () {
+  fetchPosts();
+});
 
 // Attach events for options menus, close buttons, and comment functionality
 function attachPostEvents() {

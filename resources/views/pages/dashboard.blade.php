@@ -339,58 +339,7 @@
         @endauth
     </div>
     <div class="blog-feed-section" id="postsContainer">
-        @foreach($blogPosts ?? [] as $post)
-            <div class="blog-post-card">
-                @if($post->cover_image)
-                    <div class="blog-post-cover-wrapper">
-                        <img src="{{ Str::startsWith($post->cover_image, ['http://', 'https://']) ? $post->cover_image : Storage::disk('s3')->url($post->cover_image) }}" alt="Cover Image" class="blog-post-cover">
-                    </div>
-                @endif
-                <div class="blog-post-content">
-                    <div class="author-row">
-                        @php
-                            $avatarUrl = $post->user->avatar_url;
-                            $authorName = $post->user->name;
-                            $initials = collect(explode(' ', $authorName))->map(fn($w) => strtoupper($w[0] ?? ''))->join('');
-                            $isCurrentUser = Auth::check() && Auth::id() == $post->user->user_id;
-                        @endphp
-                        @if($avatarUrl)
-                            <img src="{{ $avatarUrl }}" class="author-avatar" alt="{{ $authorName }}">
-                        @else
-                            <div class="author-avatar" style="display:flex;align-items:center;justify-content:center;background:#e0e0e0;color:#2a3c62;font-weight:700;font-size:1.1rem;">{{ $initials }}</div>
-                        @endif
-                        <a href="/user/{{ $post->user->user_id }}" class="author-name">{{ $authorName }}</a>
-                        @auth
-                            @if(!$isCurrentUser)
-                                <button class="follow-btn{{ $post->isFollowing ? ' following' : '' }}" data-user-id="{{ $post->user->user_id }}">
-                                    {{ $post->isFollowing ? 'Following' : 'Follow' }}
-                                </button>
-                            @endif
-                        @endauth
-                    </div>
-                    <a href="/posts/{{ $post->post_id }}" class="blog-post-link" style="text-decoration:none;display:block;">
-                        <div>
-                            <div class="blog-post-title">{{ $post->title }}</div>
-                            <div class="blog-post-excerpt">{{ Str::limit(strip_tags($post->content), 180) }}</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="blog-post-meta">
-                    <span><i class="fas fa-eye"></i> {{ $post->viewCount() }} views</span>
-                    <span><i class="fas fa-clock"></i> {{ ceil(str_word_count(strip_tags($post->content))/200) }} min read</span>
-                    <form method="POST" action="{{ route('posts.bookmark', $post->post_id) }}" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="bookmark-btn{{ $post->isBookmarked || $post->is_bookmarked ? ' bookmarked' : '' }}">
-                            <i class="{{ $post->isBookmarked || $post->is_bookmarked ? 'fas fa-bookmark' : 'far fa-bookmark' }}"></i>
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ route('posts.report', $post->post_id) }}" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="report-btn ml-2" title="Report this post"><i class="fas fa-flag"></i></button>
-                    </form>
-                </div>
-            </div>
-        @endforeach
+        <!-- Posts will be loaded via JavaScript -->
     </div>
 </div>
 @auth

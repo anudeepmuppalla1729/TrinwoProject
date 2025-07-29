@@ -111,6 +111,9 @@ class AnswerController extends Controller
         $userId = Auth::id();
         
         if (!$userId) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'You must be logged in to vote!'], 401);
+            }
             return redirect()->back()->with('error', 'You must be logged in to vote!');
         }
         
@@ -122,12 +125,36 @@ class AnswerController extends Controller
             if ($existingVote->vote_type === 'upvote') {
                 $existingVote->delete();
                 
+                // Reload the answer from database to get fresh vote counts
+                $answer = Answer::findOrFail($answer->answer_id);
+                
+                if (request()->expectsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Upvote removed!',
+                        'userVote' => null,
+                        'upvotes' => $answer->getUpvotesCount(),
+                        'downvotes' => $answer->getDownvotesCount()
+                    ]);
+                }
                 return redirect()->back()->with('success', 'Upvote removed!');
             }
             
             // If user previously downvoted, change to upvote
             $existingVote->update(['vote_type' => 'upvote']);
             
+            // Reload the answer from database to get fresh vote counts
+            $answer = Answer::findOrFail($answer->answer_id);
+            
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Changed from downvote to upvote!',
+                    'userVote' => 'upvote',
+                    'upvotes' => $answer->getUpvotesCount(),
+                    'downvotes' => $answer->getDownvotesCount()
+                ]);
+            }
             return redirect()->back()->with('success', 'Changed from downvote to upvote!');
         }
         
@@ -137,6 +164,18 @@ class AnswerController extends Controller
             'vote_type' => 'upvote'
         ]);
         
+        // Reload the answer from database to get fresh vote counts
+        $answer = Answer::findOrFail($answer->answer_id);
+        
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Answer upvoted!',
+                'userVote' => 'upvote',
+                'upvotes' => $answer->getUpvotesCount(),
+                'downvotes' => $answer->getDownvotesCount()
+            ]);
+        }
         return redirect()->back()->with('success', 'Answer upvoted!');
     }
 
@@ -152,6 +191,9 @@ class AnswerController extends Controller
         $userId = Auth::id();
         
         if (!$userId) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'You must be logged in to vote!'], 401);
+            }
             return redirect()->back()->with('error', 'You must be logged in to vote!');
         }
         
@@ -163,12 +205,36 @@ class AnswerController extends Controller
             if ($existingVote->vote_type === 'downvote') {
                 $existingVote->delete();
                 
+                // Reload the answer from database to get fresh vote counts
+                $answer = Answer::findOrFail($answer->answer_id);
+                
+                if (request()->expectsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Downvote removed!',
+                        'userVote' => null,
+                        'upvotes' => $answer->getUpvotesCount(),
+                        'downvotes' => $answer->getDownvotesCount()
+                    ]);
+                }
                 return redirect()->back()->with('success', 'Downvote removed!');
             }
             
             // If user previously upvoted, change to downvote
             $existingVote->update(['vote_type' => 'downvote']);
             
+            // Reload the answer from database to get fresh vote counts
+            $answer = Answer::findOrFail($answer->answer_id);
+            
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Changed from upvote to downvote!',
+                    'userVote' => 'downvote',
+                    'upvotes' => $answer->getUpvotesCount(),
+                    'downvotes' => $answer->getDownvotesCount()
+                ]);
+            }
             return redirect()->back()->with('success', 'Changed from upvote to downvote!');
         }
         
@@ -178,6 +244,18 @@ class AnswerController extends Controller
             'vote_type' => 'downvote'
         ]);
         
+        // Reload the answer from database to get fresh vote counts
+        $answer = Answer::findOrFail($answer->answer_id);
+        
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Answer downvoted!',
+                'userVote' => 'downvote',
+                'upvotes' => $answer->getUpvotesCount(),
+                'downvotes' => $answer->getDownvotesCount()
+            ]);
+        }
         return redirect()->back()->with('success', 'Answer downvoted!');
     }
 
@@ -256,11 +334,24 @@ class AnswerController extends Controller
         if (!$user) {
             return back()->with('error', 'You must be logged in to report.');
         }
+        
         $request->validate([
             'reason' => 'required|string|max:255',
         ]);
+        
+        $answer = Answer::findOrFail($id);
+        
+        // Prevent users from reporting their own answers
+        if ($answer->user_id === $user->user_id) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'You cannot report your own answer.'], 403);
+            }
+            return back()->with('error', 'You cannot report your own answer.');
+        }
+        
         $userId = $user->user_id;
         $answerId = $id;
+        
         // Prevent duplicate reports by same user
         $existing = \App\Models\AnswerReport::where('reporter_id', $userId)->where('answer_id', $answerId)->first();
         if ($existing) {
@@ -268,11 +359,13 @@ class AnswerController extends Controller
             if ($request->expectsJson()) return response()->json(['success' => false, 'message' => $msg], 409);
             return back()->with('error', $msg);
         }
+        
         \App\Models\AnswerReport::create([
             'reporter_id' => $userId,
             'answer_id' => $answerId,
             'reason' => $request->reason,
         ]);
+        
         $msg = 'Answer reported successfully.';
         if ($request->expectsJson()) return response()->json(['success' => true, 'message' => $msg]);
         return back()->with('success', $msg);
