@@ -34,6 +34,7 @@ class Notification extends Model
     const TYPE_UPVOTE = 'upvote';
     const TYPE_COMMENT = 'comment';
     const TYPE_REPLY = 'reply';
+    const TYPE_ANSWER = 'answer';
     const TYPE_REPORT = 'report';
     const TYPE_REPORT_ACTION = 'report_action';
 
@@ -90,6 +91,7 @@ class Notification extends Model
             self::TYPE_UPVOTE => 'fas fa-thumbs-up',
             self::TYPE_COMMENT => 'fas fa-comment',
             self::TYPE_REPLY => 'fas fa-reply',
+            self::TYPE_ANSWER => 'fas fa-lightbulb',
             self::TYPE_REPORT => 'fas fa-flag',
             self::TYPE_REPORT_ACTION => 'fas fa-check-circle',
             default => 'fas fa-bell'
@@ -103,7 +105,7 @@ class Notification extends Model
             self::TYPE_FOLLOWER => 'text-primary',
             self::TYPE_MILESTONE => 'text-success',
             self::TYPE_UPVOTE => 'text-info',
-            self::TYPE_COMMENT, self::TYPE_REPLY => 'text-secondary',
+            self::TYPE_COMMENT, self::TYPE_REPLY, self::TYPE_ANSWER => 'text-secondary',
             self::TYPE_REPORT => 'text-danger',
             self::TYPE_REPORT_ACTION => 'text-success',
             default => 'text-muted'
@@ -135,7 +137,7 @@ class Notification extends Model
             'data' => [
                 'follower_name' => $follower->name,
                 'follower_username' => $follower->username,
-                'follower_avatar' => $follower->avatar
+                'follower_avatar' => $follower->avatar_url
             ]
         ]);
     }
@@ -159,7 +161,7 @@ class Notification extends Model
             'type' => self::TYPE_MILESTONE,
             'title' => 'Milestone Achieved!',
             'message' => $messages[$milestoneType] ?? 'You\'ve achieved a new milestone!',
-            'data' => $milestoneData
+            'data' => array_merge($milestoneData, ['milestone_type' => $milestoneType])
         ]);
     }
 
@@ -219,6 +221,26 @@ class Notification extends Model
                 'content_id' => $contentId,
                 'content_title' => $contentTitle,
                 'reply_text' => $replyText,
+                'sender_name' => $sender->name,
+                'sender_username' => $sender->username
+            ]
+        ]);
+    }
+
+    public static function createAnswer($userId, $senderId, $questionId, $questionTitle, $answerContent)
+    {
+        $sender = User::find($senderId);
+        return self::create([
+            'user_id' => $userId,
+            'sender_id' => $senderId,
+            'type' => self::TYPE_ANSWER,
+            'title' => 'New Answer',
+            'message' => $sender->name . ' answered your question',
+            'link' => route('question.show', $questionId, false),
+            'data' => [
+                'question_id' => $questionId,
+                'question_title' => $questionTitle,
+                'answer_content' => $answerContent,
                 'sender_name' => $sender->name,
                 'sender_username' => $sender->username
             ]

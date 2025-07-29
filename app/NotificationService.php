@@ -99,6 +99,20 @@ class NotificationService
     }
 
     /**
+     * Create answer notifications
+     */
+    public static function createAnswerNotification(User $questionOwner, User $answerAuthor, $question, $answer)
+    {
+        return Notification::createAnswer(
+            $questionOwner->user_id, 
+            $answerAuthor->user_id, 
+            $question->question_id, 
+            $question->title, 
+            $answer->content
+        );
+    }
+
+    /**
      * Create report notifications
      */
     public static function createReportNotification(User $user, string $reportType, $report, string $reason)
@@ -122,12 +136,22 @@ class NotificationService
         $milestones = [];
 
         // Check first question
-        if ($user->questions()->count() === 1) {
+        $questionCount = $user->questions()->count();
+        $hasFirstQuestionMilestone = self::hasMilestoneNotification($user, 'first_question');
+        
+        \Log::info("User {$user->user_id}: questionCount = {$questionCount}, hasFirstQuestionMilestone = " . ($hasFirstQuestionMilestone ? 'true' : 'false'));
+        
+        if ($questionCount === 1 && !$hasFirstQuestionMilestone) {
             $milestones[] = 'first_question';
         }
 
         // Check first answer
-        if ($user->answers()->count() === 1) {
+        $answerCount = $user->answers()->count();
+        $hasFirstAnswerMilestone = self::hasMilestoneNotification($user, 'first_answer');
+        
+        \Log::info("User {$user->user_id}: answerCount = {$answerCount}, hasFirstAnswerMilestone = " . ($hasFirstAnswerMilestone ? 'true' : 'false'));
+        
+        if ($answerCount === 1 && !$hasFirstAnswerMilestone) {
             $milestones[] = 'first_answer';
         }
 
@@ -137,42 +161,47 @@ class NotificationService
             ->where('post_votes.vote_type', 'upvote')
             ->count();
 
-        if ($upvotes === 1) {
+        $hasFirstUpvoteMilestone = self::hasMilestoneNotification($user, 'first_upvote');
+        
+        \Log::info("User {$user->user_id}: upvotes = {$upvotes}, hasFirstUpvoteMilestone = " . ($hasFirstUpvoteMilestone ? 'true' : 'false'));
+        
+        if ($upvotes === 1 && !$hasFirstUpvoteMilestone) {
             $milestones[] = 'first_upvote';
         }
 
         // Check reputation milestones (you'll need to implement reputation system)
         // For now, we'll use a simple calculation
-        $reputation = $user->questions()->count() * 5 + $user->answers()->count() * 10 + $upvotes * 2;
+        $reputation = $questionCount * 5 + $answerCount * 10 + $upvotes * 2;
         
-        if ($reputation >= 100 && $reputation < 200) {
+        if ($reputation >= 100 && $reputation < 200 && !self::hasMilestoneNotification($user, 'reputation_100')) {
             $milestones[] = 'reputation_100';
-        } elseif ($reputation >= 500 && $reputation < 600) {
+        } elseif ($reputation >= 500 && $reputation < 600 && !self::hasMilestoneNotification($user, 'reputation_500')) {
             $milestones[] = 'reputation_500';
-        } elseif ($reputation >= 1000 && $reputation < 1100) {
+        } elseif ($reputation >= 1000 && $reputation < 1100 && !self::hasMilestoneNotification($user, 'reputation_1000')) {
             $milestones[] = 'reputation_1000';
         }
 
         // Check question milestones
-        $questionCount = $user->questions()->count();
-        if ($questionCount === 10) {
+        if ($questionCount === 10 && !self::hasMilestoneNotification($user, 'questions_10')) {
             $milestones[] = 'questions_10';
         }
 
         // Check answer milestones
-        $answerCount = $user->answers()->count();
-        if ($answerCount === 25) {
+        if ($answerCount === 25 && !self::hasMilestoneNotification($user, 'answers_25')) {
             $milestones[] = 'answers_25';
         }
 
         // Check follower milestones
         $followerCount = $user->followers()->count();
-        if ($followerCount === 50) {
+        if ($followerCount === 50 && !self::hasMilestoneNotification($user, 'followers_50')) {
             $milestones[] = 'followers_50';
         }
 
+        \Log::info("User {$user->user_id}: Creating milestones: " . implode(', ', $milestones));
+
         // Create milestone notifications
         foreach ($milestones as $milestone) {
+            \Log::info("Creating milestone notification for user {$user->user_id}, type: {$milestone}");
             self::createMilestoneNotification($user, $milestone, [
                 'reputation' => $reputation,
                 'questions_count' => $questionCount,
@@ -180,6 +209,36 @@ class NotificationService
                 'followers_count' => $followerCount
             ]);
         }
+    }
+
+    /**
+     * Check if user has already received a specific milestone notification
+     */
+    private static function hasMilestoneNotification(User $user, string $milestoneType): bool
+    {
+        $messages = [
+            'first_question' => 'Congratulations! You asked your first question.',
+            'first_answer' => 'Great job! You provided your first answer.',
+            'first_upvote' => 'Awesome! You received your first upvote.',
+            'reputation_100' => 'You\'ve reached 100 reputation points!',
+            'reputation_500' => 'You\'ve reached 500 reputation points!',
+            'reputation_1000' => 'You\'ve reached 1000 reputation points!',
+            'questions_10' => 'You\'ve asked 10 questions!',
+            'answers_25' => 'You\'ve provided 25 answers!',
+            'followers_50' => 'You\'ve reached 50 followers!'
+        ];
+
+        $message = $messages[$milestoneType] ?? '';
+        
+        $exists = $user->notifications()
+            ->where('type', 'milestone')
+            ->where('message', $message)
+            ->exists();
+            
+        // Log for debugging
+        \Log::info("Checking milestone notification for user {$user->user_id}, type: {$milestoneType}, message: {$message}, exists: " . ($exists ? 'true' : 'false'));
+        
+        return $exists;
     }
 
     /**
@@ -235,6 +294,19 @@ class NotificationService
 
         if ($user && $user->user_id !== $sender->user_id) {
             self::createReplyNotification($user, $sender, $content, $contentType, $reply);
+        }
+    }
+
+    /**
+     * Handle answer notifications
+     */
+    public static function handleAnswer($question, $answer, User $answerAuthor)
+    {
+        $questionOwner = $question->user;
+        
+        // Don't notify if the answer author is the same as the question owner
+        if ($questionOwner && $questionOwner->user_id !== $answerAuthor->user_id) {
+            self::createAnswerNotification($questionOwner, $answerAuthor, $question, $answer);
         }
     }
 

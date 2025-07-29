@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         editor.ui.registry.addButton('codehighlight', {
-            icon: 'sourcecode',
+            icon: 'code-sample',
             tooltip: 'Insert Code Block',
             onAction: openDialog
         });

@@ -280,7 +280,9 @@ html, body {
                     <i class="{{ $post->isBookmarked ? 'fas fa-bookmark' : 'far fa-bookmark' }}"></i>
                 </button>
             </form>
-            <button type="button" id="reportBtn" title="Report" class="report-btn"><i class="fas fa-flag"></i></button>
+            @if(Auth::id() !== $post->user->user_id)
+                <button type="button" id="reportBtn" title="Report" class="report-btn"><i class="fas fa-flag"></i></button>
+            @endif
         </div>
         <div class="custom-blog-content">{!! $post->content !!}</div>
         <div class="custom-comments-section">
