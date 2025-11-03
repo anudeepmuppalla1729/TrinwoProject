@@ -14,8 +14,27 @@ use App\Mail\ReportNotification;
 use App\Models\PostReport;
 use Illuminate\Support\Facades\Mail;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group.
+|
+*/
 
 
+/*
+|--------------------------------------------------------------------------
+| Guest Routes (Unauthenticated Users)
+|--------------------------------------------------------------------------
+|
+| These routes are only accessible to users who are not logged in.
+| Includes landing page, login, registration, and interest selection.
+|
+*/
 Route::middleware(['guest'])->group(function () {
     Route::get('/', function () {
         return view('landingPage');
@@ -38,7 +57,16 @@ Route::get('/questions', [QuestionController::class, 'index'])->name('questions'
 Route::get('/question/{id?}', [QuestionController::class, 'show'])->name('question');
 Route::get('/api/questions/search', [QuestionController::class, 'search'])->name('api.questions.search');
 
-// Question routes
+/*
+|--------------------------------------------------------------------------
+| Question Management Routes (Authenticated Users)
+|--------------------------------------------------------------------------
+|
+| Routes for creating, editing, and interacting with questions.
+| Includes: CRUD operations, voting, bookmarking, sharing, and question status.
+| Requires: Authentication & completed profile
+|
+*/
 Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::post('/questions', [QuestionController::class, 'store'])->name('questions.store');
     Route::get('/questions/create', [QuestionController::class, 'create'])->name('questions.create');
@@ -52,7 +80,18 @@ Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::post('/questions/{id}/close', [QuestionController::class, 'closeQuestion'])->name('questions.close');
     Route::post('/questions/{id}/reopen', [QuestionController::class, 'reopenQuestion'])->name('questions.reopen');
     
-    // Answer routes
+        /*
+    |--------------------------------------------------------------------------
+    | Answer Management Routes
+    |--------------------------------------------------------------------------
+    |
+    | Routes for managing answers to questions including:
+    | - Creating/updating/deleting answers
+    | - Voting and accepting answers
+    | - Adding comments to answers
+    | - Sharing answers
+    |
+    */
     Route::post('/questions/{questionId}/answers', [AnswerController::class, 'store'])->name('answers.store');
     Route::put('/answers/{id}', [AnswerController::class, 'update'])->name('answers.update');
     Route::delete('/answers/{id}', [AnswerController::class, 'destroy'])->name('answers.destroy');
@@ -124,6 +163,18 @@ Route::middleware(['auth', 'check.profile.completion'])->group(function () {
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('password.update');
 });
 
+/*
+|--------------------------------------------------------------------------
+| User Profile Routes
+|--------------------------------------------------------------------------
+|
+| Routes for user profile management including:
+| - Profile dashboard
+| - User's content (answers, questions, posts)
+| - Social features (followers, following)
+| - User preferences and settings
+|
+*/
 Route::middleware(['auth', 'check.profile.completion'])->prefix('profile')->name('profile.')->group(function () {
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/answers', [ProfileController::class, 'answers'])->name('answers');
@@ -165,6 +216,15 @@ Route::post('/forgot-password/send-otp', [App\Http\Controllers\ForgotPasswordCon
 Route::post('/forgot-password/verify-otp', [App\Http\Controllers\ForgotPasswordController::class, 'verifyOtp']);
 Route::post('/forgot-password/reset', [App\Http\Controllers\ForgotPasswordController::class, 'resetPassword']);
 
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+|
+| Routes for the admin panel including authentication and management functions.
+| These routes are protected by admin authentication middleware.
+|
+*/
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
@@ -208,6 +268,18 @@ Route::middleware(['auth:admin', 'check.admin.status'])->group(function () {
 
     // Admin API Endpoints
     Route::prefix('admin/api')->group(function () {
+        /*
+        |--------------------------------------------------------------------------
+        | Admin API Routes
+        |--------------------------------------------------------------------------
+        |
+        | RESTful API endpoints for the admin panel:
+        | - Dashboard statistics and analytics
+        | - User management
+        | - Content moderation
+        | - System settings
+        |
+        */
         // Dashboard API
         Route::get('/dashboard/stats', [AdminController::class, 'dashboardStats']);
         Route::get('/dashboard/recent-activity', [AdminController::class, 'recentActivity']);
