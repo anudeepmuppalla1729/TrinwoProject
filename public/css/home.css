@@ -2,14 +2,11 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: white;
-
 }
 
 .hamburger {
   display: none;
 }
-
-
 
 /* Navbar container */
 .navbar {
@@ -24,7 +21,6 @@ body {
 
   width: 100vw;
 }
-
 
 /* Left section */
 .nav-left {
@@ -184,14 +180,15 @@ body {
 }
 
 .settings-logout {
-  margin-top: 10px
+  margin-top: 10px;
 }
 
 .settings-logout a {
   padding: 0.4rem;
   margin-bottom: 0;
   background: rgb(236, 234, 234);
-  margin-left: 45px;
+  margin-left: 43px;
+  margin-right: 43px;
   border-radius: 6px;
   text-decoration: none;
   color: black;
@@ -202,7 +199,6 @@ body {
   gap: 0.4rem;
   transition: background 0.3s;
 }
-
 
 /* Sidebar corner images */
 .sidebar-corner {
@@ -218,33 +214,30 @@ body {
 .sidebar-top-left {
   top: 0;
   left: 0;
-  background-image: url('../assets/topleft.png');
+  background-image: url("../assets/topleft.png");
   /* change path as needed */
 }
 
 .sidebar-top-right {
   top: 0;
   right: 0;
-  background-image: url('../assets/top-right.png');
+  background-image: url("../assets/top-right.png");
   /* change path as needed */
 }
 
 .sidebar-bottom-left {
   bottom: 0;
   left: 0;
-  background-image: url('../assets/bottom_left.png');
+  background-image: url("../assets/bottom_left.png");
   /* change path as needed */
 }
 
 .sidebar-bottom-right {
   bottom: 0;
   right: 0;
-  background-image: url('../assets/bottomright.png');
+  background-image: url("../assets/bottomright.png");
   /* change path as needed */
 }
-
-
-
 
 /* Main content area */
 .home_content {
@@ -270,7 +263,6 @@ body {
 .home_content::-webkit-scrollbar {
   display: none;
 }
-
 
 /* Question Input Box */
 .question-box {
@@ -324,7 +316,6 @@ body {
 
 .insight-btn {
   cursor: pointer;
-
 }
 
 .privacy-select {
@@ -356,7 +347,6 @@ body {
 .post-btn:hover {
   background: rgb(42, 60, 98);
 }
-
 
 /* Modal backdrop */
 .modal-overlay {
@@ -493,7 +483,7 @@ body {
   border-radius: 10px;
 
   font-size: 1.1rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-top: 8px;
   margin-bottom: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -520,7 +510,7 @@ body {
   border-radius: 10px;
 
   font-size: 1.1rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-top: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
@@ -551,7 +541,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 10px;
   font-size: 1rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   background-color: #fff;
@@ -630,7 +620,7 @@ body {
   border-radius: 10px;
   resize: none;
   font-size: 1.1rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-top: 5px;
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -661,7 +651,7 @@ body {
   border-radius: 10px;
   resize: none;
   font-size: 1rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-top: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
@@ -750,9 +740,6 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-
-
-
 .posts-container {
   margin-top: 1rem;
 }
@@ -786,7 +773,6 @@ body {
 .post-header .options {
   position: relative;
   cursor: pointer;
-
 }
 
 .options-menu {
@@ -873,8 +859,6 @@ body {
   border-bottom-right-radius: 8px;
 }
 
-
-
 .close-post {
   cursor: pointer;
   color: black;
@@ -891,7 +875,6 @@ body {
   margin: 0.2rem 0;
 }
 
-
 .post-actions {
   margin-top: 1rem;
   padding-top: 0.5rem;
@@ -899,7 +882,6 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-
 }
 
 .post-actions button {
@@ -912,7 +894,6 @@ body {
   transition: background 0.2s ease;
   color: white;
 }
-
 
 .post-actions button:hover {
   background: rgb(42, 60, 98);
@@ -1028,6 +1009,10 @@ body {
   vertical-align: middle;
 }
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
